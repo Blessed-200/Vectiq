@@ -54,19 +54,30 @@ def cmd_tables(args: argparse.Namespace) -> int:
 
 
 def cmd_publish(args: argparse.Namespace) -> int:
-    """Upload finished hourly shards as GitHub release assets (tag per UTC day)."""
-    day = time.strftime("%Y-%m-%d", time.gmtime())
-    tag = f"tape-{day}"
-    subprocess.run(["gh", "release", "create", tag, "--title", tag, "--notes", "raw tape shards", "--latest=false"],
-                   check=False, capture_output=True)
-    t = time.gmtime()
-    for p in sorted(Path(args.tape).rglob("*.jsonl.zst")):
-        if p.parent.parts[-3:] != (f"{t.tm_year:04d}", f"{t.tm_mon:02d}", f"{t.tm_mday:02d}"):
-            continue
-        asset = p.with_name(f"{day}_{p.name}")
-        asset.write_bytes(p.read_bytes())
-        subprocess.run(["gh", "release", "upload", tag, str(asset), "--clobber"], check=False)
-        asset.unlink()
+    """Upload recently written shards as release assets (one tag per shard's UTC day).
+
+    Shards touched in the last 3 h are uploaded regardless of today's date, so the last
+    minutes before midnight are never stranded. Asset names carry the run id: a new
+    runner can never overwrite what a previous runner already published.
+    """
+    import shutil
+    import tempfile
+
+    run = os.environ.get("GITHUB_RUN_ID", "local")
+    created: set[str] = set()
+    with tempfile.TemporaryDirectory() as tmp:
+        for p in sorted(Path(args.tape).rglob("*.jsonl.zst")):
+            if time.time() - p.stat().st_mtime > 3 * 3600:
+                continue
+            y, m, d = p.parent.parts[-3:]
+            tag = f"tape-{y}-{m}-{d}"
+            if tag not in created:
+                subprocess.run(["gh", "release", "create", tag, "--title", tag, "--notes", "raw tape shards",
+                                "--latest=false"], check=False, capture_output=True)
+                created.add(tag)
+            asset = Path(tmp) / f"{y}-{m}-{d}_{p.name[:2]}_r{run}.jsonl.zst"
+            shutil.copyfile(p, asset)
+            subprocess.run(["gh", "release", "upload", tag, str(asset), "--clobber"], check=False)
     ledger = Path(args.tape).parent / "paper.sqlite"
     if ledger.exists():  # persistent paper-trading state across ephemeral runners
         subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger", "--latest=false"],
