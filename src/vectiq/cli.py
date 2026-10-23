@@ -42,8 +42,9 @@ def cmd_collect(args: argparse.Namespace) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
     tape = TapeWriter(Path(args.out) / "tape")
     ledger = PaperLedger(Path(args.out) / "paper.sqlite", start_bankroll=args.bankroll)
-    Collector(_client(args), tape, ledger).run(args.minutes * 60, args.interval)
-    print(json.dumps(ledger.summary()))
+    shadow = PaperLedger(Path(args.out) / "shadow.sqlite", start_bankroll=args.bankroll)
+    Collector(_client(args), tape, ledger, shadow=shadow).run(args.minutes * 60, args.interval)
+    print(json.dumps({"alerted": ledger.summary(), "shadow": shadow.summary()}))
     return 0
 
 
@@ -78,11 +79,12 @@ def cmd_publish(args: argparse.Namespace) -> int:
             asset = Path(tmp) / f"{y}-{m}-{d}_{p.name[:2]}_r{run}.jsonl.zst"
             shutil.copyfile(p, asset)
             subprocess.run(["gh", "release", "upload", tag, str(asset), "--clobber"], check=False)
-    ledger = Path(args.tape).parent / "paper.sqlite"
-    if ledger.exists():  # persistent paper-trading state across ephemeral runners
-        subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger", "--latest=false"],
-                       check=False, capture_output=True)
-        subprocess.run(["gh", "release", "upload", "ledger", str(ledger), "--clobber"], check=False)
+    for name in ("paper.sqlite", "shadow.sqlite"):
+        ledger = Path(args.tape).parent / name
+        if ledger.exists():  # persistent paper-trading state across ephemeral runners
+            subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger",
+                            "--latest=false"], check=False, capture_output=True)
+            subprocess.run(["gh", "release", "upload", "ledger", str(ledger), "--clobber"], check=False)
     return 0
 
 

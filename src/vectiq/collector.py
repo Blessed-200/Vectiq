@@ -19,8 +19,8 @@ log = logging.getLogger("vectiq.collector")
 
 class Collector:
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
-                 *, notify: Callable[[str], bool] | None = None, scheduler: DetailScheduler | None = None) -> None:
-        self.client, self.tape, self.ledger = client, tape, ledger
+                 *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None, scheduler: DetailScheduler | None = None) -> None:
+        self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
         self.anchor: dict[int, float | None] = {}
@@ -40,18 +40,24 @@ class Collector:
 
     def _signals(self, s: MatchState) -> None:
         sigs, why = engine.evaluate(s, self.anchor.get(s.game_id))
+        calibrated = engine.is_calibrated(s.league)
+        book = self.ledger if calibrated else self.shadow  # uncalibrated leagues: silent evidence only
         for sig in sigs:
-            if self.ledger and self.ledger.open_bet(sig, s.fetched_ms):
-                self.notify(telegram.format_signal(sig))
-                log.info("signal %s %s %s @%s ev=%.3f", sig.players, sig.side, sig.line, sig.price, sig.ev)
+            if book and book.open_bet(sig, s.fetched_ms):
+                if calibrated:
+                    self.notify(telegram.format_signal(sig))
+                log.info("%s %s %s %s @%s ev=%.3f", "signal" if calibrated else "shadow", sig.players, sig.side,
+                         sig.line, sig.price, sig.ev)
 
     def _finished(self, gid: int) -> None:
         prev = self.last.pop(gid, None)
         self.anchor.pop(gid, None)
         self.tape.forget("item", gid)
         self.tape.forget("game", gid)
-        if prev and self.ledger and max(prev.sets_won) >= 3:
-            self.ledger.settle(gid, prev.points_played)
+        if prev and max(prev.sets_won) >= 3:
+            for book in (self.ledger, self.shadow):
+                if book:
+                    book.settle(gid, prev.points_played)
 
     # -- one cycle ---------------------------------------------------------
     def step(self, now_s: float | None = None) -> int:

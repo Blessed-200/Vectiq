@@ -10,12 +10,22 @@ Guards (each one exists because of a failure seen in the audit):
 from __future__ import annotations
 
 import math
+import os
 from dataclasses import dataclass
 
 from vectiq.feed.schema import MatchState, Quote
 from vectiq.pricing.hier_pricer import HierMatchPricer
 
 _PRICER = HierMatchPricer()
+
+# Leagues the pricer has been calibrated on (4.1 M Liga Pro points). Everything else is
+# priced in shadow mode only: recorded for evidence, never alerted.
+CALIBRATED = tuple(x.strip().lower() for x in
+                   os.environ.get("VECTIQ_CALIBRATED_LEAGUES", "Liga Pro. República Checa").split(",") if x.strip())
+
+
+def is_calibrated(league: str) -> bool:
+    return league.strip().lower() in CALIBRATED
 
 
 @dataclass(slots=True)

@@ -160,3 +160,20 @@ def test_client_breaker_opens_on_403():
         c.live_list()
     t[0] += 1000
     assert not c.live_list().ok  # half-open retry after cooldown
+
+
+def test_league_gate():
+    assert engine.is_calibrated("Liga Pro. República Checa")
+    assert not engine.is_calibrated("Setka Cup. Tokio") and not engine.is_calibrated("Liga Pro")
+
+
+def test_uncalibrated_league_goes_to_shadow_without_alert(tmp_path):
+    from vectiq.signals.engine import Signal
+    sent = []
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), PaperLedger(tmp_path / "a.sqlite"),
+                    shadow=PaperLedger(tmp_path / "s.sqlite"), notify=lambda m: sent.append(m) or True)
+    st = _state([(11, 6)], lines=((76.5, 3.0, 1.45),))
+    st.league = "Setka Cup. Tokio"
+    col.anchor[1] = 0.0
+    col._signals(st)
+    assert sent == []
