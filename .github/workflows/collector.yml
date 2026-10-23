@@ -1,6 +1,4 @@
 name: collector
-# Continuous capture. A new run is always queued behind the active one (concurrency
-# group, no cancel), so coverage is gapless without hitting the 6 h job limit.
 on:
   schedule:
     - cron: "*/15 * * * *"
@@ -23,13 +21,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12", cache: pip }
+        with:
+          python-version: "3.12"
+          cache: pip
       - run: pip install -e .
-      - name: Restore paper ledger
-        run: mkdir -p data && gh release download ledger --pattern "*.sqlite" --dir data --clobber || true
+      - name: Restore paper ledgers
+        run: |
+          mkdir -p data
+          gh release download ledger --pattern '*.sqlite' --dir data --clobber || true
       - name: Probe
         run: python -m vectiq probe
-      - name: Collect (5h40m) and publish shards every 20 min
+      - name: Collect and publish shards every 20 min
         run: |
           python -m vectiq collect --minutes 340 --out data &
           PID=$!
@@ -39,4 +41,8 @@ jobs:
       - name: Safety-net artifact
         if: always()
         uses: actions/upload-artifact@v4
-        with: { name: tape-${{ github.run_id }}, path: data/tape, retention-days: 7, if-no-files-found: ignore }
+        with:
+          name: tape-${{ github.run_id }}
+          path: data/tape
+          retention-days: 7
+          if-no-files-found: ignore
