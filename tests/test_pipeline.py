@@ -162,7 +162,9 @@ def test_client_breaker_opens_on_403():
     assert not c.live_list().ok  # half-open retry after cooldown
 
 
-def test_league_gate():
+def test_league_gate(monkeypatch):
+    assert not engine.is_calibrated("Liga Pro. República Checa")  # default: the set-break pricer never alerts
+    monkeypatch.setattr(engine, "CALIBRATED", ("liga pro. república checa",))
     assert engine.is_calibrated("Liga Pro. República Checa")
     assert not engine.is_calibrated("Setka Cup. Tokio") and not engine.is_calibrated("Liga Pro")
 

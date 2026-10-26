@@ -57,6 +57,7 @@ class MatchState:
     sets: list[tuple[int, int]]  # every set incl. the one in progress
     server: int | None  # 1 / 2 when the feed says so
     quotes: list[Quote] = field(default_factory=list)
+    league_en: str = ""
 
     @property
     def completed_sets(self) -> list[tuple[int, int]]:
@@ -152,6 +153,7 @@ def parse_item(item: dict[str, Any], fetched_ms: int) -> MatchState:
         sets=_sets(sc),
         server=sc.get("P"),
         quotes=quotes,
+        league_en=str(item.get("LE") or ""),
     )
 
 

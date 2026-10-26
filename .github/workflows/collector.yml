@@ -1,13 +1,23 @@
 name: collector
+# Gapless capture without a coverage hole at the hand-over:
+#  * every run starts its successor at minute 325 (workflow_dispatch from GITHUB_TOKEN is allowed),
+#    so two runs overlap for ~20 minutes and the tape never has a hole;
+#  * only one run at a time TRADES (the Masters ledger is handed over through the `ledger` release);
+#  * the 15-minute cron is only a watchdog: it starts a run only when no other collector is active.
 on:
   schedule:
     - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      chained:
+        description: "started by the previous run (hand-over)"
+        default: "false"
 concurrency:
-  group: collector
+  group: collector-${{ github.run_id }}   # unique per run: runs may overlap, none is ever cancelled
   cancel-in-progress: false
 permissions:
   contents: write
+  actions: write
 jobs:
   collect:
     runs-on: ubuntu-latest
@@ -16,30 +26,56 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      TELEGRAM_CHAT_ID_SHADOW: ${{ secrets.TELEGRAM_CHAT_ID_SHADOW }}
       BW_BASE_URLS: ${{ vars.BW_BASE_URLS }}
       BW_PROXY_URL: ${{ secrets.BW_PROXY_URL }}
     steps:
+      - name: Watchdog gate
+        id: gate
+        if: github.event_name == 'schedule' || inputs.chained != 'true'
+        run: |
+          others=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow collector.yml --limit 30 \
+            --json databaseId,status --jq "[.[] | select(.databaseId != $GITHUB_RUN_ID and (.status==\"in_progress\" or .status==\"queued\"))] | length")
+          echo "other active collector runs: $others"
+          if [ "${others:-0}" -gt 0 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.skip != 'true'
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.skip != 'true'
         with:
           python-version: "3.12"
           cache: pip
-      - run: pip install -e .
-      - name: Restore paper ledgers
+      - if: steps.gate.outputs.skip != 'true'
+        run: pip install -e .
+      - name: Restore paper ledgers and Masters book
+        if: steps.gate.outputs.skip != 'true'
         run: |
           mkdir -p data
-          gh release download ledger --pattern '*.sqlite' --dir data --clobber || true
+          gh release download ledger --pattern '*.sqlite' --pattern '*.json' --dir data --clobber || true
       - name: Probe
+        if: steps.gate.outputs.skip != 'true'
         run: python -m vectiq probe
-      - name: Collect and publish shards every 20 min
+      - name: Collect, publish every 20 min, start the successor at minute 325
+        if: steps.gate.outputs.skip != 'true'
         run: |
-          python -m vectiq collect --minutes 340 --out data &
+          FLAGS=""
+          if [ "${{ inputs.chained }}" = "true" ]; then FLAGS="--trade-from-min 20"; fi
+          python -m vectiq collect --minutes 345 --out data $FLAGS &
           PID=$!
-          while kill -0 $PID 2>/dev/null; do sleep 1200; python -m vectiq publish || true; done
+          START=$(date +%s); LAST=$START; CHAINED=0
+          while kill -0 $PID 2>/dev/null; do
+            sleep 60
+            NOW=$(date +%s)
+            if [ $CHAINED -eq 0 ] && [ $((NOW-START)) -ge 19500 ]; then
+              gh workflow run collector.yml --repo "$GITHUB_REPOSITORY" -f chained=true || true
+              CHAINED=1
+            fi
+            if [ $((NOW-LAST)) -ge 1200 ]; then python -m vectiq publish || true; LAST=$NOW; fi
+          done
           wait $PID || true
           python -m vectiq publish || true
       - name: Safety-net artifact
-        if: always()
+        if: always() && steps.gate.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tape-${{ github.run_id }}

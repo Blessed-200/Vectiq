@@ -10,6 +10,8 @@ import time
 from pathlib import Path
 
 from vectiq.collector import Collector
+from vectiq.notify import telegram
+from vectiq.signals.masters import MastersBook
 from vectiq.feed.client import BetwinnerClient
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
@@ -38,13 +40,60 @@ def cmd_probe(args: argparse.Namespace) -> int:
     return 0 if r.ok else 2
 
 
+STATE_FILES = ("masters.sqlite", "masters_book.json")
+
+
+def _release_upload(paths: list[Path]) -> None:
+    subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger",
+                    "--latest=false"], check=False, capture_output=True)
+    for p in paths:
+        if p.exists():
+            subprocess.run(["gh", "release", "upload", "ledger", str(p), "--clobber"], check=False)
+
+
+def _handoff_in(col: Collector, out: Path) -> None:
+    """Called when this run starts trading: take over the previous run's ledger and distribution book."""
+    subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
+                    "masters_book.json", "--dir", str(out), "--clobber"], check=False, capture_output=True)
+    col.mledger.reopen()
+    loaded = MastersBook.load(out / "masters_book.json")
+    for gid, (sets, _) in col.finals.items():  # finals this run saw before taking over
+        loaded.add_match(gid, sets)
+    col.book = loaded
+    (out / "trading.flag").write_text("1")
+    logging.getLogger("vectiq.cli").info("handoff in: bankroll=%.2f settled=%d", col.mledger.bankroll,
+                                         len(col.mledger.settled_series()))
+
+
+def _handoff_out(col: Collector, out: Path) -> None:
+    """Called when this run stops trading: publish the state the next run takes over."""
+    col.book.save(out / "masters_book.json")
+    _release_upload([out / n for n in STATE_FILES])
+    (out / "trading.flag").unlink(missing_ok=True)
+
+
 def cmd_collect(args: argparse.Namespace) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
-    tape = TapeWriter(Path(args.out) / "tape")
-    ledger = PaperLedger(Path(args.out) / "paper.sqlite", start_bankroll=args.bankroll)
-    shadow = PaperLedger(Path(args.out) / "shadow.sqlite", start_bankroll=args.bankroll)
-    Collector(_client(args), tape, ledger, shadow=shadow).run(args.minutes * 60, args.interval)
-    print(json.dumps({"alerted": ledger.summary(), "shadow": shadow.summary()}))
+    out = Path(args.out)
+    tape = TapeWriter(out / "tape")
+    ledger = PaperLedger(out / "paper.sqlite", start_bankroll=args.bankroll)
+    shadow = PaperLedger(out / "shadow.sqlite", start_bankroll=args.bankroll)
+    mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
+    book = MastersBook.load(out / "masters_book.json")
+    t0 = time.time()
+    chat = telegram.shadow_chat()
+    col = Collector(
+        _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book,
+        notify=lambda m: telegram.send(m, chat_id=chat),
+        trade_from_s=t0 + args.trade_from_min * 60 if args.trade_from_min else None,
+        trade_until_s=t0 + args.trade_until_min * 60 if args.trade_until_min else None,
+        on_trade_start=(lambda c: _handoff_in(c, out)) if args.trade_from_min else None,
+        on_trade_stop=lambda c: _handoff_out(c, out))
+    if not args.trade_from_min:
+        (out / "trading.flag").write_text("1")  # chained runs get the flag in _handoff_in
+    col.run(args.minutes * 60, args.interval)
+    col.book.save(out / "masters_book.json")
+    print(json.dumps({"alerted": ledger.summary(), "shadow": shadow.summary(), "masters": mledger.summary()}))
     return 0
 
 
@@ -79,12 +128,9 @@ def cmd_publish(args: argparse.Namespace) -> int:
             asset = Path(tmp) / f"{y}-{m}-{d}_{p.name[:2]}_r{run}.jsonl.zst"
             shutil.copyfile(p, asset)
             subprocess.run(["gh", "release", "upload", tag, str(asset), "--clobber"], check=False)
-    for name in ("paper.sqlite", "shadow.sqlite"):
-        ledger = Path(args.tape).parent / name
-        if ledger.exists():  # persistent paper-trading state across ephemeral runners
-            subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger",
-                            "--latest=false"], check=False, capture_output=True)
-            subprocess.run(["gh", "release", "upload", "ledger", str(ledger), "--clobber"], check=False)
+    base = Path(args.tape).parent
+    if (base / "trading.flag").exists():  # only the run that currently owns the state may publish it
+        _release_upload([base / n for n in ("paper.sqlite", "shadow.sqlite") + STATE_FILES])
     return 0
 
 
@@ -99,6 +145,9 @@ def main(argv: list[str] | None = None) -> int:
             sp.add_argument("--interval", type=float, default=3.0)
             sp.add_argument("--out", default="data")
             sp.add_argument("--bankroll", type=float, default=100.0)
+            sp.add_argument("--trade-from-min", type=float, default=0.0,
+                            help="chained runs wait this long (passive capture) before taking over trading")
+            sp.add_argument("--trade-until-min", type=float, default=335.0)
         sp.set_defaults(fn=fn)
     t = sub.add_parser("tables"); t.add_argument("--tape", default="data/tape"); t.add_argument("--out", default="data/tables"); t.set_defaults(fn=cmd_tables)
     u = sub.add_parser("publish"); u.add_argument("--tape", default="data/tape"); u.set_defaults(fn=cmd_publish)

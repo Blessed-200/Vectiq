@@ -10,7 +10,7 @@ from vectiq.feed.client import BetwinnerClient, CircuitOpen
 from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.schema import MatchState, parse_feed, parse_game
 from vectiq.notify import telegram
-from vectiq.signals import engine
+from vectiq.signals import engine, masters
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -19,8 +19,22 @@ log = logging.getLogger("vectiq.collector")
 
 class Collector:
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
-                 *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None, scheduler: DetailScheduler | None = None) -> None:
+                 *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
+                 scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
+                 book: masters.MastersBook | None = None, trade_from_s: float | None = None,
+                 trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
+                 on_trade_stop: Callable[["Collector"], None] | None = None) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
+        self.mledger, self.book = mledger, book
+        self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
+        self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
+        self._trading_seen = False
+        self.absent: dict[int, int] = {}
+        self._stopped = False
+        self.finals: dict[int, tuple[list[tuple[int, int]], int]] = {}
+        self.exposure: dict[int, float] = {}
+        self.sprt = "on"
+        self.day = time.strftime("%Y-%m-%d", time.gmtime())
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
         self.anchor: dict[int, float | None] = {}
@@ -49,20 +63,129 @@ class Collector:
                 log.info("%s %s %s %s @%s ev=%.3f", "signal" if calibrated else "shadow", sig.players, sig.side,
                          sig.line, sig.price, sig.ev)
 
+    def _rescue(self, gid: int):
+        """Ask the detail endpoint once for a final score the list feed never showed."""
+        fn = getattr(self.client, "game", None)
+        if fn is None:
+            return None
+        try:
+            r = fn(gid)
+            if r.ok and r.payload and r.payload.get("Value"):
+                st = parse_game(r.payload, r.fetched_ms).state
+                need = (st.best_of // 2 + 1) if st.best_of else 3
+                if max(st.sets_won) >= need and len(st.completed_sets) == sum(st.sets_won):
+                    return st
+        except Exception:  # noqa: BLE001 - never let a rescue attempt break the loop
+            log.debug("rescue failed for %s", gid, exc_info=True)
+        return None
+
     def _finished(self, gid: int) -> None:
         prev = self.last.pop(gid, None)
         self.anchor.pop(gid, None)
         self.tape.forget("item", gid)
         self.tape.forget("game", gid)
-        if prev and max(prev.sets_won) >= 3:
-            for book in (self.ledger, self.shadow):
+        need = (prev.best_of // 2 + 1) if prev and prev.best_of else 3
+        if prev and not (max(prev.sets_won) >= need and len(prev.completed_sets) == sum(prev.sets_won)):
+            prev = self._rescue(gid) or prev      # one last look at the detail endpoint
+        if prev and max(prev.sets_won) >= need and len(prev.completed_sets) == sum(prev.sets_won):
+            done = prev.completed_sets
+            self.finals[gid] = (done, sum(a + b for a, b in done))
+            if self.book is not None and masters.is_masters(prev):
+                self.book.add_match(gid, done)
+            for book in (self.ledger, self.shadow, self.mledger):
                 if book:
                     book.settle(gid, prev.points_played)
+            if self.mledger is not None:
+                self._refresh_sprt()
+        elif prev:
+            for book in (self.ledger, self.shadow):
+                if book:
+                    book.settle_vanished(gid, prev.points_played)
+            if self.mledger is not None:
+                if self.book is not None and masters.is_masters(prev):
+                    total = self.book.add_censored(gid, prev)      # imputed: never drop long matches silently
+                    self.finals[gid] = (prev.completed_sets, total)
+                    self.mledger.settle(gid, total)
+                else:
+                    self.mledger.settle_vanished(gid, prev.points_played)
+                self._refresh_sprt()
+
+    # -- Masters UNDER engine -------------------------------------------------
+    def trading(self, now_s: float) -> bool:
+        if self.mledger is None or self.book is None:
+            return False
+        if self.trade_from_s is not None and now_s < self.trade_from_s:
+            return False
+        if self.trade_until_s is not None and now_s >= self.trade_until_s:
+            return False
+        return True
+
+    def _trade_edges(self, now_s: float) -> None:
+        on = self.trading(now_s)
+        if on and not self._trading_seen:
+            self._trading_seen = True
+            if self.on_trade_start:
+                self.on_trade_start(self)       # take over ledger + book from the previous run
+            self._settle_known()
+        if self.trade_until_s is not None and now_s >= self.trade_until_s and self._trading_seen and not self._stopped:
+            self._stopped = True
+            if self.on_trade_stop:
+                self.on_trade_stop(self)        # final upload of the state the next run will take over
+
+    def _settle_known(self) -> None:
+        if self.mledger is None:
+            return
+        for gid in self.mledger.open_games():
+            if gid in self.finals:
+                self.mledger.settle(gid, self.finals[gid][1])
+        self._refresh_sprt()
+
+    def _refresh_sprt(self) -> None:
+        if self.mledger is None:
+            return
+        new, _ = masters.sprt_state((p, o, w) for p, o, w, _ in self.mledger.settled_series())
+        if new != self.sprt:
+            self.sprt = new
+            self.notify(f"<b>VECTIQ · MASTERS UNDER</b>\nVentaja {new.upper()} según el test secuencial (SPRT)."
+                        + (" Alertas silenciadas hasta que la evidencia se recupere." if new == "off" else ""))
+
+    def _masters(self, s: MatchState, now_s: float) -> None:
+        if not masters.is_masters(s) or self.mledger is None or self.book is None:
+            return
+        if not s.live:  # closing-line value: the last pre-start Under price on every line we hold
+            for ln, q in engine.total_ladder(s).items():
+                self.mledger.note_close(s.game_id, ln, "under", q["under"].price)
+        if not self.trading(now_s):
+            return
+        bk = self.mledger.bankroll
+        pick, why = masters.evaluate_masters(
+            s, self.book, now_s=now_s, size_mult=masters.drawdown_multiplier(self.mledger.drawdown()),
+            exposure_left=0.02 - self.exposure.get(s.game_id, 0.0))
+        if pick is None:
+            return
+        if self.sprt == "off":
+            log.info("masters muted by SPRT: %s", pick.signal.players)
+            return
+        if self.mledger.open_bet(pick.signal, s.fetched_ms):
+            self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
+            self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
+            log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
+                     pick.signal.price, pick.signal.ev)
+
+    def _daily_report(self, now_s: float) -> None:
+        d = time.strftime("%Y-%m-%d", time.gmtime(now_s))
+        if d != self.day:
+            self.day = d
+            if self.mledger is not None and self.trading(now_s):
+                self.notify(telegram.format_report("resumen diario · Masters Under", self.mledger.summary(), self.sprt,
+                                                   self.mledger.drawdown()))
 
     # -- one cycle ---------------------------------------------------------
     def step(self, now_s: float | None = None) -> int:
         now_s = now_s or time.time()
         resp = self.client.live_list()
+        self._trade_edges(now_s)
+        self._daily_report(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
             return 0
@@ -74,9 +197,16 @@ class Collector:
             self.last[s.game_id] = s
             if s.live:
                 self._signals(s)
+            self._masters(s, resp.fetched_ms / 1000.0)
         present = {s.game_id for s in states}
-        for gid in [g for g in self.last if g not in present]:
-            self._finished(gid)
+        for gid in list(self.last):
+            if gid in present:
+                self.absent.pop(gid, None)
+            else:                                   # tolerate a one-poll hiccup before declaring a match over
+                self.absent[gid] = self.absent.get(gid, 0) + 1
+                if self.absent[gid] >= 3:
+                    self.absent.pop(gid, None)
+                    self._finished(gid)
         self.sched.drop_missing(present)
         for gid in self.sched.pick(states, now_s):
             try:

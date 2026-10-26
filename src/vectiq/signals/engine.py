@@ -18,10 +18,10 @@ from vectiq.pricing.hier_pricer import HierMatchPricer
 
 _PRICER = HierMatchPricer()
 
-# Leagues the pricer has been calibrated on (4.1 M Liga Pro points). Everything else is
-# priced in shadow mode only: recorded for evidence, never alerted.
+# Leagues whose set-break pricer may alert. Default: none -- the 22-26 Oct blind test showed no edge
+# for it (see docs/HYPOTHESES.md), so it runs in shadow mode only. Masters Under lives in masters.py.
 CALIBRATED = tuple(x.strip().lower() for x in
-                   os.environ.get("VECTIQ_CALIBRATED_LEAGUES", "Liga Pro. República Checa").split(",") if x.strip())
+                   os.environ.get("VECTIQ_CALIBRATED_LEAGUES", "").split(",") if x.strip())
 
 
 def is_calibrated(league: str) -> bool:

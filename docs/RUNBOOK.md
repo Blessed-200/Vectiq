@@ -22,3 +22,12 @@ repository places bets; the ledger is simulation only.
 ## Gates before any real-money use (agreed metrics)
 Positive CLV over ≥ 1,500 signals; 95 % lower bound of ROI > 0 with N ≥ 2,000; max drawdown < 25 % at quarter-Kelly;
 bet acceptance ≥ 90 %. Until the paper ledger passes these, alerts are information, not instructions.
+
+## Masters Under shadow test + gapless collector (added 26 Oct)
+* Alerts go to `TELEGRAM_CHAT_ID_SHADOW` (falls back to `TELEGRAM_CHAT_ID`). Optional secret.
+* Workflow `collector.yml`: every run starts its successor at minute 325 (overlap ≈ 20 min, no tape hole). The `*/15` cron
+  is only a watchdog and exits if another collector is running. Only one run trades at a time; the successor captures
+  passively for 20 min, then downloads `masters.sqlite` + `masters_book.json` from release `ledger` and takes over.
+* After merging this change: cancel any *pending* old `collector` run (it is bound to the old workflow file). The run
+  in progress may finish; the watchdog starts the new chain afterwards.
+* A match that leaves the feed without a final score is settled with an imputed total (`MastersBook.impute_total`).
