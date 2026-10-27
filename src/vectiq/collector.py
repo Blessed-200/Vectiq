@@ -31,6 +31,7 @@ class Collector:
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
         self.book_path, self._book_saved = book_path, 0.0
         self.line_interval, self._line_t = line_interval, 0.0
+        self._sweep_t, self._silent_t, self._alert_t = 0.0, 0.0, 0.0
         self._trading_seen = False
         self.absent: dict[int, int] = {}
         self._stopped = False
@@ -162,8 +163,8 @@ class Collector:
             return
         bk = self.mledger.bankroll
         # bets on the same match are ~80 % correlated (audit): one position per match, 1 % of equity in total;
-        # and never more than 25 % of equity waiting to settle at once (all of them share the same hypothesis)
-        if self.mledger.open_stake >= 0.25 * bk:
+        # and never more than 35 % of equity waiting to settle at once (all of them share the same hypothesis)
+        if self.mledger.open_stake >= 0.35 * bk:
             return
         pick, why = masters.evaluate_masters(
             s, self.book, now_s=now_s, size_mult=masters.drawdown_multiplier(self.mledger.drawdown()),
@@ -177,9 +178,42 @@ class Collector:
             return
         if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
+            self._alert_t = now_s
             self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
+
+    def _sweep_orphans(self, now_s: float) -> None:
+        """Bets whose match we never saw finish (never went live, or lost in a hand-over) must not stay open forever:
+        one look at the detail endpoint, otherwise void (stake returned) so they stop blocking the open-risk cap."""
+        if self.mledger is None or now_s - self._sweep_t < 300:
+            return
+        self._sweep_t = now_s
+        for gid in self.mledger.stale_open(now_s):
+            if gid in self.last:
+                continue
+            st = self._rescue(gid)
+            if st is not None:
+                done = st.completed_sets
+                self.finals[gid] = (done, sum(a + b for a, b in done))
+                if self.book is not None and masters.is_masters(st):
+                    self.book.add_match(gid, done)
+                self.mledger.settle(gid, st.points_played)
+            else:
+                self.mledger.settle_vanished(gid, 0)      # void: never observed to completion
+                log.info("orphan bet voided for game %s", gid)
+
+    def _watchdog(self, now_s: float) -> None:
+        """Silence alarm: tells the user why, instead of leaving them wondering."""
+        if self.mledger is None or not self.trading(now_s) or now_s - self._alert_t < 10800 or now_s - self._silent_t < 10800:
+            return
+        if self._alert_t == 0.0:
+            self._alert_t = now_s
+            return
+        self._silent_t = now_s
+        bk = self.mledger.bankroll
+        self.notify(f"<b>VECTIQ · sin señales hace 3 h</b>\nEn juego ${self.mledger.open_stake:.2f} de ${bk:.2f} · "
+                    f"tope {0.35 * bk:.2f}. Si el tope está lleno, hay apuestas sin liquidar.")
 
     def _poll_line(self, now_s: float) -> None:
         """Pre-match board: archives it and lets the Masters engine see lines hours before kick-off."""
@@ -224,6 +258,8 @@ class Collector:
         self._daily_report(now_s)
         self._save_book(now_s)
         self._poll_line(now_s)
+        self._sweep_orphans(now_s)
+        self._watchdog(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
             return 0

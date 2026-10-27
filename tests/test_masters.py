@@ -271,3 +271,21 @@ def test_prematch_board_gives_hours_of_lead_and_is_archived(tmp_path):
     from vectiq.store.tape import iter_tape
     assert any(r["k"] == "line" for r in iter_tape(tmp_path / "t"))
     assert not col.last                  # board matches never enter the live tracker
+
+
+def test_orphan_open_bets_are_voided_and_free_the_cap(tmp_path):
+    from vectiq.feed.client import Response
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    led.db.execute("INSERT INTO bets(ts_ms,game_id,players,league,sets,side,line,price,p_model,ev,stake,bankroll_before,lead_min) "
+                   "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", (int((NOW - 5 * 3600) * 1000), 1, "a vs b", "Masters", "", "under", 105.5, 2.0, .5, .1, 1.0, 100.0, 10.0))
+    led.db.commit()
+    assert led.open_stake == 1.0
+
+    class C:
+        def live_list(self): return Response(True, 200, {"Success": True, "Value": []}, 1, 1, int(NOW * 1000))
+        def game(self, gid): return Response(False, 500, None, 1, 1, int(NOW * 1000))
+
+    col = Collector(C(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(), notify=lambda m: True)
+    col.step(now_s=NOW)
+    assert led.open_stake == 0.0
+    assert led.db.execute("select result from bets").fetchone()[0] == "V"

@@ -79,6 +79,13 @@ class PaperLedger:
     def open_stake(self) -> float:
         return self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE result IS NULL").fetchone()[0]
 
+    def stale_open(self, now_s: float, grace_s: float = 7200.0) -> list[int]:
+        """Games with a bet still open long after kick-off (match never seen live, or hand-over lost it)."""
+        rows = self.db.execute(
+            "SELECT DISTINCT game_id FROM bets WHERE result IS NULL "
+            "AND ts_ms/1000.0 + COALESCE(lead_min,0)*60 + ? < ?", (grace_s, now_s)).fetchall()
+        return [r[0] for r in rows]
+
     def game_stake(self, game_id: int) -> float:
         return self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE game_id=?", (game_id,)).fetchone()[0]
 
