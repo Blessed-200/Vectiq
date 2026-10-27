@@ -8,7 +8,7 @@ from typing import Callable
 
 from vectiq.feed.client import BetwinnerClient, CircuitOpen
 from vectiq.feed.scheduler import DetailScheduler
-from vectiq.feed.schema import MatchState, parse_feed, parse_game
+from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
 from vectiq.signals import engine, masters
 from vectiq.signals.paper import PaperLedger
@@ -24,12 +24,13 @@ class Collector:
                  book: masters.MastersBook | None = None, trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
-                 book_path: Path | None = None) -> None:
+                 book_path: Path | None = None, line_interval: float = 45.0) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book = mledger, book
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
         self.book_path, self._book_saved = book_path, 0.0
+        self.line_interval, self._line_t = line_interval, 0.0
         self._trading_seen = False
         self.absent: dict[int, int] = {}
         self._stopped = False
@@ -170,11 +171,33 @@ class Collector:
         if self.sprt == "off":
             log.info("masters muted by SPRT: %s", pick.signal.players)
             return
-        if self.mledger.open_bet(pick.signal, s.fetched_ms):
+        if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
             self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
+
+    def _poll_line(self, now_s: float) -> None:
+        """Pre-match board: archives it and lets the Masters engine see lines hours before kick-off."""
+        fn = getattr(self.client, "line_list", None)
+        if fn is None or self.line_interval <= 0 or now_s - self._line_t < self.line_interval:
+            return
+        self._line_t = now_s
+        try:
+            r = fn()
+        except CircuitOpen:
+            return
+        if not r.ok or not r.payload:
+            log.warning("line board failed: %s", r.error)
+            return
+        for it in r.payload.get("Value") or []:
+            try:
+                s = parse_item(it, r.fetched_ms)
+            except (KeyError, ValueError, TypeError):
+                continue
+            self.tape.append("line", s.game_id, it, r.fetched_ms)
+            if masters.is_masters(s):          # not stored in self.last: only the live list may end a match
+                self._masters(s, r.fetched_ms / 1000.0)
 
     def _save_book(self, now_s: float) -> None:
         if self.book is not None and self.book_path is not None and now_s - self._book_saved >= 600:
@@ -196,6 +219,7 @@ class Collector:
         self._trade_edges(now_s)
         self._daily_report(now_s)
         self._save_book(now_s)
+        self._poll_line(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
             return 0

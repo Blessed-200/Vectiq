@@ -244,3 +244,30 @@ def test_one_bet_per_match_and_stage(tmp_path):
     st1 = state(sets=[(11, 6)], live=True, lines=((95.5, 1.5, 2.6), (99.5, 1.4, 3.0)))
     col._masters(st1, NOW + 900)               # set-1 break is a different stage: allowed (if it has edge)
     assert led.db.execute("select count(*) from bets where game_id=383584934").fetchone()[0] in (1, 2)
+
+
+def test_prematch_board_gives_hours_of_lead_and_is_archived(tmp_path):
+    from vectiq.feed.client import Response
+    import json
+    raw = json.loads((Path(__file__).parent / "fixtures" / "get1x2_sample.json").read_text())["Value"][0]
+    raw = {**raw, "L": "Masters. Polonia", "LE": "Masters. Poland", "LI": 2685678, "S": int(NOW + 100 * 60), "SC": {},
+           "MIO": {}, "E": [{"G": 17, "T": 9, "P": 109.5, "C": 1.85}, {"G": 17, "T": 10, "P": 109.5, "C": 1.85},
+                            {"G": 17, "T": 9, "P": 104.5, "C": 1.64}, {"G": 17, "T": 10, "P": 104.5, "C": 2.208}]}
+
+    class C:
+        def live_list(self): return Response(True, 200, {"Success": True, "Value": []}, 1, 1, int(NOW * 1000))
+        def line_list(self): return Response(True, 200, {"Success": True, "Value": [raw]}, 1, 1, int(NOW * 1000))
+        def game(self, gid): return Response(False, 500, None, 1, 1, int(NOW * 1000))
+
+    sent = []
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    tape = TapeWriter(tmp_path / "t")
+    col = Collector(C(), tape, None, mledger=led, book=masters.MastersBook.from_seed(), notify=lambda m: sent.append(m) or True)
+    col.step(now_s=NOW)
+    tape.close()
+    alerts = [m for m in sent if "resumen diario" not in m]
+    assert len(alerts) == 1 and "empieza en 100 min" in alerts[0]
+    assert led.db.execute("select lead_min from bets").fetchone()[0] == pytest.approx(100.0)
+    from vectiq.store.tape import iter_tape
+    assert any(r["k"] == "line" for r in iter_tape(tmp_path / "t"))
+    assert not col.last                  # board matches never enter the live tracker

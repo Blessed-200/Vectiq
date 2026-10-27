@@ -36,12 +36,14 @@ SEED_PATH = Path(__file__).with_name("masters_seed.json")
 MIN_SAMPLE = 120          # past matches needed in a bucket before it is allowed to price anything
 MAX_KEEP = 4000           # newest matches kept per bucket (the bias must be *current*)
 STAGES = tuple(int(x) for x in os.environ.get("VECTIQ_MASTERS_STAGES", "0,1").split(",") if x.strip())
+PRE_MAX_MIN = float(os.environ.get("VECTIQ_PRE_MAX_MIN", "120"))   # pre-match board shows Masters lines up to ~3 h ahead
 EXCLUDE = tuple(x.strip().lower() for x in os.environ.get("VECTIQ_MASTERS_EXCLUDE", "china").split(",") if x.strip())
 
 
 def is_masters(s: MatchState) -> bool:
     lg = s.league.strip().lower()
-    return lg.startswith("masters") and s.best_of == 7 and not any(x in lg for x in EXCLUDE)
+    # every Masters match observed so far is best-of-7; the pre-match board may omit the format text
+    return lg.startswith("masters") and s.best_of in (7, None) and not any(x in lg for x in EXCLUDE)
 
 
 # --------------------------------------------------------------------------- distribution book
@@ -238,7 +240,7 @@ def stage_of(s: MatchState, now_s: float) -> tuple[int, str] | None:
         if s.start_ts is None:
             return None
         ahead = s.start_ts - now_s
-        return (0, "prepartido") if 90 <= ahead <= 90 * 60 else None
+        return (0, "prepartido") if 90 <= ahead <= PRE_MAX_MIN * 60 else None
     done = s.completed_sets
     if s.live and done and s.in_play_set is None and len(done) == len(s.sets) and max(s.sets_won) < 4:
         k = len(done)

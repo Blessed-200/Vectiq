@@ -28,14 +28,21 @@ class PaperLedger:
         self.start_bankroll = start_bankroll
         self.db = sqlite3.connect(self.path)
         self.db.executescript(SCHEMA)
+        self._migrate()
         self.db.execute("INSERT OR IGNORE INTO meta VALUES('start',?)", (str(start_bankroll),))
         self.db.commit()
+
+    def _migrate(self) -> None:
+        cols = {r[1] for r in self.db.execute("PRAGMA table_info(bets)")}
+        if "lead_min" not in cols:   # minutes between the alert and kick-off (NULL for in-play entries)
+            self.db.execute("ALTER TABLE bets ADD COLUMN lead_min REAL")
 
     def reopen(self) -> None:
         """Reconnect after the file was replaced on disk (state handed over by the previous run)."""
         self.db.close()
         self.db = sqlite3.connect(self.path)
         self.db.executescript(SCHEMA)
+        self._migrate()
         self.db.execute("INSERT OR IGNORE INTO meta VALUES('start',?)", (str(self.start_bankroll),))
         self.db.commit()
 
@@ -69,7 +76,7 @@ class PaperLedger:
         open_stake = self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE result IS NULL").fetchone()[0]
         return start + pnl - open_stake
 
-    def open_bet(self, s: Signal, now_ms: int | None = None) -> bool:
+    def open_bet(self, s: Signal, now_ms: int | None = None, lead_min: float | None = None) -> bool:
         bk = self.bankroll
         stake = round(bk * s.stake_frac, 2)
         if stake < 0.5:
@@ -82,6 +89,8 @@ class PaperLedger:
                  ";".join(f"{a}-{b}" for a, b in s.sets), s.side, s.line, s.price, s.p_model, s.ev, stake, bk))
         except sqlite3.IntegrityError:
             return False
+        if lead_min is not None:
+            self.db.execute("UPDATE bets SET lead_min=? WHERE rowid=last_insert_rowid()", (lead_min,))
         self.db.commit()
         return True
 
