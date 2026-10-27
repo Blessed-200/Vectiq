@@ -23,11 +23,13 @@ class Collector:
                  scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
                  book: masters.MastersBook | None = None, trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
-                 on_trade_stop: Callable[["Collector"], None] | None = None) -> None:
+                 on_trade_stop: Callable[["Collector"], None] | None = None,
+                 book_path: Path | None = None) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book = mledger, book
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
+        self.book_path, self._book_saved = book_path, 0.0
         self._trading_seen = False
         self.absent: dict[int, int] = {}
         self._stopped = False
@@ -163,6 +165,8 @@ class Collector:
             exposure_left=0.02 - self.exposure.get(s.game_id, 0.0))
         if pick is None:
             return
+        if self.mledger.has_stage(s.game_id, pick.k):   # one bet per match and entry stage, never a second line
+            return
         if self.sprt == "off":
             log.info("masters muted by SPRT: %s", pick.signal.players)
             return
@@ -171,6 +175,11 @@ class Collector:
             self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
+
+    def _save_book(self, now_s: float) -> None:
+        if self.book is not None and self.book_path is not None and now_s - self._book_saved >= 600:
+            self._book_saved = now_s
+            self.book.save(self.book_path)
 
     def _daily_report(self, now_s: float) -> None:
         d = time.strftime("%Y-%m-%d", time.gmtime(now_s))
@@ -186,6 +195,7 @@ class Collector:
         resp = self.client.live_list()
         self._trade_edges(now_s)
         self._daily_report(now_s)
+        self._save_book(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
             return 0

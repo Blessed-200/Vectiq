@@ -12,4 +12,4 @@ jobs:
         with: { python-version: "3.12" }
       - run: pip install -e .
       - run: |
-          { echo '```json'; python -m vectiq probe; echo '```'; } | tee -a "$GITHUB_STEP_SUMMARY"
+          { echo '```json'; python -m vectiq probe --line; echo '```'; } | tee -a "$GITHUB_STEP_SUMMARY"

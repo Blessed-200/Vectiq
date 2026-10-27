@@ -129,7 +129,7 @@ def test_collector_alerts_then_settles_and_learns(tmp_path, book):
     st = state()
     col._masters(st, NOW)
     assert len(sent) == 1 and "betwinner2.com/es/line/table-tennis/2685678-masters-poland" in sent[0]
-    assert "MENOS DE 104.5" in sent[0] and "Cuota mínima" in sent[0]
+    assert "MENOS DE 104.5" in sent[0] and "mínima" in sent[0]
     col._masters(st, NOW + 3)                      # same game, same line: no duplicate alert
     assert len(sent) == 1
     n_before = col.book.n(0)
@@ -161,7 +161,7 @@ def test_trading_window_and_handoff(tmp_path, book):
 def test_alert_format_has_everything_a_human_needs(book):
     pick, _ = masters.evaluate_masters(state(), book, now_s=NOW)
     txt = telegram.format_masters(pick, 100.0, sprt="on", drawdown=0.03)
-    for needle in ("MASTERS UNDER", "MENOS DE 104.5", "Cuota mínima aceptable", "EV", "Stake", "ventaja ON", "Abrir el partido"):
+    for needle in ("MASTERS UNDER", "MENOS DE 104.5", "mínima", "EV", "Apostar", "ON", "Abrir en Betwinner"):
         assert needle in txt
 
 
@@ -230,3 +230,17 @@ def test_collector_settles_vanished_masters_with_imputed_total(tmp_path):
     col.last[ghost.game_id] = ghost            # vanished mid deciding set
     col._finished(ghost.game_id)
     assert not led.open_games() and led.summary()["settled"] == 1 and led.summary()["void"] == 0
+
+
+def test_one_bet_per_match_and_stage(tmp_path):
+    sent = []
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
+                    notify=lambda m: sent.append(m) or True)
+    col._masters(state(), NOW)
+    col._masters(state(lines=((109.5, 1.848, 1.848), (103.5, 1.6, 2.30), (104.5, 1.64, 2.208))), NOW + 20)  # new line appears
+    assert len(sent) == 1 and led.db.execute("select count(*) from bets").fetchone()[0] == 1
+    assert led.has_stage(383584934, 0) and not led.has_stage(383584934, 1)
+    st1 = state(sets=[(11, 6)], live=True, lines=((95.5, 1.5, 2.6), (99.5, 1.4, 3.0)))
+    col._masters(st1, NOW + 900)               # set-1 break is a different stage: allowed (if it has edge)
+    assert led.db.execute("select count(*) from bets where game_id=383584934").fetchone()[0] in (1, 2)

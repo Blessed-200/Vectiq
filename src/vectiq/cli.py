@@ -36,8 +36,25 @@ def cmd_probe(args: argparse.Namespace) -> int:
         if vals:
             g = c.game(int(vals[0]["I"]))
             out["detail"] = {"ok": g.ok, "status": g.status, "bytes": g.size, "latency_ms": round(g.latency_ms)}
+    if getattr(args, "line", False):
+        out["line_feed"] = _probe_line(c)
     print(json.dumps(out, indent=2))
     return 0 if r.ok else 2
+
+
+def _probe_line(c: BetwinnerClient) -> dict:
+    """Does the pre-match board exist, and how far ahead are Masters totals visible?"""
+    r = c.line_list()
+    res: dict = {"ok": r.ok, "status": r.status, "bytes": r.size, "error": r.error}
+    if r.ok and r.payload:
+        vals = r.payload.get("Value") or []
+        now = time.time()
+        masters = [v for v in vals if str(v.get("L", "")).startswith("Masters")]
+        ahead = sorted(round(((v.get("S") or now) - now) / 60) for v in masters)
+        with_total = sum(1 for v in masters if any(e.get("G") == 17 for e in (v.get("E") or []) + [x for b in (v.get("AE") or []) for x in (b.get("ME") or [])]))
+        res.update(matches=len(vals), masters=len(masters), masters_with_total_ladder=with_total,
+                   masters_minutes_to_start=ahead[:25])
+    return res
 
 
 STATE_FILES = ("masters.sqlite", "masters_book.json")
@@ -84,7 +101,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     chat = telegram.shadow_chat()
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book,
-        notify=lambda m: telegram.send(m, chat_id=chat),
+        notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
         trade_from_s=t0 + args.trade_from_min * 60 if args.trade_from_min else None,
         trade_until_s=t0 + args.trade_until_min * 60 if args.trade_until_min else None,
         on_trade_start=(lambda c: _handoff_in(c, out)) if args.trade_from_min else None,
@@ -140,6 +157,8 @@ def main(argv: list[str] | None = None) -> int:
     for name, fn in (("probe", cmd_probe), ("collect", cmd_collect)):
         sp = sub.add_parser(name)
         sp.add_argument("--max-rps", type=float, default=4.0)
+        if name == "probe":
+            sp.add_argument("--line", action="store_true", help="also test the pre-match board")
         if name == "collect":
             sp.add_argument("--minutes", type=float, default=345)
             sp.add_argument("--interval", type=float, default=3.0)

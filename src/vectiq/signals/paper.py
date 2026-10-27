@@ -44,6 +44,13 @@ class PaperLedger:
         rows = self.db.execute("SELECT p_model,price,result,pnl FROM bets WHERE result IN ('W','L') ORDER BY ts_ms,id").fetchall()
         return [(p, o, r == "W", pnl) for p, o, r, pnl in rows]
 
+    def has_stage(self, game_id: int, k: int) -> bool:
+        """True if a bet was already opened for this match at this entry stage (k completed sets)."""
+        for (sets,) in self.db.execute("SELECT sets FROM bets WHERE game_id=?", (game_id,)):
+            if (len(sets.split(";")) if sets else 0) == k:
+                return True
+        return False
+
     def open_games(self) -> set[int]:
         return {r[0] for r in self.db.execute("SELECT DISTINCT game_id FROM bets WHERE result IS NULL")}
 

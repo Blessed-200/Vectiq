@@ -42,30 +42,23 @@ def send(text: str, token: str | None = None, chat_id: str | None = None) -> boo
     return r.ok
 
 
-def format_masters(pick, bankroll: float, *, mode: str = "PRUEBA · sin dinero", sprt: str = "on", drawdown: float = 0.0) -> str:
-    """Alert for the Masters UNDER engine. ``pick`` is ``signals.masters.Pick``."""
+def format_masters(pick, bankroll: float, *, mode: str = "PRUEBA", sprt: str = "on", drawdown: float = 0.0) -> str:
+    """Short alert for the Masters UNDER engine (``pick`` is ``signals.masters.Pick``). Decision first, detail last."""
     e = html.escape
     sg = pick.signal
-    when = f"empieza en {pick.minutes_to_start:.0f} min" if pick.minutes_to_start is not None else "EN VIVO"
-    sets = "  ".join(f"{a}-{b}" for a, b in sg.sets)
-    usd = bankroll * sg.stake_frac
-    lines = [
-        f"<b>VECTIQ · MASTERS UNDER</b> · {e(mode)}",
-        e(sg.players),
-        f"<i>{e(sg.league)}</i> · {e(pick.stage)} · {when}" + (f" · sets {e(sets)}" if sets else ""),
-        "────────────────",
-        f"<b>Total  MENOS DE {sg.line:g}   @ {sg.price:.3f}</b>",
-        f"Cuota mínima aceptable   {pick.min_odds:.3f}  (por debajo, no apostar)",
-        f"P estimada {sg.p_model * 100:.1f} % · cuota justa {sg.fair_odds:.3f} · EV {sg.ev * 100:+.1f} %",
-        f"Mercado (línea {sg.market_median:g}): Under {pick.p_market * 100:.1f} %",
-        f"Stake  {sg.stake_frac * 100:.2f} % del banco  ≈ ${usd:,.2f} de ${bankroll:,.2f}",
-    ]
-    if pick.alts:
-        lines.append("Alternativas: " + " · ".join(f"{ln:g} @ {o:.2f} (EV {ev * 100:+.0f} %)" for ln, o, _, ev in pick.alts))
-    lines += ["────────────────",
-              f"<code>muestra {pick.sample_n} · ventaja {sprt.upper()} · caída {drawdown * 100:.1f} % · id {sg.game_id}</code>",
-              f'<a href="{e(pick.url)}">Abrir el partido en Betwinner</a>']
-    return "\n".join(lines)
+    when = f"prepartido, empieza en {pick.minutes_to_start:.0f} min" if pick.minutes_to_start is not None else \
+        f"EN VIVO, {pick.stage} ({'  '.join(f'{a}-{b}' for a, b in sg.sets)})"
+    alt = " · ".join(f"{ln:g}@{o:.2f}" for ln, o, _, _ in pick.alts[:2])
+    return "\n".join([
+        f"<b>MASTERS UNDER</b> · {e(mode)}",
+        f"<b>MENOS DE {sg.line:g}  @ {sg.price:.2f}</b>   (mínima {pick.min_odds:.2f})",
+        e(sg.players) + " · " + e(sg.league),
+        when,
+        f"Apostar ≈ ${bankroll * sg.stake_frac:,.2f} ({sg.stake_frac * 100:.1f} %) · EV {sg.ev * 100:+.1f} %",
+        f'<a href="{e(pick.url)}">Abrir en Betwinner</a>',
+        f"<code>P {sg.p_model * 100:.1f} % · mercado {pick.p_market * 100:.1f} % · alt {alt or '-'} · "
+        f"caída {drawdown * 100:.1f} % · {sprt.upper()} · id {sg.game_id}</code>",
+    ])
 
 
 def format_report(title: str, summ: dict, sprt: str, drawdown: float) -> str:

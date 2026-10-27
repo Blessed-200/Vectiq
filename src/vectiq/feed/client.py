@@ -15,6 +15,7 @@ import requests
 
 LIST_PATH = "/service-api/LiveFeed/Get1x2_VZip"
 GAME_PATH = "/service-api/LiveFeed/GetGameZip"
+LINE_PATH = "/service-api/LineFeed/Get1x2_VZip"   # pre-match board (unverified path: see `probe --line`)
 
 DEFAULT_HEADERS = {
     "User-Agent": (
@@ -117,6 +118,10 @@ class BetwinnerClient:
     # -- public ------------------------------------------------------------
     def live_list(self, sport: int = 10, count: int = 100, lng: str = "es") -> Response:
         return self._get(LIST_PATH, {"sports": sport, "count": count, "lng": lng, "mode": 4})
+
+    def line_list(self, sport: int = 10, count: int = 400, lng: str = "es") -> Response:
+        """Pre-match board: matches (and their ladders) hours before kick-off, unlike the live list."""
+        return self._get(LINE_PATH, {"sports": sport, "count": count, "lng": lng, "mode": 4})
 
     def game(self, game_id: int, lng: str = "es") -> Response:
         return self._get(GAME_PATH, {
