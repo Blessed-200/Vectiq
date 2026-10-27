@@ -73,8 +73,14 @@ class PaperLedger:
     def bankroll(self) -> float:
         start = float(self.db.execute("SELECT v FROM meta WHERE k='start'").fetchone()[0])
         pnl = self.db.execute("SELECT COALESCE(SUM(pnl),0) FROM bets WHERE result IS NOT NULL").fetchone()[0]
-        open_stake = self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE result IS NULL").fetchone()[0]
-        return start + pnl - open_stake
+        return start + pnl      # equity: sizing must not shrink just because bets are waiting to settle
+
+    @property
+    def open_stake(self) -> float:
+        return self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE result IS NULL").fetchone()[0]
+
+    def game_stake(self, game_id: int) -> float:
+        return self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE game_id=?", (game_id,)).fetchone()[0]
 
     def open_bet(self, s: Signal, now_ms: int | None = None, lead_min: float | None = None) -> bool:
         bk = self.bankroll

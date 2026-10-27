@@ -161,9 +161,13 @@ class Collector:
         if not self.trading(now_s):
             return
         bk = self.mledger.bankroll
+        # bets on the same match are ~80 % correlated (audit): one position per match, 1 % of equity in total;
+        # and never more than 25 % of equity waiting to settle at once (all of them share the same hypothesis)
+        if self.mledger.open_stake >= 0.25 * bk:
+            return
         pick, why = masters.evaluate_masters(
             s, self.book, now_s=now_s, size_mult=masters.drawdown_multiplier(self.mledger.drawdown()),
-            exposure_left=0.02 - self.exposure.get(s.game_id, 0.0))
+            exposure_left=0.01 - self.mledger.game_stake(s.game_id) / bk)
         if pick is None:
             return
         if self.mledger.has_stage(s.game_id, pick.k):   # one bet per match and entry stage, never a second line
