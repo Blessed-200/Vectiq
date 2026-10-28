@@ -60,6 +60,30 @@ def _probe_line(c: BetwinnerClient) -> dict:
 STATE_FILES = ("masters.sqlite", "masters_book.json")
 
 
+def cmd_rescue(args: argparse.Namespace) -> int:
+    """Ask the detail endpoint for matches the live list never showed finishing: does it still know the final score?"""
+    from vectiq.feed.schema import parse_game
+    c = _client(args)
+    ids = [int(x) for x in Path(args.ids).read_text().split() if x.strip()]
+    out = []
+    for gid in ids:
+        r = c.game(gid)
+        row: dict = {"id": gid, "ok": r.ok, "status": r.status, "bytes": r.size}
+        try:
+            if r.ok and r.payload and r.payload.get("Value"):
+                st = parse_game(r.payload, r.fetched_ms).state
+                row.update(sets=[list(x) for x in st.sets], won=list(st.sets_won), live=st.live, sls=st.status, bo=st.best_of)
+            elif r.ok:
+                row["empty"] = True
+        except Exception as e:  # noqa: BLE001
+            row["parse_error"] = str(e)[:80]
+        out.append(row)
+    Path(args.out).write_text(json.dumps(out))
+    _release_upload([Path(args.out)])
+    print(f"{sum(1 for o in out if o.get('sets') is not None)}/{len(out)} with state")
+    return 0
+
+
 def _release_upload(paths: list[Path]) -> None:
     subprocess.run(["gh", "release", "create", "ledger", "--title", "ledger", "--notes", "paper ledger",
                     "--latest=false"], check=False, capture_output=True)
@@ -168,6 +192,8 @@ def main(argv: list[str] | None = None) -> int:
                             help="chained runs wait this long (passive capture) before taking over trading")
             sp.add_argument("--trade-until-min", type=float, default=335.0)
         sp.set_defaults(fn=fn)
+    rs = sub.add_parser("rescue"); rs.add_argument("--ids", default="tools/rescue_ids.txt"); rs.add_argument("--out", default="rescue.json")
+    rs.add_argument("--max-rps", type=float, default=3.0); rs.set_defaults(fn=cmd_rescue)
     t = sub.add_parser("tables"); t.add_argument("--tape", default="data/tape"); t.add_argument("--out", default="data/tables"); t.set_defaults(fn=cmd_tables)
     u = sub.add_parser("publish"); u.add_argument("--tape", default="data/tape"); u.set_defaults(fn=cmd_publish)
     a = p.parse_args(argv)

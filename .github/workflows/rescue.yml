@@ -1,0 +1,17 @@
+name: rescue
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  rescue:
+    runs-on: ubuntu-latest
+    env:
+      BW_BASE_URLS: ${{ vars.BW_BASE_URLS }}
+      BW_PROXY_URL: ${{ secrets.BW_PROXY_URL }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e .
+      - run: python -m vectiq rescue --ids tools/rescue_ids.txt --out rescue.json
