@@ -34,6 +34,8 @@ class PaperLedger:
 
     def _migrate(self) -> None:
         cols = {r[1] for r in self.db.execute("PRAGMA table_info(bets)")}
+        if "src" not in cols:        # how the result was obtained: observed | imputed | partial (certain loss) | void
+            self.db.execute("ALTER TABLE bets ADD COLUMN src TEXT")
         if "lead_min" not in cols:   # minutes between the alert and kick-off (NULL for in-play entries)
             self.db.execute("ALTER TABLE bets ADD COLUMN lead_min REAL")
 
@@ -112,13 +114,17 @@ class PaperLedger:
                         (price, game_id, line, side))
         self.db.commit()
 
-    def settle(self, game_id: int, final_total: int) -> int:
+    def settle(self, game_id: int, final_total: int, src: str = "observed") -> int:
         rows = self.db.execute("SELECT id,side,line,price,stake FROM bets WHERE game_id=? AND result IS NULL",
                                (game_id,)).fetchall()
         for bid, side, line, price, stake in rows:
-            won = (final_total > line) if side == "over" else (final_total < line)
-            self.db.execute("UPDATE bets SET final_total=?, result=?, pnl=? WHERE id=?",
-                            (final_total, "W" if won else "L", stake * (price - 1) if won else -stake, bid))
+            if final_total == line:                      # integer line hit exactly: stake returned (push), not a loss
+                res, pnl = "P", 0.0
+            else:
+                won = (final_total > line) if side == "over" else (final_total < line)
+                res, pnl = ("W", stake * (price - 1)) if won else ("L", -stake)
+            self.db.execute("UPDATE bets SET final_total=?, result=?, pnl=?, src=? WHERE id=?",
+                            (final_total, res, pnl, src, bid))
         self.db.commit()
         return len(rows)
 
@@ -130,9 +136,9 @@ class PaperLedger:
                                (game_id,)).fetchall()
         for bid, side, line, stake in rows:
             if side == "under" and min_total >= line:
-                self.db.execute("UPDATE bets SET final_total=?, result='L', pnl=? WHERE id=?", (min_total, -stake, bid))
+                self.db.execute("UPDATE bets SET final_total=?, result='L', pnl=?, src='partial' WHERE id=?", (min_total, -stake, bid))
             else:
-                self.db.execute("UPDATE bets SET result='V', pnl=0 WHERE id=?", (bid,))
+                self.db.execute("UPDATE bets SET result='V', pnl=0, src='void' WHERE id=?", (bid,))
         self.db.commit()
         return len(rows)
 

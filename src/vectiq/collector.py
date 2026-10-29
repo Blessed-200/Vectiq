@@ -109,7 +109,7 @@ class Collector:
                 if self.book is not None and masters.is_masters(prev):
                     total = self.book.add_censored(gid, prev)      # imputed: never drop long matches silently
                     self.finals[gid] = (prev.completed_sets, total)
-                    self.mledger.settle(gid, total)
+                    self.mledger.settle(gid, total, src="imputed")
                 else:
                     self.mledger.settle_vanished(gid, prev.points_played)
                 self._refresh_sprt()

@@ -289,3 +289,18 @@ def test_orphan_open_bets_are_voided_and_free_the_cap(tmp_path):
     col.step(now_s=NOW)
     assert led.open_stake == 0.0
     assert led.db.execute("select result from bets").fetchone()[0] == "V"
+
+
+def test_push_and_settlement_source(tmp_path):
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    ins = ("INSERT INTO bets(ts_ms,game_id,players,league,sets,side,line,price,p_model,ev,stake,bankroll_before) "
+           "VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
+    led.db.execute(ins, (1, 1, "a", "Masters", "", "under", 105.0, 2.0, .5, .1, 1.0, 100.0))
+    led.db.execute(ins, (1, 2, "b", "Masters", "", "under", 105.5, 2.0, .5, .1, 1.0, 100.0))
+    led.db.commit()
+    led.settle(1, 105)                      # exact hit on an integer line: push, stake back
+    led.settle(2, 100, src="imputed")
+    rows = {r[0]: r[1:] for r in led.db.execute("select game_id,result,pnl,src from bets")}
+    assert rows[1] == ("P", 0.0, "observed")
+    assert rows[2] == ("W", 1.0, "imputed")
+    assert led.summary()["settled"] == 1    # pushes are not counted as settled W/L

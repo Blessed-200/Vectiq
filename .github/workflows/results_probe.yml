@@ -1,0 +1,18 @@
+name: results_probe
+on: workflow_dispatch
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    env:
+      BW_BASE_URLS: ${{ vars.BW_BASE_URLS }}
+      BW_PROXY_URL: ${{ secrets.BW_PROXY_URL }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install playwright && playwright install --with-deps chromium
+      - run: python tools/results_probe.py
+      - run: gh release upload ledger results_probe.json --clobber
