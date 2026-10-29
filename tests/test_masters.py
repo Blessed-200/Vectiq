@@ -304,3 +304,63 @@ def test_push_and_settlement_source(tmp_path):
     assert rows[1] == ("P", 0.0, "observed")
     assert rows[2] == ("W", 1.0, "imputed")
     assert led.summary()["settled"] == 1    # pushes are not counted as settled W/L
+
+
+def test_parse_results_rejects_inconsistent_scores():
+    from vectiq.feed.results import parse_results, parse_score
+    assert parse_score("3:1 (11:6,9:11,11:5,11:8)") == [(11, 6), (9, 11), (11, 5), (11, 8)]
+    assert parse_score("3:1 (11:6,9:11,11:5)") is None            # set count != games won
+    assert parse_score("3:0 (11:6,9:11,11:5)") is None            # a set lost is not a set won
+    assert parse_score(None) is None and parse_score("") is None
+    body = {"count": 2, "items": [{"id": 7, "score": "3:0 (11:6,11:5,11:9)"}, {"id": 8, "score": "bad"}]}
+    assert parse_results(body) == {7: [(11, 6), (11, 5), (11, 9)]}
+    assert parse_results({"count": 3, "items": body["items"]}) == {}   # count mismatch: reject the whole body
+    assert parse_results({"count": 0}) == {}
+
+
+def _ghost():
+    g = state(sets=[(11, 6), (6, 11), (11, 9), (8, 11), (11, 5), (9, 11), (10, 7)], live=True)
+    g.sets_won = (3, 3)
+    g.league_id, g.start_ts = 2685660, int(NOW) - 3000
+    return g
+
+
+def _with_results(rows, tmp_path):
+    from vectiq.feed.client import Response
+
+    class C(FakeClient):
+        calls = 0
+        def results(self, champ, d0, d1):
+            C.calls += 1
+            return Response(True, 200, {"count": len(rows), "items": rows}, 1, 1, int(NOW * 1000))
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    col = Collector(C(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
+                    notify=lambda m: True)
+    col._masters(state(), NOW)
+    return col, led, C
+
+
+def test_vanished_match_is_settled_from_the_results_service(tmp_path):
+    g = _ghost()
+    rows = [{"id": g.game_id, "score": "4:3 (11:6,6:11,11:9,8:11,11:5,9:11,11:7)"}]
+    col, led, C = _with_results(rows, tmp_path)
+    col.last[g.game_id] = g
+    col._finished(g.game_id)
+    assert not led.open_games() and not col.pending and C.calls == 1
+    src, tot = led.db.execute("select src, final_total from bets").fetchone()
+    assert src == "results_api" and tot == 11 + 6 + 6 + 11 + 11 + 9 + 8 + 11 + 11 + 5 + 9 + 11 + 11 + 7
+
+
+def test_pending_result_retries_then_falls_back_to_imputed(tmp_path, monkeypatch):
+    g = _ghost()
+    col, led, C = _with_results([], tmp_path)          # service has nothing yet
+    col.last[g.game_id] = g
+    col._finished(g.game_id)
+    assert g.game_id in col.pending and led.open_games()          # bets stay open, nothing invented
+    col._poll_pending(NOW)
+    assert g.game_id in col.pending                                # not due yet: no extra request
+    col.pending[g.game_id].update(next=0.0, deadline=0.0)          # deadline reached
+    col._res_cache.clear()
+    col._poll_pending(NOW)
+    assert not col.pending and not led.open_games()
+    assert led.db.execute("select src from bets").fetchone()[0] == "imputed"

@@ -15,6 +15,7 @@ import requests
 
 LIST_PATH = "/service-api/LiveFeed/Get1x2_VZip"
 GAME_PATH = "/service-api/LiveFeed/GetGameZip"
+from vectiq.feed.results import RESULT_PATH  # noqa: E402
 LINE_PATH = "/service-api/LineFeed/Get1x2_VZip"   # pre-match board (unverified path: see `probe --line`)
 
 DEFAULT_HEADERS = {
@@ -128,3 +129,8 @@ class BetwinnerClient:
             "id": game_id, "lng": lng, "isSubGames": "true", "GroupEvents": "true",
             "countevents": 250, "grMode": 2,
         })
+
+    def results(self, champ_id: int, date_from: int, date_to: int, lng: str = "es") -> Response:
+        """Finished matches of one championship in [date_from, date_to) (unix s): final set scores."""
+        return self._get(RESULT_PATH, {"champId": champ_id, "dateFrom": date_from, "dateTo": date_to,
+                                       "lng": lng, "ref": 152})

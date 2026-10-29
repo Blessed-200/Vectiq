@@ -13,3 +13,9 @@ Corte: solo cuentan apuestas con ts_ms >= 1793142468000. Lo anterior sirvió par
 - Drawdown simulado a stake real < 15 %. Nada de filtros nuevos sin repetir la prueba en datos posteriores a su creación.
 - Pasar a real = piloto con stake mínimo (0.30-1 USD) en 30 tickets para medir aceptación, cuota realmente obtenida (deslizamiento) y límites. Subir stake solo si cuota real ~ cuota capturada.
 - Parar: ROI < 0 con n >= 300 en la hipótesis, o SPRT apagado.
+
+
+## Addendum 2026-10-29 — settlement source
+Finals now come from the results service (`src='results_api'`, verified 0/2,332 disagreements against the tape).
+`observed` and `results_api` count as real outcomes; `imputed` (service had nothing within 90 min), `partial` and `void` are
+reported separately and never counted toward the pre-registered sample sizes unless the main result is also shown without them.

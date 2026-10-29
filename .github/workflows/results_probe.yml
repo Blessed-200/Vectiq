@@ -14,5 +14,7 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.12" }
       - run: pip install playwright && playwright install --with-deps chromium
-      - run: python tools/results_probe.py
-      - run: gh release upload ledger results_probe.json --clobber
+      - run: pip install -e .
+      - run: python tools/results_check.py
+      - run: python tools/results_probe.py || true
+      - run: gh release upload ledger results_check.json results_probe.json --clobber

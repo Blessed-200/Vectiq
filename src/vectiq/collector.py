@@ -8,6 +8,7 @@ from typing import Callable
 
 from vectiq.feed.client import BetwinnerClient, CircuitOpen
 from vectiq.feed.scheduler import DetailScheduler
+from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
 from vectiq.signals import engine, masters
@@ -44,6 +45,9 @@ class Collector:
         self.anchor: dict[int, float | None] = {}
         self.last: dict[int, MatchState] = {}
         self.cycle = 0
+        self.pending: dict[int, dict] = {}       # vanished without a final: waiting for the results service
+        self._res_cache: dict[tuple[int, int], tuple[float, dict]] = {}
+        self.pending_deadline_s = 5400.0
 
     # -- helpers -----------------------------------------------------------
     def _anchor(self, s: MatchState) -> None:
@@ -102,17 +106,73 @@ class Collector:
             if self.mledger is not None:
                 self._refresh_sprt()
         elif prev:
-            for book in (self.ledger, self.shadow):
-                if book:
-                    book.settle_vanished(gid, prev.points_played)
-            if self.mledger is not None:
-                if self.book is not None and masters.is_masters(prev):
-                    total = self.book.add_censored(gid, prev)      # imputed: never drop long matches silently
-                    self.finals[gid] = (prev.completed_sets, total)
-                    self.mledger.settle(gid, total, src="imputed")
-                else:
-                    self.mledger.settle_vanished(gid, prev.points_played)
-                self._refresh_sprt()
+            done = self._results_final(prev.league_id, prev.start_ts, gid)
+            if done:
+                self._settle_final(gid, prev, done, "results_api")
+            elif getattr(self.client, "results", None) is None:
+                self._settle_unresolved(gid, prev)
+            else:                                  # not published yet: keep the bets open and retry, then fall back
+                self.pending[gid] = {"prev": prev, "next": time.time() + 120, "deadline": time.time() + self.pending_deadline_s}
+
+    def _settle_final(self, gid: int, st: MatchState, done: list[tuple[int, int]], src: str) -> None:
+        self.finals[gid] = (done, sum(a + b for a, b in done))
+        if self.book is not None and masters.is_masters(st):
+            self.book.add_match(gid, done)
+        total = sum(a + b for a, b in done)
+        for book in (self.ledger, self.shadow, self.mledger):
+            if book:
+                book.settle(gid, total, src=src)
+        if self.mledger is not None:
+            self._refresh_sprt()
+
+    def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
+        for book in (self.ledger, self.shadow):
+            if book:
+                book.settle_vanished(gid, prev.points_played)
+        if self.mledger is not None:
+            if self.book is not None and masters.is_masters(prev):
+                total = self.book.add_censored(gid, prev)      # imputed: never drop long matches silently
+                self.finals[gid] = (prev.completed_sets, total)
+                self.mledger.settle(gid, total, src="imputed")
+            else:
+                self.mledger.settle_vanished(gid, prev.points_played)
+            self._refresh_sprt()
+
+    def _results_final(self, league_id, start_ts, gid: int) -> list[tuple[int, int]] | None:
+        """Final sets from the results service (None if unavailable/not yet published). One request per
+        (championship, day) per 2 minutes, shared by every pending match of that block."""
+        fn = getattr(self.client, "results", None)
+        if fn is None or league_id is None or not start_ts:
+            return None
+        d0, d1 = day_window(int(start_ts))
+        key = (int(league_id), d0)
+        hit = self._res_cache.get(key)
+        if hit is None or time.time() - hit[0] > 120:
+            try:
+                r = fn(int(league_id), d0, d1)
+                data = parse_results(r.payload) if r.ok and r.payload else {}
+            except Exception:  # noqa: BLE001 - results are best-effort; the fallback path still settles
+                log.debug("results lookup failed for %s", gid, exc_info=True)
+                data = {}
+            hit = self._res_cache[key] = (time.time(), data)
+            if len(self._res_cache) > 64:
+                self._res_cache.pop(next(iter(self._res_cache)))
+        return hit[1].get(gid)
+
+    def _poll_pending(self, now_s: float) -> None:
+        for gid, p in list(self.pending.items()):
+            if time.time() < p["next"]:
+                continue
+            prev = p["prev"]
+            done = self._results_final(prev.league_id, prev.start_ts, gid)
+            if done:
+                self.pending.pop(gid)
+                self._settle_final(gid, prev, done, "results_api")
+            elif time.time() >= p["deadline"]:
+                self.pending.pop(gid)
+                self._settle_unresolved(gid, prev)
+            else:
+                p["next"] = time.time() + 300
 
     # -- Masters UNDER engine -------------------------------------------------
     def trading(self, now_s: float) -> bool:
@@ -190,7 +250,7 @@ class Collector:
             return
         self._sweep_t = now_s
         for gid in self.mledger.stale_open(now_s):
-            if gid in self.last:
+            if gid in self.last or gid in self.pending:
                 continue
             st = self._rescue(gid)
             if st is not None:
@@ -258,6 +318,7 @@ class Collector:
         self._daily_report(now_s)
         self._save_book(now_s)
         self._poll_line(now_s)
+        self._poll_pending(now_s)
         self._sweep_orphans(now_s)
         self._watchdog(now_s)
         if not resp.ok or resp.payload is None:
