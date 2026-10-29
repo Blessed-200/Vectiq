@@ -45,6 +45,7 @@ class Collector:
         self.anchor: dict[int, float | None] = {}
         self.last: dict[int, MatchState] = {}
         self.cycle = 0
+        self.why: dict[str, int] = {}              # why evaluations produced no bet (since the last silence report)
         self.pending: dict[int, dict] = {}       # vanished without a final: waiting for the results service
         self._res_cache: dict[tuple[int, int], tuple[float, dict]] = {}
         self.pending_deadline_s = 5400.0
@@ -229,6 +230,7 @@ class Collector:
         pick, why = masters.evaluate_masters(
             s, self.book, now_s=now_s, size_mult=masters.drawdown_multiplier(self.mledger.drawdown()),
             exposure_left=0.01 - self.mledger.game_stake(s.game_id) / bk)
+        self.why[why if pick is None else "signal"] = self.why.get(why if pick is None else "signal", 0) + 1
         if pick is None:
             return
         if self.mledger.has_stage(s.game_id, pick.k):   # one bet per match and entry stage, never a second line
@@ -272,8 +274,11 @@ class Collector:
             return
         self._silent_t = now_s
         bk = self.mledger.bankroll
-        self.notify(f"<b>VECTIQ · sin señales hace 3 h</b>\nEn juego ${self.mledger.open_stake:.2f} de ${bk:.2f} · "
-                    f"tope {0.35 * bk:.2f}. Si el tope está lleno, hay apuestas sin liquidar.")
+        top = ", ".join(f"{k} {v}" for k, v in sorted(self.why.items(), key=lambda kv: -kv[1])[:4]) or "sin evaluaciones"
+        self.why.clear()
+        self.notify(f"<b>VECTIQ · sin señales hace 3 h</b>\nEn juego ${self.mledger.open_stake:.2f} de ${bk:.2f} "
+                    f"(tope {0.35 * bk:.2f}) · caída {100 * self.mledger.drawdown():.1f} % · SPRT {self.sprt}\n"
+                    f"Motivos (partidos evaluados): {top}")
 
     def _poll_line(self, now_s: float) -> None:
         """Pre-match board: archives it and lets the Masters engine see lines hours before kick-off."""

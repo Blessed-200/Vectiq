@@ -364,3 +364,12 @@ def test_pending_result_retries_then_falls_back_to_imputed(tmp_path, monkeypatch
     col._poll_pending(NOW)
     assert not col.pending and not led.open_games()
     assert led.db.execute("select src from bets").fetchone()[0] == "imputed"
+
+
+def test_drawdown_brake_does_not_starve_the_book_with_a_minimum_stake(tmp_path):
+    """Regression: bankroll $98 x 1 % x 0.5 brake = $0.49 was rejected by a $0.50 floor, silencing every alert."""
+    from vectiq.signals.engine import Signal
+    led = PaperLedger(tmp_path / "m.sqlite", 98.16)
+    sig = Signal(game_id=9, players="a v b", league="Masters. Rusia", sets=[], side="under", line=107.5, price=2.0,
+                 p_model=0.55, ev=0.1, fair_odds=1.8, stake_frac=0.005, model_total=105.0, market_median=108.0)
+    assert led.open_bet(sig, int(NOW * 1000)) and led.open_stake == 0.49

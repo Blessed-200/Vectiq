@@ -22,6 +22,9 @@ CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v TEXT);
 """
 
 
+MIN_STAKE = 0.01
+
+
 class PaperLedger:
     def __init__(self, path: Path | str, start_bankroll: float = 100.0) -> None:
         self.path = str(path)
@@ -94,7 +97,7 @@ class PaperLedger:
     def open_bet(self, s: Signal, now_ms: int | None = None, lead_min: float | None = None) -> bool:
         bk = self.bankroll
         stake = round(bk * s.stake_frac, 2)
-        if stake < 0.5:
+        if stake < MIN_STAKE:     # paper money has no betting minimum; only skip dust
             return False
         try:
             self.db.execute(
