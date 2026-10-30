@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content="Devin artifact kit" />
+    <title>Artifact</title>
+    <script>
+      // A network that blocks the kit's host (or hands back a block page for it) leaves the page blank; say so instead. Styled like the
+      // ds error alert card (ChatAlertCard variant="error", no bar), values hardcoded: the kit CSS is what failed.
+      function artifactKitFailed() {
+        function show() {
+          if (document.getElementById("artifact-kit-notice")) return;
+          document.documentElement.style.colorScheme = "light";
+          var notice = document.createElement("div");
+          notice.id = "artifact-kit-notice";
+          notice.setAttribute("role", "alert");
+          notice.style.cssText =
+            "box-sizing:border-box;display:flex;align-items:flex-start;gap:6px;max-width:960px;margin:0 auto;padding:32px 24px 0;" +
+            "font:13px/18px Inter,ui-sans-serif,system-ui,sans-serif;letter-spacing:-0.005em;color:rgb(25 25 25)";
+          var ns = "http://www.w3.org/2000/svg";
+          var icon = document.createElementNS(ns, "svg");
+          icon.setAttribute("viewBox", "0 0 24 24");
+          icon.setAttribute("fill", "rgb(245 59 58)");
+          icon.setAttribute("aria-hidden", "true");
+          icon.style.cssText = "width:14px;height:14px;flex-shrink:0;margin-top:2px";
+          var path = document.createElementNS(ns, "path");
+          path.setAttribute("fill-rule", "evenodd");
+          path.setAttribute("clip-rule", "evenodd");
+          path.setAttribute(
+            "d",
+            "M12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2ZM12 15C11.4477 15 11 15.4477 11 16C11 16.5523 11.4477 17 12 17C12.5523 17 13 16.5523 13 16C13 15.4477 12.5523 15 12 15ZM12 7C11.5858 7 11.25 7.33579 11.25 7.75V12.25C11.25 12.6642 11.5858 13 12 13C12.4142 13 12.75 12.6642 12.75 12.25V7.75C12.75 7.33579 12.4142 7 12 7Z"
+          );
+          icon.appendChild(path);
+          var text = document.createElement("span");
+          text.textContent = "This page could not load Devin's artifact kit.";
+          notice.appendChild(icon);
+          notice.appendChild(text);
+          document.body.prepend(notice);
+        }
+        if (document.body) show();
+        else document.addEventListener("DOMContentLoaded", show);
+      }
+    </script>
+    <link rel="stylesheet" href="https://static.devin.ai/artifact-kit/3ca8cd77f017c7a2/ds-kit.css" onerror="artifactKitFailed()" />
+    <style>
+.mb-2 {
+    margin-bottom: 0.5rem
+}
+.block {
+    display: block
+}
+.shrink {
+    flex-shrink: 1
+}
+.text-secondary {
+    color: rgb(var(--text-secondary))
+}
+@keyframes enter {
+    from {
+        opacity: var(--tw-enter-opacity, 1);
+        transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0))
+    }
+}
+@keyframes exit {
+    to {
+        opacity: var(--tw-exit-opacity, 1);
+        transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0))
+    }
+}
+    </style>
+  </head>
+  <body>
+    <script src="https://static.devin.ai/artifact-kit/3ca8cd77f017c7a2/ds-kit.js" onerror="artifactKitFailed()"></script>
+    <script>
+      if (!window.DS) artifactKitFailed();
+    </script>
+    <main data-artifact-shell class="mx-auto flex max-w-[960px] flex-col gap-6 px-6 py-8">
+<div id="root"></div>
+<script>DSRun("\n// Backtesting ciego VECTIQ — tape Betwinner 22–29 oct 2026, test OOS 27–29 oct.\nconst curve = [\n  {i:0,bank:1.011},{i:15,bank:1.01},{i:30,bank:1.072},{i:45,bank:1.15},{i:60,bank:1.213},\n  {i:75,bank:1.248},{i:90,bank:1.287},{i:105,bank:1.301},{i:120,bank:1.377},{i:135,bank:1.389},\n  {i:150,bank:1.294},{i:165,bank:1.289},{i:180,bank:1.304},{i:195,bank:1.286},{i:210,bank:1.301},\n  {i:225,bank:1.321},{i:240,bank:1.366},{i:255,bank:1.536},{i:270,bank:1.5},{i:285,bank:1.489},\n  {i:300,bank:1.512},{i:315,bank:1.441},{i:330,bank:1.429},{i:345,bank:1.39},{i:360,bank:1.347},\n  {i:375,bank:1.286},{i:390,bank:1.384},{i:405,bank:1.405},{i:420,bank:1.44},{i:435,bank:1.465},\n  {i:450,bank:1.503},{i:465,bank:1.618},{i:480,bank:1.573},{i:495,bank:1.696},{i:510,bank:1.888},\n  {i:525,bank:1.8},{i:540,bank:1.922},{i:555,bank:1.987},{i:570,bank:2.016},{i:585,bank:2.093},\n  {i:600,bank:2.125},{i:615,bank:2.252},{i:630,bank:2.094},{i:645,bank:2.161},{i:660,bank:2.136},\n  {i:675,bank:2.106},{i:690,bank:2.124},{i:705,bank:2.11},{i:720,bank:2.179},{i:735,bank:2.072},\n  {i:750,bank:2.115},{i:765,bank:2.152},{i:780,bank:2.283},{i:795,bank:2.263},{i:810,bank:2.287},\n  {i:825,bank:2.49},{i:840,bank:2.518},{i:855,bank:2.551},{i:870,bank:2.757},{i:880,bank:2.819},\n];\nconst markets = [\n  {m:\"G1 Ganador (T1/T3)\", n:1604, wr:0.423, roi:-0.065, brier:0.224, beat:0.433, clv:3.17, mls:12},\n  {m:\"G2 Hándicap (T7/T8)\", n:2289, wr:0.460, roi:-0.128, brier:0.258, beat:0.519, clv:1.22, mls:13},\n  {m:\"G17 Total (T9/T10)\", n:1833, wr:0.518, roi:0.030, brier:0.253, beat:0.597, clv:4.53, mls:11},\n];\nconst totals = [\n  {seg:\"Under — Masters (bo7), st 0+1\", n:881, wr:0.552, roi:0.126, brier:0.248, beat:0.619, clv:4.64},\n  {seg:\"Under — Masters, solo st 0 (pre)\", n:444, wr:0.572, roi:0.174, brier:0.246, beat:0.718, clv:6.40},\n  {seg:\"Under — Masters, solo st 1\", n:437, wr:0.531, roi:0.089, brier:0.250, beat:0.517, clv:2.85},\n  {seg:\"Under — otras ligas (bo5/bo7)\", n:494, wr:0.488, roi:-0.017, brier:0.257, beat:null, clv:null},\n  {seg:\"Over — todas las ligas\", n:383, wr:0.475, roi:-0.097, brier:0.261, beat:null, clv:null},\n];\nconst daily = [\n  {day:\"27 oct\", bets:269, ret:0.420, bank:1.420},\n  {day:\"28 oct\", bets:306, ret:0.332, bank:1.891},\n  {day:\"29 oct\", bets:306, ret:0.331, bank:2.517},\n];\nconst chart = { bank: { label: \"Banca (× inicial)\", color: chartColors[0] } };\n\nfunction Report() {\n  return (\n    React.createElement(PageLayout, {\n      title: \"VECTIQ — Backtesting en ciego (27–29 oct 2026)\"       ,\n      subtitle: \"Modelos causales sobre 14 323 partidos del tape Betwinner. Entrenamiento 22–26 oct; todo lo reportado es fuera de muestra.\"                  ,}\n\n      , React.createElement(BannerCard, null\n        , React.createElement(Text, { size: 14,}, \"Único edge comprobable: \"\n             , React.createElement('b', null, \"Total UNDER en Masters (best-of-7)\"    ), \". La línea de la casa queda ~6 puntos por encima del total real. ROI \"\n                  , React.createElement('b', null, \"+12.6 %\" ), \" sobre volumen, CLV \"    , React.createElement('b', null, \"+4.64 %\" ), \", 62 % de apuestas baten el cierre. Moneyline y hándicap \"\n                    , React.createElement('b', null, \"no\"), \" muestran ventaja: su EV aparente era error de modelo, no ineficiencia.\"\n\n        )\n      )\n\n      , React.createElement(StatsRow, null\n        , React.createElement(StatCard, { label: \"ROI — Masters Under (n=881)\"    ,}\n          , React.createElement(StatCardValue, null, \"+12.6 %\" )\n        )\n        , React.createElement(StatCard, { label: \"Retorno diario compuesto\"  ,}\n          , React.createElement(StatCardValue, null, \"+36.0 %\" )\n          , React.createElement(StatCardCaption, null, \"objetivo: 16.5 %/día\"  )\n        )\n        , React.createElement(StatCard, { label: \"MDD / Rachas\"  ,}\n          , React.createElement(StatCardValue, null, \"19.3 % / 7\"   )\n          , React.createElement(StatCardCaption, null, \"drawdown máx. / pérdidas seguidas\"    )\n        )\n        , React.createElement(StatCard, { label: \"Brier / CLV\"  ,}\n          , React.createElement(StatCardValue, null, \"0.248 / +4.64 %\"   )\n          , React.createElement(StatCardCaption, null, \"calibración / valor vs cierre\"    )\n        )\n      )\n\n      , React.createElement(Card, null, React.createElement(CardContent, null, React.createElement(CardBody, null\n        , React.createElement(Text, { size: 14, weight: \"semibold\",}, \"Curva de banca — estrategia Masters Under (Kelly 0.5, cap 1 %/apuesta, 2 %/partido)\"             )\n        , React.createElement(ChartContainer, { config: chart, style: { height: 240, width: \"100%\" },}\n          , React.createElement(AreaChart, { data: curve,}\n            , React.createElement(ChartGrid, null )\n            , React.createElement(ChartXAxis, { dataKey: \"i\", title: \"apuesta nº\" ,} )\n            , React.createElement(ChartYAxis, { domain: [0.9, 2.9],} )\n            , React.createElement(ChartTooltip, { content: React.createElement(ChartTooltipContent, null ),} )\n            , React.createElement(ChartArea, { dataKey: \"bank\",} )\n          )\n        )\n        , React.createElement(Text, { size: 12, className: \"text-secondary\",}, \"881 apuestas liquidadas en 3 días. Banca 1.000 → 2.819 (+182 %). Los % diarios (42/33/33 %) superan el objetivo del 16.5 %, pero son 3 días de muestra y asumen que toda cuota del tape era ejecutable.\"\n\n\n        )\n      )))\n\n      , React.createElement(Card, null, React.createElement(CardContent, null, React.createElement(CardBody, null\n        , React.createElement(Text, { size: 14, weight: \"semibold\",}, \"Retorno diario (simulación compuesta)\"   )\n        , React.createElement(Table, null\n          , React.createElement(TableHeader, null, React.createElement(TableRow, null\n            , React.createElement(TableHead, null, \"Día\"), React.createElement(TableHead, null, \"Apuestas\")\n            , React.createElement(TableHead, null, \"Retorno\"), React.createElement(TableHead, null, \"Banca\")\n          ))\n          , React.createElement(TableBody, null\n            , daily.map(d => (\n              React.createElement(TableRow, { key: d.day,}\n                , React.createElement(TableCell, null, d.day), React.createElement(TableCell, null, d.bets)\n                , React.createElement(TableCell, null, \"+\", (d.ret*100).toFixed(1), \" %\" ), React.createElement(TableCell, null, d.bank.toFixed(3))\n              )\n            ))\n          )\n        )\n      )))\n\n      , React.createElement(Card, null, React.createElement(CardContent, null, React.createElement(CardBody, null\n        , React.createElement(Text, { size: 14, weight: \"semibold\",}, \"ROI por mercado (todas las ligas)\"     )\n        , React.createElement(Table, null\n          , React.createElement(TableHeader, null, React.createElement(TableRow, null\n            , React.createElement(TableHead, null, \"Mercado\"), React.createElement(TableHead, null, \"n\"), React.createElement(TableHead, null, \"Win rate\" )\n            , React.createElement(TableHead, null, \"ROI\"), React.createElement(TableHead, null, \"Brier\"), React.createElement(TableHead, null, \"% bate cierre\"  )\n            , React.createElement(TableHead, null, \"CLV medio\" ), React.createElement(TableHead, null, \"Racha pérd.\" )\n          ))\n          , React.createElement(TableBody, null\n            , markets.map(r => (\n              React.createElement(TableRow, { key: r.m,}\n                , React.createElement(TableCell, null, r.m), React.createElement(TableCell, null, r.n)\n                , React.createElement(TableCell, null, (r.wr*100).toFixed(1), \" %\" )\n                , React.createElement(TableCell, null, (r.roi*100).toFixed(1), \" %\" )\n                , React.createElement(TableCell, null, r.brier.toFixed(3))\n                , React.createElement(TableCell, null, (r.beat*100).toFixed(0), \" %\" )\n                , React.createElement(TableCell, null, r.clv.toFixed(2), \" %\" ), React.createElement(TableCell, null, r.mls)\n              )\n            ))\n          )\n        )\n      )))\n\n      , React.createElement(Card, null, React.createElement(CardContent, null, React.createElement(CardBody, null\n        , React.createElement(Text, { size: 14, weight: \"semibold\",}, \"Desglose del mercado Total — dónde vive el edge\"        )\n        , React.createElement(Table, null\n          , React.createElement(TableHeader, null, React.createElement(TableRow, null\n            , React.createElement(TableHead, null, \"Segmento\"), React.createElement(TableHead, null, \"n\"), React.createElement(TableHead, null, \"Win rate\" )\n            , React.createElement(TableHead, null, \"ROI\"), React.createElement(TableHead, null, \"Brier\"), React.createElement(TableHead, null, \"% bate cierre\"  ), React.createElement(TableHead, null, \"CLV\")\n          ))\n          , React.createElement(TableBody, null\n            , totals.map(r => (\n              React.createElement(TableRow, { key: r.seg,}\n                , React.createElement(TableCell, null, r.seg), React.createElement(TableCell, null, r.n)\n                , React.createElement(TableCell, null, (r.wr*100).toFixed(1), \" %\" )\n                , React.createElement(TableCell, null, (r.roi*100).toFixed(1), \" %\" )\n                , React.createElement(TableCell, null, r.brier.toFixed(3))\n                , React.createElement(TableCell, null, r.beat == null ? \"—\" : (r.beat*100).toFixed(0)+\" %\")\n                , React.createElement(TableCell, null, r.clv == null ? \"—\" : r.clv.toFixed(2)+\" %\")\n              )\n            ))\n          )\n        )\n        , React.createElement(Text, { size: 12, className: \"text-secondary\",}, \"Asimetría confirmada: Under Masters +11 % / Over Masters −8.6 %. Under fuera de Masters ≈ vig (−1.7 %).\"\n\n        )\n      )))\n\n      , React.createElement(Card, null, React.createElement(CardContent, null, React.createElement(CardBody, null\n        , React.createElement(Text, { size: 14, weight: \"semibold\", className: \"mb-2 block\" ,}, \"Metodología y límites honestos\"   )\n        , React.createElement(Text, { size: 13, className: \"text-secondary\",}, \"Replay cronológico del tape (1.64 M registros, 14 323 partidos). Libros empíricos de puntos/margen restantes por k sets y Elo causal se alimentan solo de partidos finalizados; partidos censurados (16 %) se imputan para evitar sesgo de supervivencia — 1 024 apuestas quedaron void por ello. Reglas: EV ∈ [5 %, 15 %], p ∈ (0.05, 0.95), Kelly 0.5 con shrink 0.5, cap 1 %/apuesta, 2 %/partido. Riesgos no modelados: latencia de ejecución, cuotas suspendidas (B), cambios de línea entre la señal y el fill, y duración de muestra (3 días). El +36 %/día es una cota optimista; el ROI por apuesta (+12.6 %) es la señal robusta.\"\n\n\n\n\n\n\n\n        )\n      )))\n\n      , React.createElement(Footnote, null, \"Fuente: releases tape-2026-10-22..29 (assets .jsonl.zst). Scripts: tools/tape_inspect.py, tools/backtest.py. Métricas completas por apuesta en bt_report.json.\"\n\n\n      )\n    )\n  );\n}\nrender(React.createElement(Report, null ));\n")</script>
+    </main>
+  </body>
+</html>

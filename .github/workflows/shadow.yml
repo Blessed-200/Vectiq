@@ -1,0 +1,62 @@
+name: shadow-engine
+# Shadow ST0/ST1: procesa el tape que publica `collector`, registra decisiones
+# ANTES de conocer resultados y reconcilia finales (tape + API de resultados).
+# Estado persistente en el release `shadow-ledger` (mismo patrón que `ledger`).
+on:
+  schedule:
+    - cron: "37 * * * *"   # cada hora; el tape se publica cada ~20 min
+  workflow_dispatch:
+concurrency:
+  group: shadow-engine
+  cancel-in-progress: false
+permissions:
+  contents: write
+env:
+  GH_TOKEN: ${{ github.token }}
+  BW_BASE_URLS: ${{ vars.BW_BASE_URLS }}
+  BW_PROXY_URL: ${{ secrets.BW_PROXY_URL }}
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install . zstandard
+      - name: Restore shadow state
+        run: |
+          mkdir -p shadow/state
+          gh release download shadow-ledger -p 'state.tar.gz' -D /tmp --clobber 2>/dev/null \
+            && tar xzf /tmp/state.tar.gz -C shadow/state || echo "first run: empty state"
+      - name: Download tape (today + yesterday + missing recent)
+        run: |
+          mkdir -p data/tape
+          today=$(date -u +%F); yest=$(date -ud 'yesterday' +%F)
+          for tag in tape-$yest tape-$today; do
+            gh release download "$tag" -D "data/tape/$tag" --clobber \
+              || echo "release $tag not published yet"
+          done
+      - name: Run shadow engine (ST0 + ST1)
+        run: |
+          python shadow/engine.py --tape data/tape --state shadow/state \
+            --shards-manifest shadow/state/shards.json --results-api
+      - name: Daily panel
+        run: python shadow/report.py --state shadow/state --day $(date -u +%F) || true
+      - name: Persist shadow state
+        if: always()
+        run: |
+          tar czf /tmp/state.tar.gz -C shadow/state .
+          gh release view shadow-ledger >/dev/null 2>&1 \
+            || gh release create shadow-ledger --title "Shadow engine state" --notes "append-only store"
+          gh release upload shadow-ledger /tmp/state.tar.gz --clobber
+      - name: Daily summary artifact
+        if: always()
+        run: python shadow/report.py --state shadow/state > /tmp/shadow_panel.json || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: shadow-panel-${{ github.run_id }}
+          path: /tmp/shadow_panel.json
+          retention-days: 30
