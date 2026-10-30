@@ -11,7 +11,7 @@ from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
-from vectiq.signals import engine, masters
+from vectiq.signals import candidate, engine, masters
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -22,12 +22,12 @@ class Collector:
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
                  *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
                  scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
-                 book: masters.MastersBook | None = None, trade_from_s: float | None = None,
+                 book: masters.MastersBook | None = None, cand: PaperLedger | None = None, trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
                  book_path: Path | None = None, line_interval: float = 45.0) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
-        self.mledger, self.book = mledger, book
+        self.mledger, self.book, self.cand = mledger, book, cand
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
         self.book_path, self._book_saved = book_path, 0.0
@@ -120,14 +120,14 @@ class Collector:
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow):
+        for book in (self.ledger, self.shadow, self.cand):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -214,7 +214,17 @@ class Collector:
             self.notify(f"<b>VECTIQ · MASTERS UNDER</b>\nVentaja {new.upper()} según el test secuencial (SPRT)."
                         + (" Alertas silenciadas hasta que la evidencia se recupere." if new == "off" else ""))
 
+    def _candidate(self, s: MatchState) -> None:
+        """Shadow-only frozen rule: one flat $1 paper position per game, never notified."""
+        if self.cand is None or self.cand.game_stake(s.game_id) > 0:
+            return
+        sig = candidate.evaluate_candidate(s)
+        if sig is not None:
+            self.cand.open_bet(sig, s.fetched_ms)
+
     def _masters(self, s: MatchState, now_s: float) -> None:
+        if self.trading(now_s):                 # only the run that owns the ledgers records the candidate
+            self._candidate(s)
         if not masters.is_masters(s) or self.mledger is None or self.book is None:
             return
         if not s.live:  # closing-line value: the last pre-start Under price on every line we hold

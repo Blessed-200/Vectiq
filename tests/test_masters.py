@@ -373,3 +373,36 @@ def test_drawdown_brake_does_not_starve_the_book_with_a_minimum_stake(tmp_path):
     sig = Signal(game_id=9, players="a v b", league="Masters. Rusia", sets=[], side="under", line=107.5, price=2.0,
                  p_model=0.55, ev=0.1, fair_odds=1.8, stake_frac=0.005, model_total=105.0, market_median=108.0)
     assert led.open_bet(sig, int(NOW * 1000)) and led.open_stake == 0.49
+
+
+def _cand_state(sets=((11, 8), (7, 6)), lines=((99.5, 1.84, 1.84), (95.5, 1.55, 2.3)), **kw):
+    return state(sets=sets, live=True, lines=lines, best_of=7, **kw)
+
+
+def test_frozen_candidate_matches_the_manus_spec():
+    from vectiq.signals.candidate import evaluate_candidate as ev
+    sig = ev(_cand_state())                                   # points 19+13=32, line 99.5 -> floor(6.75)=6
+    assert sig and sig.side == "under" and sig.line == 99.5 and sig.price == 1.84
+    assert ev(_cand_state(sets=((11, 8), (4, 5)))) is None    # PB12: only 9 points in the set in progress
+    assert ev(_cand_state(sets=((11, 8),))) is None           # no set in progress
+    assert ev(_cand_state(sets=((11, 8), (11, 5), (6, 7)))) is None   # two sets completed
+    assert ev(_cand_state(lines=((109.5, 1.84, 1.84),))) is None      # budget 7, not 6
+    assert ev(_cand_state(league="Masters. China")) is None
+    assert ev(state(sets=[(11, 8), (7, 6)], live=True, best_of=5, lines=((99.5, 1.84, 1.84),))) is None
+    # picks the most balanced line (min |over-under|), not the cheapest Under
+    sig2 = ev(_cand_state(lines=((99.5, 1.80, 1.90), (95.5, 1.88, 1.89), (101.5, 1.70, 2.1))))
+    assert sig2 is None or sig2.line == 95.5
+
+
+def test_candidate_is_recorded_once_per_game_and_never_notified(tmp_path):
+    sent = []
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    cand = PaperLedger(tmp_path / "c.sqlite", 1000.0)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, cand=cand,
+                    book=masters.MastersBook.from_seed(), notify=lambda m: sent.append(m) or True)
+    col._masters(_cand_state(), NOW)
+    col._masters(_cand_state(sets=((11, 8), (8, 7))), NOW + 5)      # later snapshot of the same game
+    assert cand.db.execute("select count(*) from bets").fetchone()[0] == 1 and cand.open_stake == 1.0
+    assert not any("99.5" in m for m in sent)
+    col._settle_final(383584934, _cand_state(), [(11, 8), (7, 11), (11, 5), (11, 9), (11, 7)], "results_api")
+    assert cand.db.execute("select result, src from bets").fetchone() == ("W", "results_api")

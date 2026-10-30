@@ -57,7 +57,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -95,8 +95,11 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--dir", str(out), "--clobber"], check=False, capture_output=True)
+                    "masters_book.json", "--pattern", "cand.sqlite", "--dir", str(out), "--clobber"],
+                   check=False, capture_output=True)
     col.mledger.reopen()
+    if col.cand is not None:
+        col.cand.reopen()
     loaded = MastersBook.load(out / "masters_book.json")
     for gid, (sets, _) in col.finals.items():  # finals this run saw before taking over
         loaded.add_match(gid, sets)
@@ -119,12 +122,13 @@ def cmd_collect(args: argparse.Namespace) -> int:
     tape = TapeWriter(out / "tape")
     ledger = PaperLedger(out / "paper.sqlite", start_bankroll=args.bankroll)
     shadow = PaperLedger(out / "shadow.sqlite", start_bankroll=args.bankroll)
+    cand = PaperLedger(out / "cand.sqlite", start_bankroll=1000.0)      # frozen offline candidate, flat ~$1, silent
     mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
     book = MastersBook.load(out / "masters_book.json")
     t0 = time.time()
     chat = telegram.shadow_chat()
     col = Collector(
-        _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book,
+        _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand,
         notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
         trade_from_s=t0 + args.trade_from_min * 60 if args.trade_from_min else None,
         trade_until_s=t0 + args.trade_until_min * 60 if args.trade_until_min else None,
