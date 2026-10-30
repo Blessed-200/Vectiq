@@ -1,16 +1,22 @@
 name: shadow-engine
-# Shadow ST0/ST1: procesa el tape que publica `collector`, registra decisiones
-# ANTES de conocer resultados y reconcilia finales (tape + API de resultados).
-# Estado persistente en el release `shadow-ledger` (mismo patrón que `ledger`).
+# Shadow ST0/ST1 EN VIVO: polling de LineFeed/Get1x2_VZip (mismo endpoint que el
+# collector) -> decisiones registradas ANTES del inicio del partido.
+# Patrón encadenado como `collector`: cada run dura ~44 min y lanza su sucesor;
+# el cron de 15 min es watchdog (arranca uno si ninguno está activo).
 on:
   schedule:
-    - cron: "37 * * * *"   # cada hora; el tape se publica cada ~20 min
+    - cron: "*/15 * * * *"
   workflow_dispatch:
+    inputs:
+      chained:
+        description: "started by the previous run (hand-over)"
+        default: "false"
 concurrency:
-  group: shadow-engine
+  group: shadow-${{ github.run_id }}
   cancel-in-progress: false
 permissions:
   contents: write
+  actions: write
 env:
   GH_TOKEN: ${{ github.token }}
   BW_BASE_URLS: ${{ vars.BW_BASE_URLS }}
@@ -18,44 +24,50 @@ env:
 jobs:
   shadow:
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 55
     steps:
+      - name: Watchdog gate
+        id: gate
+        if: github.event_name == 'schedule' || inputs.chained != 'true'
+        run: |
+          others=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow shadow.yml --limit 30 \
+            --json databaseId,status --jq "[.[] | select(.databaseId != $GITHUB_RUN_ID and (.status==\"in_progress\" or .status==\"queued\"))] | length")
+          echo "other active shadow runs: $others"
+          if [ "${others:-0}" -gt 0 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/checkout@v4
+        if: steps.gate.outputs.skip != 'true'
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.skip != 'true'
         with:
           python-version: "3.12"
       - run: pip install . zstandard
+        if: steps.gate.outputs.skip != 'true'
       - name: Restore shadow state
+        if: steps.gate.outputs.skip != 'true'
         run: |
           mkdir -p shadow/state
           gh release download shadow-ledger -p 'state.tar.gz' -D /tmp --clobber 2>/dev/null \
             && tar xzf /tmp/state.tar.gz -C shadow/state || echo "first run: empty state"
-      - name: Download tape (today + yesterday + missing recent)
+      - name: Live shadow loop (44 min) + chain successor
+        if: steps.gate.outputs.skip != 'true'
         run: |
-          mkdir -p data/tape
-          today=$(date -u +%F); yest=$(date -ud 'yesterday' +%F)
-          for tag in tape-$yest tape-$today; do
-            gh release download "$tag" -D "data/tape/$tag" --clobber \
-              || echo "release $tag not published yet"
-          done
-      - name: Run shadow engine (ST0 + ST1)
-        run: |
-          python shadow/engine.py --tape data/tape --state shadow/state \
-            --shards-manifest shadow/state/shards.json --results-api
+          (sleep 2640 && gh workflow run shadow.yml --repo "$GITHUB_REPOSITORY" -f chained=true || true) &
+          python shadow/live.py --state shadow/state --minutes 44
       - name: Daily panel
+        if: steps.gate.outputs.skip != 'true'
         run: python shadow/report.py --state shadow/state --day $(date -u +%F) || true
       - name: Persist shadow state
-        if: always()
+        if: always() && steps.gate.outputs.skip != 'true'
         run: |
           tar czf /tmp/state.tar.gz -C shadow/state .
           gh release view shadow-ledger >/dev/null 2>&1 \
             || gh release create shadow-ledger --title "Shadow engine state" --notes "append-only store"
           gh release upload shadow-ledger /tmp/state.tar.gz --clobber
-      - name: Daily summary artifact
-        if: always()
+      - name: Panel artifact
+        if: always() && steps.gate.outputs.skip != 'true'
         run: python shadow/report.py --state shadow/state > /tmp/shadow_panel.json || true
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && steps.gate.outputs.skip != 'true'
         with:
           name: shadow-panel-${{ github.run_id }}
           path: /tmp/shadow_panel.json

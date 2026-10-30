@@ -99,7 +99,7 @@ class ShadowEngine:
             means.append(sum(h) / len(h))
         return sum(means) / len(means), HIST_MIN
 
-    # ---------- procesamiento de un shard ----------
+    # ---------- procesamiento ----------
     def process_shard(self, shard: Path):
         for rec in read_shard(shard):
             try:
@@ -111,18 +111,22 @@ class ShadowEngine:
                             state.quotes.extend(_quotes(state.game_id, "match", row))
             except Exception:
                 continue
+            self._on_state(state, rec["t"])
+
+    def _on_state(self, state, t_ms: int):
             gid = state.game_id
             g = self.games.get(gid)
             if g is None:
                 g = {"gid": gid, "bo": None, "league": None, "players": None,
-                     "start_ts": None, "first_seen": rec["t"], "finished": False,
+                     "start_ts": None, "first_seen": t_ms, "finished": False,
                      "final_total": None, "sets": None, "decisions": {},
                      "last_price": {}, "st0_logged": False}
                 self.games[gid] = g
                 self.st.append("matches", {k: v for k, v in g.items()
                                            if k not in ("last_price", "decisions")})
+            g["last_seen"] = t_ms
             if g["finished"]:
-                continue
+                return
             if state.best_of:
                 g["bo"] = state.best_of
             if getattr(state, "league_id", None):
@@ -151,26 +155,26 @@ class ShadowEngine:
                 self.st.append("settlements", {
                     "gid": gid, "final_total": total, "sets": g["sets"],
                     "source": "tape", "conciliation": "PRIMARY_CONFIRMED",
-                    "event_time_ms": rec["t"]})
+                    "event_time_ms": t_ms})
                 if g["players"]:
                     for p in g["players"].split(" vs "):
                         self.st.append("players", {
                             "gid": gid, "player": p, "final_total": total,
-                            "event_time_ms": g["start_ts"] or rec["t"],
+                            "event_time_ms": g["start_ts"] or t_ms,
                             "league": g["league"]})
                         self.player_hist[p].append(
-                            (g["start_ts"] or rec["t"], total, gid))
-                continue
+                            (g["start_ts"] or t_ms, total, gid))
+                return
 
             # ---- ventana st0: registrar mercado + decisiones ----
             if need != 4 or "masters" not in (g["league"] or "").lower():
-                continue
-            now_s = rec["t"] / 1000.0
+                return
+            now_s = t_ms / 1000.0
             if not (not state.live and not state.sets and state.start_ts
                     and 60 <= state.start_ts - now_s <= 4 * 3600):
-                continue
+                return
             if "ST0" in g["decisions"]:
-                continue  # una decisión por partido (primera ventana elegible)
+                return  # una decisión por partido (primera ventana elegible)
 
             by_line: dict[float, dict] = {}
             for q in state.quotes:
@@ -181,15 +185,15 @@ class ShadowEngine:
                       for ln, s in sorted(by_line.items()) if s.get("under") and s.get("over")]
             cen, cen_ok = implied_center(ladder)
             self.st.append("market", {
-                "gid": gid, "observed_at_ms": rec["t"], "event_time_ms": g["start_ts"],
+                "gid": gid, "observed_at_ms": t_ms, "event_time_ms": g["start_ts"],
                 "ladder": ladder, "implied_center": cen, "center_valid": cen_ok,
                 "seconds_to_start": (g["start_ts"] or 0) - now_s})
 
-            pmu, _ = self._players_hist_stats(g["players"] or "", rec["t"]) \
+            pmu, _ = self._players_hist_stats(g["players"] or "", t_ms) \
                 if g["players"] else (None, 0)
             gap = (cen - pmu) if (cen is not None and pmu is not None) else None
 
-            base = {"gid": gid, "decision_at_ms": rec["t"], "observed_at_ms": rec["t"],
+            base = {"gid": gid, "decision_at_ms": t_ms, "observed_at_ms": t_ms,
                     "event_time_ms": g["start_ts"], "ingested_at": now_iso(),
                     "league": g["league"], "players": g["players"],
                     "implied_center": cen, "player_mean": pmu, "gap": gap,
@@ -231,6 +235,18 @@ class ShadowEngine:
             self.st.append("decisions", d1)
             g["decisions"]["ST1"] = d1
             self.n_new += 1
+
+    # ---------- detección de finales desaparecidos (modo live) ----------
+    def mark_vanished(self, live_gids: set[int], t_ms: int):
+        """Partido con decisión que ya no aparece en el feed -> posible final.
+        La liquidación real la confirma settle_pending (tape/API); aquí solo
+        dejamos de esperar nuevos ticks."""
+        for gid, g in self.games.items():
+            if g.get("finished") or not g.get("decisions"):
+                continue
+            if gid in live_gids or (t_ms - (g.get("last_seen") or 0)) < 3600_000:
+                continue
+            g["vanished"] = True
 
     # ---------- liquidación pendiente ----------
     def settle_pending(self, results_api=None):
