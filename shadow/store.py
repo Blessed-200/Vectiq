@@ -20,6 +20,7 @@ FILES = {
     "decisions": "decisions.jsonl",      # una por (partido, estrategia)
     "players": "player_results.jsonl",   # totales finales por jugador
     "settlements": "settlements.jsonl",  # liquidaciones y conciliación
+    "capacity": "capacity.jsonl",        # probe UpdateCoupon por decisión BET
     "errors": "errors.jsonl",
     "runs": "runs.jsonl",                # cabecera de cada ejecución
 }

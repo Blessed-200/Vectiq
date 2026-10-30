@@ -74,6 +74,21 @@ def metrics(state: Path, day: str | None):
     out["paired"] = {"both_bet": len(both),
                      "only_ST0": len(set(bets["ST0"]) - set(bets["ST1"])),
                      "only_ST1": len(set(bets["ST1"]) - set(bets["ST0"]))}
+    # telemetría de capacidad (probes UpdateCoupon en tiempo de decisión)
+    caps = st.load("capacity")
+    cap_out = {}
+    for s in ("ST0", "ST1"):
+        cs = [c for c in caps if c.get("strategy") == s and c.get("ok")]
+        mb = sorted(c["max_bet"] for c in cs if c.get("max_bet") is not None)
+        cap_out[s] = {
+            "probes": len(cs),
+            "blocked": sum(1 for c in cs if c.get("block")),
+            "coef_moved": sum(1 for c in cs if c.get("change_cf")),
+            "max_bet_median": mb[len(mb) // 2] if mb else None,
+            "max_bet_min": mb[0] if mb else None,
+            "max_bet_max": mb[-1] if mb else None,
+        }
+    out["capacity"] = cap_out
     return out
 
 
