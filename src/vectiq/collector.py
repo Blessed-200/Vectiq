@@ -27,7 +27,9 @@ class Collector:
                  on_trade_stop: Callable[["Collector"], None] | None = None,
                  book_path: Path | None = None, line_interval: float = 45.0,
                  notify_doc: Callable[[str, str], bool] | None = None, dashboard_dir: Path | None = None,
-                 dashboard_every_s: float = 6 * 3600.0) -> None:
+                 dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
+                 notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
+                 shadow_state_dir: Path | None = None) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book, self.cand = mledger, book, cand
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
@@ -37,6 +39,8 @@ class Collector:
         self._sweep_t, self._silent_t, self._alert_t = 0.0, 0.0, 0.0
         self.notify_doc, self.dashboard_dir = notify_doc, dashboard_dir
         self.dashboard_every_s, self._dash_t = dashboard_every_s, 0.0
+        self.notify_photo, self.notify_status, self.status_every_s, self._status_t = notify_photo, notify_status, status_every_s, 0.0
+        self.shadow_state_dir, self._devin_t, self._devin = shadow_state_dir, 0.0, []
         self._trading_seen = False
         self.absent: dict[int, int] = {}
         self._stopped = False
@@ -283,8 +287,54 @@ class Collector:
                     led.settle_vanished(gid, 0)
                     log.info("orphan bet voided for game %s", gid)
 
+    def _all_books(self, now_s: float) -> list[dict]:
+        """Every paper book (ours + Devin's shadow engine when its state is published) as dashboard records."""
+        from vectiq.notify import dashboard
+        paths = {"Telegram (modelo)": self.mledger.path if self.mledger else None,
+                 "Manus (regla fija)": self.cand.path if self.cand else None,
+                 "Setka / viejo": self.shadow.path if self.shadow else None}
+        for led in (self.mledger, self.cand, self.shadow):
+            if led is not None:
+                led.db.commit()
+        _, books = dashboard.build(paths, now_s)
+        if now_s - self._devin_t > 1800 and self.shadow_state_dir is not None:
+            self._devin_t = now_s
+            self._devin = self._fetch_devin(now_s)
+        return books + self._devin
+
+    def _fetch_devin(self, now_s: float) -> list[dict]:
+        import subprocess
+        import tarfile
+        from vectiq.notify import dashboard
+        try:
+            d = Path(self.shadow_state_dir)
+            d.mkdir(parents=True, exist_ok=True)
+            r = subprocess.run(["gh", "release", "download", "shadow-ledger", "-p", "state.tar.gz", "-D", str(d), "--clobber"],
+                               check=False, capture_output=True, timeout=60)
+            tgz = d / "state.tar.gz"
+            if r.returncode != 0 or not tgz.exists():
+                return []
+            with tarfile.open(tgz) as tf:
+                tf.extractall(d, filter="data")
+            return dashboard.shadow_books(d, now_s)
+        except Exception:  # noqa: BLE001
+            log.debug("devin state unavailable", exc_info=True)
+            return []
+
+    def _status(self, now_s: float) -> None:
+        """Pinned live message, edited in place every ~10 minutes (cheap, no spam)."""
+        if self.notify_status is None or not self.trading(now_s) or now_s - self._status_t < self.status_every_s:
+            return
+        self._status_t = now_s
+        try:
+            from vectiq.notify import dashboard
+            books = self._all_books(now_s)
+            self.notify_status(dashboard.status_text(books, time.strftime("%H:%M", time.gmtime(now_s))))
+        except Exception:  # noqa: BLE001
+            log.warning("status update failed", exc_info=True)
+
     def _dashboard(self, now_s: float) -> None:
-        """Every few hours: one HTML board of every paper book (curves, ROI with uncertainty, ETA), sent to Telegram."""
+        """Every few hours: chart image + HTML board of every paper book, sent to Telegram."""
         if self.notify_doc is None or self.dashboard_dir is None or not self.trading(now_s):
             return
         if now_s - self._dash_t < self.dashboard_every_s:
@@ -294,17 +344,15 @@ class Collector:
         if first:                      # do not fire right after a hand-over; wait one full period
             return
         from vectiq.notify import dashboard
-        paths = {"Telegram (modelo)": self.mledger.path if self.mledger else None,
-                 "Manus (regla fija)": self.cand.path if self.cand else None,
-                 "Setka / viejo": self.shadow.path if self.shadow else None}
         try:
-            for led in (self.mledger, self.cand, self.shadow):
-                if led is not None:
-                    led.db.commit()
-            page, books = dashboard.build(paths, now_s)
-            out = Path(self.dashboard_dir) / "dashboard.html"
-            out.write_text(page, encoding="utf-8")
-            self.notify_doc(str(out), dashboard.caption(books))
+            books = self._all_books(now_s)
+            out = Path(self.dashboard_dir)
+            png = out / "dashboard.png"
+            if self.notify_photo is not None and dashboard.chart_png(books, png):
+                self.notify_photo(str(png), dashboard.caption(books))
+            page = dashboard.render(books, time.strftime("%Y-%m-%d %H:%M", time.gmtime(now_s)))
+            (out / "dashboard.html").write_text(page, encoding="utf-8")
+            self.notify_doc(str(out / "dashboard.html"), "Tablero completo (abrir en el navegador)")
         except Exception:  # noqa: BLE001 - a report must never stop collection
             log.warning("dashboard failed", exc_info=True)
 
@@ -369,6 +417,7 @@ class Collector:
         self._poll_pending(now_s)
         self._sweep_orphans(now_s)
         self._dashboard(now_s)
+        self._status(now_s)
         self._watchdog(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)

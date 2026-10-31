@@ -46,7 +46,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - if: steps.gate.outputs.skip != 'true'
-        run: pip install -e .
+        run: pip install -e ".[report]"
       - name: Restore paper ledgers and Masters book
         if: steps.gate.outputs.skip != 'true'
         run: |

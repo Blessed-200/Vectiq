@@ -458,3 +458,33 @@ def test_dashboard_counts_only_real_results_and_renders(tmp_path):
     b = books[0]
     assert len(books) == 1 and b["n"] == 3 and b["open"] == 1 and abs(b["roi"] - 1 / 3) < 1e-9
     assert "<svg" in page and "VECTIQ" in page and "X" in dashboard.caption(books)
+
+
+def test_devin_books_chart_and_pinned_status(tmp_path, monkeypatch):
+    import json
+    from vectiq.notify import dashboard, telegram
+    d = tmp_path / "st"; d.mkdir()
+    dec = [{"gid": 1, "strategy": "ST0", "decision": "BET", "line": 100.5, "odds": 2.0, "decision_at_ms": 1000},
+           {"gid": 2, "strategy": "ST0", "decision": "BET", "line": 100.5, "odds": 2.0, "decision_at_ms": 2000},
+           {"gid": 3, "strategy": "ST0", "decision": "BET", "line": 100.5, "odds": 2.0, "decision_at_ms": 3000},
+           {"gid": 1, "strategy": "ST1", "decision": "BET", "line": 100.5, "odds": 2.0, "decision_at_ms": 1000},
+           {"gid": 9, "strategy": "ST0", "decision": "NO_BET", "line": None}]
+    (d / "decisions.jsonl").write_text("\n".join(json.dumps(x) for x in dec))
+    (d / "settlements.jsonl").write_text("\n".join(json.dumps(x) for x in (
+        {"gid": 1, "final_total": 90}, {"gid": 2, "final_total": 120})))
+    st0, st1 = dashboard.shadow_books(d, now_s=10.0)
+    assert (st0["n"], st0["open"], round(st0["roi"], 6)) == (2, 1, 0.0) and st0["curve"] == [1.0, 0.0]
+    assert (st1["n"], st1["open"]) == (1, 0) and "Devin ST1" in st1["name"]
+    assert "Devin ST0" in dashboard.status_text([st0, st1], "12:00") and dashboard.chart_png([st0, st1], tmp_path / "c.png")
+    assert (tmp_path / "c.png").stat().st_size > 2000
+    calls = []
+
+    class R:
+        ok = True; text = ""
+        def json(self): return {"result": {"message_id": 77}}
+    monkeypatch.setattr(telegram.requests, "post", lambda url, **kw: calls.append(url.rsplit("/", 1)[1]) or R())
+    sf = tmp_path / "tg.json"
+    assert telegram.upsert_status("x", sf, token="t", chat_id="c") and json.loads(sf.read_text())["message_id"] == 77
+    assert calls == ["sendMessage", "pinChatMessage"]
+    calls.clear()
+    assert telegram.upsert_status("y", sf, token="t", chat_id="c") and calls == ["editMessageText"]   # edited in place

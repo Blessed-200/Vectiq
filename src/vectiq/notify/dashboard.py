@@ -46,6 +46,99 @@ def book_stats(name: str, db: sqlite3.Connection, now_s: float) -> dict:
             "since": time.strftime("%Y-%m-%d", time.gmtime(first)) if rows else "-"}
 
 
+def _book_from_units(name: str, units: list[tuple[float, int]], n_open: int, n_void: int, first_ms: int | None,
+                     now_s: float, src: dict | None = None) -> dict:
+    """Same record as ``book_stats`` from an already-computed list of (unit pnl, ts_ms)."""
+    units = sorted(units, key=lambda x: x[1])
+    n = len(units)
+    mean = sum(u for u, _ in units) / n if n else 0.0
+    sd = math.sqrt(sum((u - mean) ** 2 for u, _ in units) / (n - 1)) if n > 1 else 0.0
+    se = sd / math.sqrt(n) if n > 1 else float("nan")
+    first = (first_ms or now_s * 1000) / 1000
+    rate = n / max((now_s - first) / 86400, 1e-9) if n else 0.0
+    curve, acc = [], 0.0
+    for u, _ in units:
+        acc += u
+        curve.append(acc)
+    wins = sum(u > 0 for u, _ in units)
+    return {"name": name, "n": n, "open": n_open, "void": n_void, "hit": wins / max(1, sum(u != 0 for u, _ in units)),
+            "roi": mean, "lo": mean - 1.96 * se if n > 1 else float("nan"), "hi": mean + 1.96 * se if n > 1 else float("nan"),
+            "p_pos": 0.5 * (1 + math.erf(mean / se / math.sqrt(2))) if n > 1 and se > 0 else float("nan"),
+            "rate": rate, "eta_days": (TARGET_N - n) / rate if rate > 0 and n < TARGET_N else 0.0, "curve": curve,
+            "src": src or {}, "since": time.strftime("%Y-%m-%d", time.gmtime(first)) if first_ms else "-"}
+
+
+def shadow_books(state_dir: Path | str, now_s: float | None = None) -> list[dict]:
+    """ST0 / ST1 of the Devin shadow engine, read from its append-only store (decisions + settlements)."""
+    import json
+    now_s = now_s or time.time()
+    root = Path(state_dir)
+
+    def load(fn: str) -> list[dict]:
+        p = root / fn
+        out = []
+        if p.exists():
+            for ln in p.read_text(encoding="utf-8").splitlines():
+                try:
+                    out.append(json.loads(ln))
+                except ValueError:
+                    continue
+        return out
+    final = {int(x["gid"]): x["final_total"] for x in load("settlements.jsonl") if x.get("final_total") is not None}
+    books = []
+    for strat, label in (("ST0", "Devin ST0 (prepartido)"), ("ST1", "Devin ST1 (+ gap)")):
+        seen: dict[int, dict] = {}
+        for d in load("decisions.jsonl"):
+            if d.get("strategy") == strat and d.get("decision") == "BET" and d.get("line") is not None:
+                seen.setdefault(int(d["gid"]), d)
+        units, n_open = [], 0
+        for gid, d in seen.items():
+            T = final.get(gid)
+            if T is None:
+                n_open += 1
+            else:
+                units.append((0.0 if T == d["line"] else (d["odds"] - 1 if T < d["line"] else -1.0), int(d.get("decision_at_ms") or 0)))
+        first = min((int(d.get("decision_at_ms") or 0) for d in seen.values()), default=None) or None
+        books.append(_book_from_units(label, units, n_open, 0, first, now_s, {"observed/api": len(units)}))
+    return books
+
+
+def chart_png(books: list[dict], path: Path | str) -> bool:
+    """One image, all books: cumulative units per bet. Returns False when matplotlib is unavailable."""
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except Exception:  # noqa: BLE001
+        return False
+    colors = ["#2a7de1", "#e1822a", "#2aa876", "#a24fd1", "#d1424f", "#6b7280"]
+    fig, ax = plt.subplots(figsize=(7.2, 4.0), dpi=160)
+    fig.patch.set_facecolor("#0f1318"); ax.set_facecolor("#0f1318")
+    for i, b in enumerate(books):
+        if len(b["curve"]) > 1:
+            ax.plot(range(1, len(b["curve"]) + 1), b["curve"], lw=1.8, color=colors[i % 6],
+                    label=f'{b["name"]}  {b["roi"] * 100:+.1f} %  (n {b["n"]})')
+    ax.axhline(0, color="#3a4452", lw=1, ls="--")
+    ax.set_title("VECTIQ · unidades acumuladas (1 u por apuesta)", color="#e8ebef", fontsize=11, loc="left")
+    ax.set_xlabel("apuesta con resultado", color="#98a2b0", fontsize=9); ax.tick_params(colors="#98a2b0", labelsize=8)
+    for sp in ax.spines.values():
+        sp.set_color("#2a323d")
+    ax.legend(loc="upper left", fontsize=7.5, facecolor="#181e26", edgecolor="#2a323d", labelcolor="#e8ebef")
+    fig.tight_layout()
+    fig.savefig(path, facecolor=fig.get_facecolor())
+    plt.close(fig)
+    return True
+
+
+def status_text(books: list[dict], generated: str) -> str:
+    """Compact monospace table for the pinned live message."""
+    rows = [f"{'bot':<22}{'n':>5}{'ROI':>9}{'P>0':>6}"]
+    for b in books:
+        p = "–" if b["p_pos"] != b["p_pos"] else f"{b['p_pos'] * 100:.0f}%"
+        rows.append(f"{b['name'][:21]:<22}{b['n']:>5}{_pct(b['roi']).replace(' ', ''):>9}{p:>6}")
+    return f"<b>VECTIQ · estado en vivo</b>  <i>{generated} UTC</i>\n<pre>" + "\n".join(rows) + "</pre>"
+
+
 def _svg(curve: list[float], color: str, w: int = 300, h: int = 70) -> str:
     if len(curve) < 2:
         return f'<svg viewBox="0 0 {w} {h}" class="spark"></svg>'

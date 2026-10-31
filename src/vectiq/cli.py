@@ -57,7 +57,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "tg_status.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -95,7 +95,7 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--dir", str(out), "--clobber"],
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "tg_status.json", "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
     if col.cand is not None:
@@ -131,6 +131,9 @@ def cmd_collect(args: argparse.Namespace) -> int:
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand,
         notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
         notify_doc=lambda path, cap: telegram.send_document(path, cap, chat_id=chat), dashboard_dir=out,
+        notify_photo=lambda path, cap: telegram.send_photo(path, cap, chat_id=chat),
+        notify_status=lambda text: telegram.upsert_status(text, out / "tg_status.json", chat_id=chat),
+        shadow_state_dir=out / "devin_state",
         trade_from_s=t0 + args.trade_from_min * 60 if args.trade_from_min else None,
         trade_until_s=t0 + args.trade_until_min * 60 if args.trade_until_min else None,
         on_trade_start=(lambda c: _handoff_in(c, out)) if args.trade_from_min else None,
