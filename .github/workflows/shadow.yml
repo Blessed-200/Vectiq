@@ -48,6 +48,10 @@ jobs:
           mkdir -p shadow/state
           gh release download shadow-ledger -p 'state.tar.gz' -D /tmp --clobber 2>/dev/null \
             && tar xzf /tmp/state.tar.gz -C shadow/state || echo "first run: empty state"
+          # Semilla del libro empírico (distribución de puntos restantes por set);
+          # sin ella el engine rechaza todo en arranque en frío.
+          gh release download ledger -p 'masters_book.json' -D shadow/state --clobber \
+            || echo "masters_book.json no disponible — libro en frío"
       - name: Live shadow loop (44 min)
         if: steps.gate.outputs.skip != 'true'
         run: python shadow/live.py --state shadow/state --minutes 44
