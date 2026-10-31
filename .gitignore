@@ -4,3 +4,7 @@ __pycache__/
 data/
 *.egg-info/
 shadow/state/
+docs/finals.json
+docs/bt3.json
+docs/backtest_metrics.json
+docs/kit.d.ts

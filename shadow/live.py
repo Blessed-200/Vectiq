@@ -61,7 +61,7 @@ def run(state_dir: Path, minutes: int) -> dict:
     eng = ShadowEngine(state_dir)
     eng.restore()
     bases = [b.strip() for b in os.environ.get("BW_BASE_URLS", "").split(",") if b.strip()]
-    client = BetwinnerClient(bases or ["https://betwinner.com"], max_rps=2.0,
+    client = BetwinnerClient(bases or ["https://betwinner2.com"], max_rps=2.0,
                              proxy=os.environ.get("BW_PROXY_URL") or None)
     coupon_session = None  # se crea perezosa en el primer probe
     probed = {(c["gid"], c["strategy"])

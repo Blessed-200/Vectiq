@@ -48,11 +48,9 @@ jobs:
           mkdir -p shadow/state
           gh release download shadow-ledger -p 'state.tar.gz' -D /tmp --clobber 2>/dev/null \
             && tar xzf /tmp/state.tar.gz -C shadow/state || echo "first run: empty state"
-      - name: Live shadow loop (44 min) + chain successor
+      - name: Live shadow loop (44 min)
         if: steps.gate.outputs.skip != 'true'
-        run: |
-          (sleep 2640 && gh workflow run shadow.yml --repo "$GITHUB_REPOSITORY" -f chained=true || true) &
-          python shadow/live.py --state shadow/state --minutes 44
+        run: python shadow/live.py --state shadow/state --minutes 44
       - name: Daily panel
         if: steps.gate.outputs.skip != 'true'
         run: python shadow/report.py --state shadow/state --day $(date -u +%F) || true
@@ -63,6 +61,9 @@ jobs:
           gh release view shadow-ledger >/dev/null 2>&1 \
             || gh release create shadow-ledger --title "Shadow engine state" --notes "append-only store"
           gh release upload shadow-ledger /tmp/state.tar.gz --clobber
+      - name: Chain successor (solo tras persistir el estado)
+        if: always() && steps.gate.outputs.skip != 'true'
+        run: gh workflow run shadow.yml --repo "$GITHUB_REPOSITORY" -f chained=true || true
       - name: Panel artifact
         if: always() && steps.gate.outputs.skip != 'true'
         run: python shadow/report.py --state shadow/state > /tmp/shadow_panel.json || true

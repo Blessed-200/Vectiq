@@ -23,7 +23,7 @@ def get_client() -> BetwinnerClient:
     global _client
     if _client is None:
         bases = [b.strip() for b in os.environ.get("BW_BASE_URLS", "").split(",") if b.strip()]
-        _client = BetwinnerClient(bases or ["https://betwinner.com"], max_rps=2.0,
+        _client = BetwinnerClient(bases or ["https://betwinner2.com"], max_rps=2.0,
                                 proxy=os.environ.get("BW_PROXY_URL") or None)
     return _client
 
