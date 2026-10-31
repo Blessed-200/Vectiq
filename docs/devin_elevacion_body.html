@@ -1,0 +1,209 @@
+<div id="root"></div>
+<script type="text/jsx">
+// Elevación de la estrategia "Devin" — auditoría del colectivo cuantitativo.
+// Datos: 1 119 apuestas Masters-Under st0+1, tape Betwinner 27–29 oct 2026 (OOS),
+// censuradas liquidadas con la API oficial de resultados (167 finales reales recuperados).
+
+const frontier = [
+  {sel:"Volumen completo (baseline)", n:345, wr:"52.7 %", roi:"+7.5 %", clv:"+4.64 %", note:"referencia"},
+  {sel:"Top-60 por EV", n:60, wr:"47.8 %", roi:"+2.7 %", clv:"+9.41 %", note:"ranking por EV destruye valor"},
+  {sel:"Top-60 por p modelo", n:60, wr:"56.7 %", roi:"+2.3 %", clv:"−4.49 %", note:"p no discrimina"},
+  {sel:"Top-60 por línea", n:60, wr:"59.4 %", roi:"+11.6 %", clv:"−2.65 %", note:"mejor ROI, CLV débil"},
+  {sel:"Línea ≥ 108.5 (sin cap)", n:77, wr:"57.3 %", roi:"+7.0 %", clv:"—", note:"única regla positiva los 3 días"},
+];
+
+const growth = [
+  {cfg:"WR 52.7 % @2.03 · 2.5 % · 55/d", p10k:"1.5 %", med:"10.2×", ploss:"1.3 %", ruin:"0.1 %", mdd95:"68 %"},
+  {cfg:"WR 55 % @1.95 · 2.5 % · 55/d", p10k:"1.8 %", med:"12.5×", ploss:"0.6 %", ruin:"0 %", mdd95:"64 %"},
+  {cfg:"WR 55 % @1.95 · 4 % · 55/d", p10k:"27 %", med:"33×", ploss:"1.7 %", ruin:"0.8 %", mdd95:"83 %"},
+  {cfg:"WR 57 % @2.0 · 5 % · 55/d", p10k:"99 %", med:"13 969×", ploss:"0 %", ruin:"0 %", mdd95:"75 %"},
+];
+
+const leagues = [
+  {lg:"Masters Rusia", n:332, roi:"+10.9 %"}, {lg:"Masters Bielorrusia", n:230, roi:"+11.3 %"},
+  {lg:"Masters Polonia", n:209, roi:"+7.2 %"}, {lg:"Masters China", n:73, roi:"−3.4 %"},
+  {lg:"Masters España", n:48, roi:"+8.1 %"}, {lg:"Masters Pol. Mujeres", n:46, roi:"−19.1 %"},
+  {lg:"Masters RU Mujeres", n:37, roi:"+11.7 %"}, {lg:"Masters Argentina", n:37, roi:"+10.0 %"},
+  {lg:"Super League", n:23, roi:"−0.5 %"},
+];
+
+const gates = [
+  {g:"Integridad", s:"APROBADO", t:"Censuradas liquidadas por API oficial; 0 discrepancias previas."},
+  {g:"Probabilidad", s:"RECHAZADO", t:"p del modelo no discrimina: resolución ≈0, Brier 0.2496 ≈ mercado 0.2505. Ventaja = selección de segmento, no de precisión relativa."},
+  {g:"Calibración OOS", s:"RECHAZADO", t:"Isotónica sobreajusta (Brier peor OOS); Platt neutro. Recalibrar no mejora selección."},
+  {g:"Economía", s:"APROBADO", t:"ROI unitario +7.5 %, IC95% [+0.8, +14.2], CLV +4.64 %, 62 % bate cierre."},
+  {g:"Reducción de volumen", s:"INCONCLUSO", t:"Línea ≥108.5 conserva ROI con −75 % volumen y es positiva los 3 días; ranking por EV/p rechazado."},
+  {g:"Crecimiento 100×/30d", s:"RECHAZADO", t:"A edge demostrado: mediana ~10×, P(10k) ≈ 1.5 %, MDD95 68 %. Requiere WR≥57 % sostenido o stake ≥4 % con MDD95 83 %."},
+  {g:"Generalización", s:"INCONCLUSO", t:"P(ROI>0)=98.5 % bajo iid; pero 3 días + heterogeneidad por liga (China −3.4 %, Pol. Mujeres −19.1 %) impiden exigir 70 % para ROI>10 %."},
+  {g:"Riesgo", s:"INCONCLUSO", t:"Ruina <0.1 % a 2.5 %, pero MDD mediana ~47 % a 30 días por volumen alto compuesto."},
+];
+
+function Report() {
+  return (
+    <PageLayout
+      title="Estrategia «Devin» — auditoría y elevación cuantitativa"
+      subtitle="Colectivo de investigación sobre 1 035 apuestas liquidadas (OOS 27–29 oct). Todo lo afirmado aquí tiene evidencia en los datos o Monte Carlo declarado."
+    >
+      <BannerCard>
+        <Text size={14}>
+          Veredicto del colectivo: el edge <b>Masters-Under es real pero es de segmento, no de modelo</b>.
+          La probabilidad que emite el motor no ordena oportunidades (resolución ≈0): la casa se equivoca
+          en el <b>nivel</b> de la línea, no en la forma que nosotros estimamos. ROI unitario <b>+7.5 %</b>
+          (IC95% +0.8…+14.2), P(ROI&gt;0) ≈ 98.6 %. El objetivo $100→$10k/30d es matemáticamente
+          <b> inviable al edge demostrado</b> — se necesita +16.6 %/día y el sistema entrega ~8 %/día.
+        </Text>
+      </BannerCard>
+
+      <StatsRow>
+        <StatCard label="P(ROI futuro > 0)"><StatCardValue>98.6 %</StatCardValue>
+          <StatCardCaption>posterior Beta, 545/1035 victorias</StatCardCaption></StatCard>
+        <StatCard label="P(día positivo)"><StatCardValue>~91 %</StatCardValue>
+          <StatCardCaption>bootstrap, ~340 apuestas/día</StatCardCaption></StatCard>
+        <StatCard label="Mediana 30 días"><StatCardValue>~10×</StatCardValue>
+          <StatCardCaption>stake 2.5 %, 55/día, Monte Carlo</StatCardCaption></StatCard>
+        <StatCard label="P(llegar a 100×)"><StatCardValue>1.5 %</StatCardValue>
+          <StatCardCaption>al edge demostrado</StatCardCaption></StatCard>
+      </StatsRow>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">1. Calibración: la p no ordena — la ventaja está en qué líneas eliges</Text>
+        <Text size={13} className="text-secondary">
+          Brier 0.2496 vs 0.2505 del mercado: el motor apenas supera la cuota implícita. Descomposición:
+          incertidumbre 0.2493, <b>resolución 0.0030</b> (casi nula), fiabilidad 0.0035. El WR por
+          deciles de p no es monótono (61 % en el bin 0.52, 45 % en 0.53): ordenar por p o EV no
+          discrimina lo bueno de lo malo. Los calibradores Platt/isotónica no mejoran el Brier OOS ni
+          la selección. Conclusión de los especialistas C+D: <b>el libro empírico captura el sesgo
+          estructural de nivel, no ranking</b>. Tratar la p como indicador de segmento, no como score
+          fino — y no subir stakes por p alta.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">2. Frontera volumen–rentabilidad (objetivo 50–60/día)</Text>
+        <Table>
+          <TableHeader><TableRow>
+            <TableHead>Regla de selección</TableHead><TableHead className="text-right">n/día</TableHead>
+            <TableHead className="text-right">WR</TableHead><TableHead className="text-right">ROI unit.</TableHead>
+            <TableHead className="text-right">CLV</TableHead><TableHead>Nota</TableHead>
+          </TableRow></TableHeader>
+          <TableBody>
+            {frontier.map(r => <TableRow key={r.sel}>
+              <TableCell>{r.sel}</TableCell><TableCell className="text-right">{r.n}</TableCell>
+              <TableCell className="text-right">{r.wr}</TableCell><TableCell className="text-right">{r.roi}</TableCell>
+              <TableCell className="text-right">{r.clv}</TableCell><TableCell>{r.note}</TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
+        <Text size={13} className="text-secondary mt-2">
+          Hallazgo: filtrar por <b>línea alta</b> (≥108.5, media del top ≈110–112) reduce el volumen ~75 %
+          y mantiene o mejora el ROI — coherente con la causa del edge (línea ~6 pts por encima del total
+          real: a mayor línea, mayor margen de seguridad). Pero su CLV es negativo (−2.6 %): el mercado se
+          mueve en contra antes del cierre, y el patrón es inestable día a día (día 29 casi plano).
+          Decisión: <b>INCONCLUSO</b> — adoptar línea ≥108.5 como piloto con monitoreo, no como regla
+          validada. La selección por EV/p queda <b>rechazada</b>.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">3. $100 → $10 000 en 30 días: viabilidad matemática</Text>
+        <Text size={13} className="text-secondary mb-2">
+          100× exige +16.6 %/día compuesto. Al edge demostrado (WR 52.7 % @2.03, stake 2.5 %, 55/día) el
+          crecimiento geométrico es +8.1 %/día → mediana ≈10× en 30 días. Monte Carlo (20 000 trayectorias,
+          ruina &lt;20 % banca, resultados por apuesta iid según la empírica):
+        </Text>
+        <Table>
+          <TableHeader><TableRow>
+            <TableHead>Configuración</TableHead><TableHead className="text-right">P(10k)</TableHead>
+            <TableHead className="text-right">Mediana</TableHead><TableHead className="text-right">P(pérdida)</TableHead>
+            <TableHead className="text-right">P(ruina)</TableHead><TableHead className="text-right">MDD p95</TableHead>
+          </TableRow></TableHeader>
+          <TableBody>
+            {growth.map(r => <TableRow key={r.cfg}>
+              <TableCell>{r.cfg}</TableCell><TableCell className="text-right">{r.p10k}</TableCell>
+              <TableCell className="text-right">{r.med}</TableCell><TableCell className="text-right">{r.ploss}</TableCell>
+              <TableCell className="text-right">{r.ruin}</TableCell><TableCell className="text-right">{r.mdd95}</TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
+        <Text size={13} className="text-secondary mt-2">
+          Solo WR≥57 % sostenido a cuota ~2.0 con stake ≥4–5 % vuelve probable el objetivo — y a costa de
+          drawdowns medios ~60 % y p95 &gt;75 %, además de límites de stake que la casa impondría mucho
+          antes. <b>Veredicto G (capital): 100× no es alcanzable con la ventaja demostrada; ~10×/30d es
+          la expectativa central. Cualquier configuración que lo «logre» lo hace con riesgo de drawdown
+          que viola la puerta de riesgo.</b> No compensar edge débil con stake.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">4. Heterogeneidad por liga — el edge no es uniforme</Text>
+        <Table>
+          <TableHeader><TableRow>
+            <TableHead>Liga Masters</TableHead><TableHead className="text-right">n</TableHead>
+            <TableHead className="text-right">ROI unit.</TableHead>
+          </TableRow></TableHeader>
+          <TableBody>
+            {leagues.map(r => <TableRow key={r.lg}>
+              <TableCell>{r.lg}</TableCell><TableCell className="text-right">{r.n}</TableCell>
+              <TableCell className="text-right">{r.roi}</TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
+        <Text size={13} className="text-secondary mt-2">
+          China (−3.4 %), Polonia Mujeres (−19.1 %) y Super League (−0.5 %) rompen la uniformidad.
+          Hipótesis a validar con más tape: excluir esas tres ligas. Con n=23–73 son inferencias débiles —
+          marcar como <b>hipótesis, no regla aprobada</b>.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">5. Probabilidad de éxito futuro — respuesta al objetivo del 70 %</Text>
+        <Text size={13} className="text-secondary">
+          Bajo independencia condicional al modelo: posterior Beta sobre el WR da P(WR&gt;49.3 %
+          breakeven) = 98.6 %, IC95% del WR [49.6, 55.7]; bootstrap agrupado por partido da
+          P(ROI&gt;0)=98.5 %, IC95% ROI [+0.8, +14.2]; P(ROI&gt;5 %)=77 %; P(día positivo)≈91 %.
+          <b> El 70 % se supera para «ROI&gt;0», no para «ROI&gt;10 %» ni «100×».</b> Advertencia del
+          auditor I: 3 días de test y drift visible (ROI diario 9.5→6.2→7.0 %, decreciente) hacen que el
+          98 % sea una cota bajo estacionariedad — la confianza real es menor. Evidencia necesaria para
+          sostener 70 % con colas honestas: ~2–4 semanas más de tape con la corrección de censurados ya
+          integrada.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">Puertas de aprobación</Text>
+        <Table>
+          <TableHeader><TableRow>
+            <TableHead>Puerta</TableHead><TableHead>Decisión</TableHead><TableHead>Evidencia</TableHead>
+          </TableRow></TableHeader>
+          <TableBody>
+            {gates.map(r => <TableRow key={r.g}>
+              <TableCell weight="semibold">{r.g}</TableCell><TableCell>{r.s}</TableCell><TableCell>{r.t}</TableCell>
+            </TableRow>)}
+          </TableBody>
+        </Table>
+      </CardBody></CardContent></Card>
+
+      <Card><CardContent><CardBody>
+        <Text size={14} weight="semibold" className="mb-2 block">Recomendación del colectivo</Text>
+        <Text size={13} className="text-secondary">
+          1) Mantener la selección de segmento Masters-Under; no usar p ni EV para ordenar dentro del
+          segmento. 2) Piloto: línea ≥108.5 (~77 apuestas/día) — se acerca al objetivo 50–60 con ROI
+          conservado; añadir umbral diario si se quiere cap duro de 60. 3) Excluir en prueba China,
+          Pol. Mujeres y Super League. 4) Stake 2.5 % plano dinámico; no perseguir 100× — la expectativa
+          honesta es ~10×/30d con MDD real ~40–60 %. 5) Acumular 2–4 semanas de tape más antes de declarar
+          el 70 % de confianza futura; re-correr esta auditoría. 6) Comparación A/B contra el motor en
+          sombra cuando haya solape temporal suficiente.
+        </Text>
+      </CardBody></CardContent></Card>
+
+      <Footnote>
+        Métodos: bootstrap agrupado por partido (10 000 réplicas), bootstrap por día, posterior Beta(1,1),
+        Monte Carlo 20 000 trayectorias, liquidación de censurados por API oficial de resultados.
+        Limitaciones: 3 días de test, cuotas del tape asumidas ejecutables, correlación intra-partido
+        controlada pero no eliminada, selección de reglas evaluada sobre los mismos días (riesgo
+        in-sample marcado en cada puerta).
+      </Footnote>
+    </PageLayout>
+  );
+}
+</script>

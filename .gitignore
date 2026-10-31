@@ -3,3 +3,8 @@ __pycache__/
 .pytest_cache/
 data/
 *.egg-info/
+shadow/state/
+docs/finals.json
+docs/bt3.json
+docs/backtest_metrics.json
+docs/kit.d.ts
