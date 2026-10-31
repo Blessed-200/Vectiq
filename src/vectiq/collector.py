@@ -101,7 +101,7 @@ class Collector:
             self.finals[gid] = (done, sum(a + b for a, b in done))
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:

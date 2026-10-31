@@ -200,10 +200,14 @@ def kelly(p: float, odds: float) -> float:
     return max(0.0, (p * odds - 1.0) / (odds - 1.0))
 
 
-def drawdown_multiplier(drawdown: float) -> float:
-    """1.0 until -15 %, half size until -25 %, flat (paused) beyond."""
+def drawdown_multiplier(drawdown: float, floor: float = 0.25) -> float:
+    """1.0 until -15 %, half size until -25 %, then ``floor`` x size.
+
+    Paper money must never stop completely: a paused book settles nothing new, so its equity can never recover and
+    the pause would be permanent (it happened 2026-10-30 at -26 %). The pre-registered sample keeps growing; with real
+    money the floor is simply set to 0."""
     if drawdown >= 0.25:
-        return 0.0
+        return floor
     if drawdown >= 0.15:
         return 0.5
     return 1.0

@@ -114,7 +114,8 @@ def test_sprt_switches_off_on_losses_and_back_on_on_wins():
 def test_drawdown_brake():
     assert masters.drawdown_multiplier(0.05) == 1.0
     assert masters.drawdown_multiplier(0.18) == 0.5
-    assert masters.drawdown_multiplier(0.30) == 0.0
+    assert masters.drawdown_multiplier(0.30) == 0.25       # paper never fully stops (deadlock on 2026-10-30)
+    assert masters.drawdown_multiplier(0.30, floor=0.0) == 0.0
 
 
 class FakeClient:
@@ -406,3 +407,19 @@ def test_candidate_is_recorded_once_per_game_and_never_notified(tmp_path):
     assert not any("99.5" in m for m in sent)
     col._settle_final(383584934, _cand_state(), [(11, 8), (7, 11), (11, 5), (11, 9), (11, 7)], "results_api")
     assert cand.db.execute("select result, src from bets").fetchone() == ("W", "results_api")
+
+
+def test_candidate_bet_settles_when_the_final_is_observed_in_the_feed(tmp_path):
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    cand = PaperLedger(tmp_path / "c.sqlite", 1000.0)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, cand=cand,
+                    book=masters.MastersBook.from_seed(), notify=lambda m: True)
+    col._masters(_cand_state(), NOW)
+    assert cand.open_games()
+    fin = _cand_state(sets=((11, 8), (7, 11), (11, 5), (11, 9), (11, 7)))
+    fin.sets_won = (3, 2) if False else (4, 1)
+    fin.sets = [(11, 8), (7, 11), (11, 5), (11, 9), (11, 7)]
+    fin.sets_won = (4, 1)
+    col.last[fin.game_id] = fin
+    col._finished(fin.game_id)
+    assert not cand.open_games() and cand.db.execute("select result from bets").fetchone()[0] == "W"
