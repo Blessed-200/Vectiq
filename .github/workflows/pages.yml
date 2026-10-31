@@ -1,0 +1,76 @@
+name: pages
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+env:
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 30          # para el registro de cambios (git log)
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Descargar assets del release ledger (obligatorios)
+        run: |
+          set -euo pipefail
+          mkdir -p site/assets
+          gh release download ledger \
+            --pattern "masters.sqlite" --pattern "cand.sqlite" \
+            --pattern "shadow.sqlite" --pattern "paper.sqlite" \
+            --pattern "masters_book.json" \
+            --dir site/assets --clobber
+          ls -la site/assets/
+
+      - name: Descargar shadow-ledger (opcional: puede no existir aún)
+        run: |
+          mkdir -p site/assets
+          gh release download shadow-ledger --pattern "state.tar.gz" \
+            --dir site/assets --clobber || echo "shadow-ledger aún no existe — estado vacío honesto"
+
+      - name: Construir site/data
+        run: |
+          python3 site/build_data.py \
+            --assets site/assets --out site/data --repo-root . \
+            --require masters.sqlite cand.sqlite shadow.sqlite masters_book.json
+          ls -la site/data/
+
+      - name: Verificar que los JSON son válidos y recientes
+        run: |
+          python3 - <<'PY'
+          import json, glob, sys
+          files = sorted(glob.glob("site/data/*.json"))
+          assert files, "no se generó ningún JSON"
+          for f in files:
+              d = json.load(open(f))
+              assert "schema_version" in d, f"{f} sin schema_version"
+          print(f"{len(files)} JSON válidos:", files)
+          PY
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/
+
+      - name: Deploy a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

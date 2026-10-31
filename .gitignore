@@ -8,3 +8,7 @@ docs/finals.json
 docs/bt3.json
 docs/backtest_metrics.json
 docs/kit.d.ts
+
+# Panel Pages (se genera en CI)
+site/data/
+site/assets/
