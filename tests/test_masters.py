@@ -423,3 +423,38 @@ def test_candidate_bet_settles_when_the_final_is_observed_in_the_feed(tmp_path):
     col.last[fin.game_id] = fin
     col._finished(fin.game_id)
     assert not cand.open_games() and cand.db.execute("select result from bets").fetchone()[0] == "W"
+
+
+def test_stale_bets_in_every_ledger_are_settled_from_the_results_service(tmp_path):
+    from vectiq.feed.client import Response
+    from vectiq.signals.engine import Signal
+
+    class C(FakeClient):
+        def results(self, champ, d0, d1):
+            rows = [{"id": 9, "score": "4:1 (11:8,7:11,11:5,11:9,11:7)"}]
+            return Response(True, 200, {"count": 1, "items": rows}, 1, 1, int(NOW * 1000))
+    cand = PaperLedger(tmp_path / "c.sqlite", 1000.0)
+    sig = Signal(9, "a v b", "Masters. Rusia", [], "under", 99.5, 1.84, 0.55, 0.1, 1.8, 0.001, 90.0, 99.5)
+    assert cand.open_bet(sig, int((NOW - 4 * 3600) * 1000), champ_id=2685660, start_ts=int(NOW - 5 * 3600))
+    legacy = Signal(10, "c v d", "Masters. Rusia", [], "under", 99.5, 1.84, 0.55, 0.1, 1.8, 0.001, 90.0, 99.5)
+    assert cand.open_bet(legacy, int((NOW - 4 * 3600) * 1000))          # old row: no champ/start stored
+    col = Collector(C(), TapeWriter(tmp_path / "t"), None, cand=cand, notify=lambda m: True)
+    col._sweep_orphans(NOW)
+    rows = dict(cand.db.execute("select game_id, result||':'||src from bets").fetchall())
+    assert rows[9] == "W:results_api" and rows[10] == "V:void" and not cand.open_games()
+
+
+def test_dashboard_counts_only_real_results_and_renders(tmp_path):
+    from vectiq.notify import dashboard
+    from vectiq.signals.engine import Signal
+    led = PaperLedger(tmp_path / "l.sqlite", 100.0)
+    for g, tot in ((1, 90), (2, 120), (3, 90)):
+        sg = Signal(g, "a v b", "Masters. Rusia", [], "under", 100.5, 2.0, 0.55, 0.1, 1.8, 0.01, 90.0, 100.5)
+        led.open_bet(sg, 1_792_000_000_000 + g)
+        led.settle(g, tot)
+    sg = Signal(4, "a v b", "Masters. Rusia", [], "under", 100.5, 2.0, 0.55, 0.1, 1.8, 0.01, 90.0, 100.5)
+    led.open_bet(sg, 1_792_000_000_010)                                   # still open: must not count
+    page, books = dashboard.build({"X": tmp_path / "l.sqlite", "Missing": tmp_path / "none.sqlite"}, now_s=1_792_100_000.0)
+    b = books[0]
+    assert len(books) == 1 and b["n"] == 3 and b["open"] == 1 and abs(b["roi"] - 1 / 3) < 1e-9
+    assert "<svg" in page and "VECTIQ" in page and "X" in dashboard.caption(books)

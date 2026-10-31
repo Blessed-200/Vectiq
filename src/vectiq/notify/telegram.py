@@ -42,6 +42,17 @@ def send(text: str, token: str | None = None, chat_id: str | None = None) -> boo
     return r.ok
 
 
+def send_document(path, caption: str = "", token: str | None = None, chat_id: str | None = None) -> bool:
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return False
+    with open(path, "rb") as fh:
+        r = requests.post(f"https://api.telegram.org/bot{token}/sendDocument", timeout=30,
+                          data={"chat_id": chat_id, "caption": caption, "parse_mode": "HTML"}, files={"document": fh})
+    return r.ok
+
+
 def format_masters(pick, bankroll: float, *, mode: str = "PRUEBA", sprt: str = "on", drawdown: float = 0.0) -> str:
     """Short alert for the Masters UNDER engine (``pick`` is ``signals.masters.Pick``). Decision first, detail last."""
     e = html.escape

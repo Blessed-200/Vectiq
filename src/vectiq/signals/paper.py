@@ -39,6 +39,9 @@ class PaperLedger:
         cols = {r[1] for r in self.db.execute("PRAGMA table_info(bets)")}
         if "src" not in cols:        # how the result was obtained: observed | imputed | partial (certain loss) | void
             self.db.execute("ALTER TABLE bets ADD COLUMN src TEXT")
+        for col in ("champ_id", "start_ts"):       # needed to settle from the results service after a hand-over
+            if col not in cols:
+                self.db.execute(f"ALTER TABLE bets ADD COLUMN {col} INTEGER")
         if "lead_min" not in cols:   # minutes between the alert and kick-off (NULL for in-play entries)
             self.db.execute("ALTER TABLE bets ADD COLUMN lead_min REAL")
 
@@ -91,10 +94,17 @@ class PaperLedger:
             "AND ts_ms/1000.0 + COALESCE(lead_min,0)*60 + ? < ?", (grace_s, now_s)).fetchall()
         return [r[0] for r in rows]
 
+    def stale_open_meta(self, now_s: float, grace_s: float = 7200.0) -> list[tuple[int, int | None, int | None]]:
+        """(game_id, champ_id, start_ts) of every game with an old open bet, whatever the ledger."""
+        return self.db.execute(
+            "SELECT game_id, MAX(champ_id), MAX(start_ts) FROM bets WHERE result IS NULL "
+            "AND ts_ms/1000.0 + COALESCE(lead_min,0)*60 + ? < ? GROUP BY game_id", (grace_s, now_s)).fetchall()
+
     def game_stake(self, game_id: int) -> float:
         return self.db.execute("SELECT COALESCE(SUM(stake),0) FROM bets WHERE game_id=?", (game_id,)).fetchone()[0]
 
-    def open_bet(self, s: Signal, now_ms: int | None = None, lead_min: float | None = None) -> bool:
+    def open_bet(self, s: Signal, now_ms: int | None = None, lead_min: float | None = None,
+                 champ_id: int | None = None, start_ts: int | None = None) -> bool:
         bk = self.bankroll
         stake = round(bk * s.stake_frac, 2)
         if stake < MIN_STAKE:     # paper money has no betting minimum; only skip dust
@@ -109,6 +119,8 @@ class PaperLedger:
             return False
         if lead_min is not None:
             self.db.execute("UPDATE bets SET lead_min=? WHERE rowid=last_insert_rowid()", (lead_min,))
+        if champ_id is not None or start_ts is not None:
+            self.db.execute("UPDATE bets SET champ_id=?, start_ts=? WHERE rowid=last_insert_rowid()", (champ_id, start_ts))
         self.db.commit()
         return True
 

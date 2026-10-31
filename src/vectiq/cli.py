@@ -130,6 +130,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand,
         notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
+        notify_doc=lambda path, cap: telegram.send_document(path, cap, chat_id=chat), dashboard_dir=out,
         trade_from_s=t0 + args.trade_from_min * 60 if args.trade_from_min else None,
         trade_until_s=t0 + args.trade_until_min * 60 if args.trade_until_min else None,
         on_trade_start=(lambda c: _handoff_in(c, out)) if args.trade_from_min else None,

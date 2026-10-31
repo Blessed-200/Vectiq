@@ -25,7 +25,9 @@ class Collector:
                  book: masters.MastersBook | None = None, cand: PaperLedger | None = None, trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
-                 book_path: Path | None = None, line_interval: float = 45.0) -> None:
+                 book_path: Path | None = None, line_interval: float = 45.0,
+                 notify_doc: Callable[[str, str], bool] | None = None, dashboard_dir: Path | None = None,
+                 dashboard_every_s: float = 6 * 3600.0) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book, self.cand = mledger, book, cand
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
@@ -33,6 +35,8 @@ class Collector:
         self.book_path, self._book_saved = book_path, 0.0
         self.line_interval, self._line_t = line_interval, 0.0
         self._sweep_t, self._silent_t, self._alert_t = 0.0, 0.0, 0.0
+        self.notify_doc, self.dashboard_dir = notify_doc, dashboard_dir
+        self.dashboard_every_s, self._dash_t = dashboard_every_s, 0.0
         self._trading_seen = False
         self.absent: dict[int, int] = {}
         self._stopped = False
@@ -66,7 +70,7 @@ class Collector:
         calibrated = engine.is_calibrated(s.league)
         book = self.ledger if calibrated else self.shadow  # uncalibrated leagues: silent evidence only
         for sig in sigs:
-            if book and book.open_bet(sig, s.fetched_ms):
+            if book and book.open_bet(sig, s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
                 if calibrated:
                     self.notify(telegram.format_signal(sig))
                 log.info("%s %s %s %s @%s ev=%.3f", "signal" if calibrated else "shadow", sig.players, sig.side,
@@ -220,7 +224,7 @@ class Collector:
             return
         sig = candidate.evaluate_candidate(s)
         if sig is not None:
-            self.cand.open_bet(sig, s.fetched_ms)
+            self.cand.open_bet(sig, s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts)
 
     def _masters(self, s: MatchState, now_s: float) -> None:
         if self.trading(now_s):                 # only the run that owns the ledgers records the candidate
@@ -248,7 +252,7 @@ class Collector:
         if self.sprt == "off":
             log.info("masters muted by SPRT: %s", pick.signal.players)
             return
-        if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start):
+        if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start, champ_id=s.league_id, start_ts=s.start_ts):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
             self._alert_t = now_s
             self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
@@ -256,24 +260,53 @@ class Collector:
                      pick.signal.price, pick.signal.ev)
 
     def _sweep_orphans(self, now_s: float) -> None:
-        """Bets whose match we never saw finish (never went live, or lost in a hand-over) must not stay open forever:
-        one look at the detail endpoint, otherwise void (stake returned) so they stop blocking the open-risk cap."""
-        if self.mledger is None or now_s - self._sweep_t < 300:
+        """No bet may stay open: every ledger's stale bets are settled from the match itself (detail endpoint) or from
+        the results service (needs champ_id/start_ts stored when the bet was opened); only if neither knows the final
+        after ``grace`` is the bet voided (stake returned, counted apart), never silently dropped or guessed."""
+        if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for gid in self.mledger.stale_open(now_s):
-            if gid in self.last or gid in self.pending:
+        for led in (self.mledger, self.cand, self.shadow, self.ledger):
+            if led is None:
                 continue
-            st = self._rescue(gid)
-            if st is not None:
-                done = st.completed_sets
-                self.finals[gid] = (done, sum(a + b for a, b in done))
-                if self.book is not None and masters.is_masters(st):
-                    self.book.add_match(gid, done)
-                self.mledger.settle(gid, st.points_played)
-            else:
-                self.mledger.settle_vanished(gid, 0)      # void: never observed to completion
-                log.info("orphan bet voided for game %s", gid)
+            for gid, champ, start in led.stale_open_meta(now_s):
+                if gid in self.last or gid in self.pending:
+                    continue
+                done = self._results_final(champ, start, gid)
+                if done:
+                    led.settle(gid, sum(a + b for a, b in done), src="results_api")
+                    continue
+                st = self._rescue(gid)
+                if st is not None:
+                    led.settle(gid, st.points_played, src="observed")
+                elif champ is None or now_s - (start or 0) > 6 * 3600:   # legacy row, or service silent for 6 h
+                    led.settle_vanished(gid, 0)
+                    log.info("orphan bet voided for game %s", gid)
+
+    def _dashboard(self, now_s: float) -> None:
+        """Every few hours: one HTML board of every paper book (curves, ROI with uncertainty, ETA), sent to Telegram."""
+        if self.notify_doc is None or self.dashboard_dir is None or not self.trading(now_s):
+            return
+        if now_s - self._dash_t < self.dashboard_every_s:
+            return
+        first = self._dash_t == 0.0
+        self._dash_t = now_s
+        if first:                      # do not fire right after a hand-over; wait one full period
+            return
+        from vectiq.notify import dashboard
+        paths = {"Telegram (modelo)": self.mledger.path if self.mledger else None,
+                 "Manus (regla fija)": self.cand.path if self.cand else None,
+                 "Setka / viejo": self.shadow.path if self.shadow else None}
+        try:
+            for led in (self.mledger, self.cand, self.shadow):
+                if led is not None:
+                    led.db.commit()
+            page, books = dashboard.build(paths, now_s)
+            out = Path(self.dashboard_dir) / "dashboard.html"
+            out.write_text(page, encoding="utf-8")
+            self.notify_doc(str(out), dashboard.caption(books))
+        except Exception:  # noqa: BLE001 - a report must never stop collection
+            log.warning("dashboard failed", exc_info=True)
 
     def _watchdog(self, now_s: float) -> None:
         """Silence alarm: tells the user why, instead of leaving them wondering."""
@@ -335,6 +368,7 @@ class Collector:
         self._poll_line(now_s)
         self._poll_pending(now_s)
         self._sweep_orphans(now_s)
+        self._dashboard(now_s)
         self._watchdog(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
