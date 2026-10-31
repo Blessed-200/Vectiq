@@ -88,6 +88,15 @@ class ShadowEngine:
                 g["finished"] = True
                 g["final_total"] = s["final_total"]
                 g["sets"] = s.get("sets")
+        # Semilla del libro: sin ella el arranque en frío rechaza todo
+        # ("book_insuficiente n=0") durante semanas hasta juntar MIN_BOOK
+        # liquidaciones propias. Solo se aplica si el libro aún está vacío.
+        if self.book.n(0) < MIN_BOOK:
+            seed_path = self.st.root / "masters_book.json"
+            if seed_path.exists():
+                seed = json.loads(seed_path.read_text())
+                for k, xs in (seed.get("remaining") or {}).items():
+                    self.book.rem_t[int(k)] = sorted(int(x) for x in xs)
 
     def _players_hist_stats(self, players: str, before_ms: int):
         """(media causal, n min de los dos) o None si algún jugador < HIST_MIN."""

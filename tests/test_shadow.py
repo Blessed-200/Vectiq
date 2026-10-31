@@ -87,6 +87,20 @@ def test_engine_records_decisions(tmp_path):
     assert len(mk) == 2 and all(m["ladder"] for m in mk)
 
 
+def test_book_seed_on_cold_start(tmp_path):
+    """masters_book.json siembra el libro en arranque en frío; sin él n(0)=0."""
+    state = tmp_path / "state"
+    state.mkdir()
+    eng = ShadowEngine(state)
+    eng.restore()
+    assert eng.book.n(0) == 0
+    seed = {"remaining": {"0": [90, 100, 110] * 30}}
+    (state / "masters_book.json").write_text(json.dumps(seed))
+    eng2 = ShadowEngine(state)
+    eng2.restore()
+    assert eng2.book.n(0) == 90
+
+
 def test_no_duplicate_decisions_on_reprocess(tmp_path):
     shard = _fake_shard(tmp_path, [21])
     eng = ShadowEngine(tmp_path / "state")
