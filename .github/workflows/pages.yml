@@ -40,7 +40,7 @@ jobs:
             --dir site/assets --clobber
           ls -la site/assets/
 
-      - name: Descargar shadow-ledger (opcional: puede no existir aún)
+      - name: "Descargar shadow-ledger (opcional — puede no existir aún)"
         run: |
           mkdir -p site/assets
           gh release download shadow-ledger --pattern "state.tar.gz" \
