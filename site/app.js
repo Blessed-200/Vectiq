@@ -149,7 +149,7 @@ function histChart(book, { w = 920, h = 220 } = {}) {
 
 /* ---------- renderers ---------- */
 function stratLabel(key, s) {
-  const names = { masters: "Telegram (modelo)", cand: "Manus (regla fija)",
+  const names = { masters: "Telegram (modelo)", cand: "Manus (regla fija)", st2: "ST2-core (sombra)",
     setka: "Setka / viejo", st0: "Devin ST0", st1: "Devin ST1" };
   return names[key] || s.meta?.name || key;
 }
@@ -327,7 +327,7 @@ function renderPuertas() {
     card.append(ul);
     return card;
   };
-  ["h_a", "h_b", "cand", "st0", "st1"].forEach(k => g[k] && wrap.append(mk(g[k])));
+  ["h_a", "h_b", "cand", "st2", "st0", "st1"].forEach(k => g[k] && wrap.append(mk(g[k])));
 }
 function renderEjecucion() {
   const c = state.summary.capacity || {}, wrap = $("#capacity"); wrap.innerHTML = "";

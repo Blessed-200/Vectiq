@@ -57,7 +57,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "tg_status.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "tg_status.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -95,11 +95,13 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "tg_status.json", "--dir", str(out), "--clobber"],
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "tg_status.json", "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
     if col.cand is not None:
         col.cand.reopen()
+    if col.st2 is not None:
+        col.st2.reopen()
     loaded = MastersBook.load(out / "masters_book.json")
     for gid, (sets, _) in col.finals.items():  # finals this run saw before taking over
         loaded.add_match(gid, sets)
@@ -123,12 +125,13 @@ def cmd_collect(args: argparse.Namespace) -> int:
     ledger = PaperLedger(out / "paper.sqlite", start_bankroll=args.bankroll)
     shadow = PaperLedger(out / "shadow.sqlite", start_bankroll=args.bankroll)
     cand = PaperLedger(out / "cand.sqlite", start_bankroll=1000.0)      # frozen offline candidate, flat ~$1, silent
+    st2_ledger = PaperLedger(out / "st2.sqlite", start_bankroll=1000.0)   # ST2-core shadow, flat ~$1 + observation log
     mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
     book = MastersBook.load(out / "masters_book.json")
     t0 = time.time()
     chat = telegram.shadow_chat()
     col = Collector(
-        _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand,
+        _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
         notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
         notify_doc=lambda path, cap: telegram.send_document(path, cap, chat_id=chat), dashboard_dir=out,
         notify_photo=lambda path, cap: telegram.send_photo(path, cap, chat_id=chat),

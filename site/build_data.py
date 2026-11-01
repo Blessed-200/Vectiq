@@ -48,6 +48,13 @@ STRATEGIES = {
         "hypothesis": None,
         "cut": CUT_CAND,
     },
+    "st2": {
+        "name": "ST2-core (sombra)",
+        "db": "st2.sqlite",
+        "desc": "Under tras set 1 (k=1), línea central, cuota < 1,85, stake plano ~$1. Una posición por partido.",
+        "hypothesis": "ST2 (backtest +7 %, falta forward)",
+        "cut": None,          # el ledger nace en el despliegue: todo lo liquidado es prospectivo
+    },
     "setka": {
         "name": "Setka / viejo",
         "db": "shadow.sqlite",
@@ -482,6 +489,9 @@ def gates(strategies: dict, shadow: dict) -> dict:
         "cand": gate("Manus — prueba limpia",
                      strategies["cand"]["forward"], 1000, 5)
                      if "cand" in strategies else None,
+        "st2": gate("ST2-core — prueba forward",
+                    strategies["st2"]["forward"], 1000, 5)
+                    if "st2" in strategies and not strategies["st2"].get("empty") else None,
     }
     for k in ("ST0", "ST1"):
         if not shadow.get("empty") and k in shadow.get("strategies", {}):
