@@ -11,7 +11,7 @@ from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
-from vectiq.signals import candidate, engine, masters
+from vectiq.signals import candidate, engine, masters, st2
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -22,7 +22,7 @@ class Collector:
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
                  *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
                  scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
-                 book: masters.MastersBook | None = None, cand: PaperLedger | None = None, trade_from_s: float | None = None,
+                 book: masters.MastersBook | None = None, cand: PaperLedger | None = None, st2_ledger: PaperLedger | None = None, trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
                  book_path: Path | None = None, line_interval: float = 45.0,
@@ -31,7 +31,7 @@ class Collector:
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
-        self.mledger, self.book, self.cand = mledger, book, cand
+        self.mledger, self.book, self.cand, self.st2 = mledger, book, cand, st2_ledger
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
         self.book_path, self._book_saved = book_path, 0.0
@@ -109,7 +109,7 @@ class Collector:
             self.finals[gid] = (done, sum(a + b for a, b in done))
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger, self.cand):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:
@@ -128,14 +128,14 @@ class Collector:
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger, self.cand):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow, self.cand):
+        for book in (self.ledger, self.shadow, self.cand, self.st2):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -230,9 +230,25 @@ class Collector:
         if sig is not None:
             self.cand.open_bet(sig, s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts)
 
+    def _st2(self, s: MatchState) -> None:
+        """ST2-core shadow bet (k=1, centre line, Under < 1.85) + first-snapshot observation log for k=1 and k=2."""
+        if self.st2 is None:
+            return
+        obs = st2.observe(s)
+        if obs is None or not st2.log_obs(self.st2.db, obs):
+            return
+        sig = st2.signal_from(obs)
+        if sig is not None and self.st2.game_stake(s.game_id) == 0 and \
+                self.st2.open_bet(sig, s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
+            st2.mark_bet(self.st2.db, s.game_id, obs["k"])
+
     def _masters(self, s: MatchState, now_s: float) -> None:
         if self.trading(now_s):                 # only the run that owns the ledgers records the candidate
             self._candidate(s)
+            try:
+                self._st2(s)
+            except Exception:  # noqa: BLE001 - a shadow book must never stop the collector
+                log.warning("st2 shadow failed", exc_info=True)
         if not masters.is_masters(s) or self.mledger is None or self.book is None:
             return
         if not s.live:  # closing-line value: the last pre-start Under price on every line we hold
@@ -270,7 +286,7 @@ class Collector:
         if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for led in (self.mledger, self.cand, self.shadow, self.ledger):
+        for led in (self.mledger, self.cand, self.st2, self.shadow, self.ledger):
             if led is None:
                 continue
             for gid, champ, start in led.stale_open_meta(now_s):
@@ -292,8 +308,9 @@ class Collector:
         from vectiq.notify import dashboard
         paths = {"Telegram (modelo)": self.mledger.path if self.mledger else None,
                  "Manus (regla fija)": self.cand.path if self.cand else None,
+                 "ST2-core (sombra)": self.st2.path if self.st2 else None,
                  "Setka / viejo": self.shadow.path if self.shadow else None}
-        for led in (self.mledger, self.cand, self.shadow):
+        for led in (self.mledger, self.cand, self.st2, self.shadow):
             if led is not None:
                 led.db.commit()
         _, books = dashboard.build(paths, now_s)
