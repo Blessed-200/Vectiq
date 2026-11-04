@@ -11,7 +11,7 @@ from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
-from vectiq.signals import candidate, engine, masters, st2
+from vectiq.signals import candidate, engine, masters, st2, st3
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -22,7 +22,12 @@ class Collector:
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
                  *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
                  scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
-                 book: masters.MastersBook | None = None, cand: PaperLedger | None = None, st2_ledger: PaperLedger | None = None, trade_from_s: float | None = None,
+                 book: masters.MastersBook | None = None, cand: PaperLedger | None = None, st2_ledger: PaperLedger | None = None,
+                 st3_ledger: PaperLedger | None = None, alerts: str = "masters,st3", arm: str = "on",
+                 notify_alert: Callable[..., int | None] | None = None,
+                 poll_updates: Callable[[int | None], list] | None = None,
+                 ack_callback: Callable[..., None] | None = None, alert_chat: str | None = None,
+                 trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
                  book_path: Path | None = None, line_interval: float = 45.0,
@@ -32,6 +37,12 @@ class Collector:
                  shadow_state_dir: Path | None = None) -> None:
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book, self.cand, self.st2 = mledger, book, cand, st2_ledger
+        self.arm_mode = arm                      # on | silent | off: heads-up while set 1 looks like a blowout
+        self.st3, self.alerts = st3_ledger, {a.strip() for a in alerts.split(",") if a.strip()}   # which engines may message Telegram
+        self.notify_alert, self.poll_updates, self.ack_callback, self.alert_chat = notify_alert, poll_updates, ack_callback, alert_chat
+        self._upd_offset: int | None = None
+        self._upd_t, self._st3_t, self._st3_pause = 0.0, 0.0, ""
+        self._armed: set[int] = set()
         self.trade_from_s, self.trade_until_s = trade_from_s, trade_until_s
         self.on_trade_start, self.on_trade_stop = on_trade_start, on_trade_stop
         self.book_path, self._book_saved = book_path, 0.0
@@ -70,6 +81,8 @@ class Collector:
             self.anchor[s.game_id] = engine.implied_rating_diff(w["home"], w["away"])
 
     def _signals(self, s: MatchState) -> None:
+        if self.ledger is None and self.shadow is None:
+            return
         sigs, why = engine.evaluate(s, self.anchor.get(s.game_id))
         calibrated = engine.is_calibrated(s.league)
         book = self.ledger if calibrated else self.shadow  # uncalibrated leagues: silent evidence only
@@ -109,7 +122,7 @@ class Collector:
             self.finals[gid] = (done, sum(a + b for a, b in done))
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:
@@ -128,14 +141,14 @@ class Collector:
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow, self.cand, self.st2):
+        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -219,8 +232,9 @@ class Collector:
         new, _ = masters.sprt_state((p, o, w) for p, o, w, _ in self.mledger.settled_series())
         if new != self.sprt:
             self.sprt = new
-            self.notify(f"<b>VECTIQ · MASTERS UNDER</b>\nVentaja {new.upper()} según el test secuencial (SPRT)."
-                        + (" Alertas silenciadas hasta que la evidencia se recupere." if new == "off" else ""))
+            if "masters" in self.alerts:
+                self.notify(f"<b>VECTIQ · MASTERS UNDER</b>\nVentaja {new.upper()} según el test secuencial (SPRT)."
+                            + (" Alertas silenciadas hasta que la evidencia se recupere." if new == "off" else ""))
 
     def _candidate(self, s: MatchState) -> None:
         """Shadow-only frozen rule: one flat $1 paper position per game, never notified."""
@@ -242,6 +256,76 @@ class Collector:
                 self.st2.open_bet(sig, s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
             st2.mark_bet(self.st2.db, s.game_id, obs["k"])
 
+    # -- ST3: alert + paper book + execution log ------------------------------
+    def _st3(self, s: MatchState, now_s: float) -> None:
+        """ST3: heads-up while set 1 is going to be a blowout, then the bet alert the moment it is; one paper position
+        per match (always recorded: it is the measurement of the rule) and one Telegram alert per match (only while the
+        risk guards allow real money)."""
+        if self.st3 is None:
+            return
+        talk = "st3" in self.alerts and self.notify_alert is not None
+        arm = st3.arm(s) if talk and self.arm_mode != "off" else None
+        if arm is not None and s.game_id not in self._armed:
+            self._armed.add(s.game_id)
+            if st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)[0]:
+                self.notify_alert(telegram.format_st3_arm(f"{s.home} vs {s.away}", s.league, arm, masters.match_url(s),
+                                                          s.fetched_ms / 1000.0), None, self.arm_mode == "silent")
+        al = st3.evaluate(s)
+        if al is None or self.st3.game_stake(s.game_id) > 0:
+            return
+        if not self.st3.open_bet(st3.signal_from(al, st3.STAKE_FRAC), s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
+            return
+        self._armed.discard(s.game_id)
+        al.url = masters.match_url(s)
+        ok, why = st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)
+        frac = st3.stake_fraction(self.st3.drawdown())
+        if talk and ok and frac > 0:
+            note = "Banca en caída: apuesta reducida a la mitad." if frac < st3.STAKE_FRAC else ""
+            mid = self.notify_alert(telegram.format_st3(al, self.st3.bankroll, frac, al.url, note=note),
+                                    telegram.exec_buttons(al.game_id))
+            st3.record_alert(self.st3.db, al, "bet", mid)
+            self._st3_t = now_s
+            log.info("st3 alert %s under %s @%s", al.players, al.line, al.price)
+        elif talk and not ok:
+            if why != self._st3_pause:
+                self._st3_pause = why
+                self.notify_alert(f"<b>ST3 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+        if ok and self._st3_pause:
+            self._st3_pause = ""
+            if talk:
+                self.notify_alert("<b>ST3 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
+
+    def _poll_exec(self, now_s: float) -> None:
+        """Telegram button presses -> execution log (accepted / lower odds / could not), deduplicated by update id."""
+        if self.poll_updates is None or self.st3 is None or not self.trading(now_s) or now_s - self._upd_t < 5:
+            return
+        self._upd_t = now_s
+        labels = {"ok": ("aceptada", "Registrado: aceptada"), "low": ("cuota_menor", "Registrado: cuota menor"),
+                  "no": ("no_llego", "Registrado: no llegué")}
+        for u in self.poll_updates(self._upd_offset):
+            self._upd_offset = int(u["update_id"]) + 1
+            cq = u.get("callback_query")
+            if not cq:
+                continue
+            parts = str(cq.get("data", "")).split(":")
+            if len(parts) != 3 or parts[0] != "x" or parts[2] not in labels:
+                continue
+            status, label = labels[parts[2]]
+            st3.record_exec(self.st3.db, int(u["update_id"]), int(parts[1]), status, (cq.get("from") or {}).get("first_name", ""))
+            if self.ack_callback is not None:
+                msg = cq.get("message") or {}
+                self.ack_callback(cq.get("id", ""), "Anotado", self.alert_chat, msg.get("message_id"), label)
+
+    def _st3_watchdog(self, now_s: float) -> None:
+        if self.st3 is None or "st3" not in self.alerts or self.notify_alert is None or not self.trading(now_s):
+            return
+        if self._st3_t == 0.0:
+            self._st3_t = now_s
+            return
+        if now_s - self._st3_t > 10800:
+            self._st3_t = now_s
+            self.notify_alert("<b>ST3 · sin señales hace 3 horas</b>\nPuede ser normal de madrugada; si sigue, revisa el recolector.", None)
+
     def _masters(self, s: MatchState, now_s: float) -> None:
         if self.trading(now_s):                 # only the run that owns the ledgers records the candidate
             self._candidate(s)
@@ -249,6 +333,10 @@ class Collector:
                 self._st2(s)
             except Exception:  # noqa: BLE001 - a shadow book must never stop the collector
                 log.warning("st2 shadow failed", exc_info=True)
+            try:
+                self._st3(s, now_s)
+            except Exception:  # noqa: BLE001 - never stop collection because of an alert
+                log.warning("st3 failed", exc_info=True)
         if not masters.is_masters(s) or self.mledger is None or self.book is None:
             return
         if not s.live:  # closing-line value: the last pre-start Under price on every line we hold
@@ -274,8 +362,9 @@ class Collector:
             return
         if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start, champ_id=s.league_id, start_ts=s.start_ts):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
-            self._alert_t = now_s
-            self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
+            if "masters" in self.alerts:        # the legacy Masters model keeps its paper book but is silent by default
+                self._alert_t = now_s
+                self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
 
@@ -286,7 +375,7 @@ class Collector:
         if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for led in (self.mledger, self.cand, self.st2, self.shadow, self.ledger):
+        for led in (self.mledger, self.cand, self.st2, self.st3, self.shadow, self.ledger):
             if led is None:
                 continue
             for gid, champ, start in led.stale_open_meta(now_s):
@@ -306,11 +395,13 @@ class Collector:
     def _all_books(self, now_s: float) -> list[dict]:
         """Every paper book (ours + Devin's shadow engine when its state is published) as dashboard records."""
         from vectiq.notify import dashboard
-        paths = {"Telegram (modelo)": self.mledger.path if self.mledger else None,
-                 "Manus (regla fija)": self.cand.path if self.cand else None,
+        paths = {"ST3 (alertas)": self.st3.path if self.st3 else None,
+                 "Telegram (modelo, silenciado)": self.mledger.path if self.mledger else None,
                  "ST2-core (sombra)": self.st2.path if self.st2 else None,
+                 "Manus (regla fija)": self.cand.path if self.cand else None,
                  "Setka / viejo": self.shadow.path if self.shadow else None}
-        for led in (self.mledger, self.cand, self.st2, self.shadow):
+        paths = {k: v for k, v in paths.items() if v}
+        for led in (self.st3, self.mledger, self.cand, self.st2, self.shadow):
             if led is not None:
                 led.db.commit()
         _, books = dashboard.build(paths, now_s)
@@ -375,7 +466,8 @@ class Collector:
 
     def _watchdog(self, now_s: float) -> None:
         """Silence alarm: tells the user why, instead of leaving them wondering."""
-        if self.mledger is None or not self.trading(now_s) or now_s - self._alert_t < 10800 or now_s - self._silent_t < 10800:
+        if self.mledger is None or "masters" not in self.alerts or not self.trading(now_s) \
+                or now_s - self._alert_t < 10800 or now_s - self._silent_t < 10800:
             return
         if self._alert_t == 0.0:
             self._alert_t = now_s
@@ -419,9 +511,15 @@ class Collector:
         d = time.strftime("%Y-%m-%d", time.gmtime(now_s))
         if d != self.day:
             self.day = d
-            if self.mledger is not None and self.trading(now_s):
+            if self.mledger is not None and self.trading(now_s) and "masters" in self.alerts:
                 self.notify(telegram.format_report("resumen diario · Masters Under", self.mledger.summary(), self.sprt,
                                                    self.mledger.drawdown()))
+            if self.st3 is not None and self.trading(now_s):
+                sm, ex = self.st3.summary(), st3.exec_summary(self.st3.db)
+                self.notify(f"<b>VECTIQ · resumen diario ST3</b>\nLiquidadas {sm['settled']} · ROI {sm['roi'] * 100:+.1f} % · "
+                            f"banca ${sm['bankroll']:.2f} · caída {self.st3.drawdown() * 100:.1f} %\n"
+                            f"Alertas {ex.get('alerts', 0)} · aceptadas {ex.get('aceptada', 0)} · cuota menor "
+                            f"{ex.get('cuota_menor', 0)} · no llegué {ex.get('no_llego', 0)}")
 
     # -- one cycle ---------------------------------------------------------
     def step(self, now_s: float | None = None) -> int:
@@ -436,6 +534,8 @@ class Collector:
         self._dashboard(now_s)
         self._status(now_s)
         self._watchdog(now_s)
+        self._poll_exec(now_s)
+        self._st3_watchdog(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
             return 0

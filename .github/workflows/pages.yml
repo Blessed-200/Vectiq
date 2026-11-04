@@ -34,8 +34,7 @@ jobs:
           set -euo pipefail
           mkdir -p site/assets
           gh release download ledger \
-            --pattern "masters.sqlite" --pattern "cand.sqlite" --pattern "st2.sqlite" \
-            --pattern "shadow.sqlite" --pattern "paper.sqlite" \
+            --pattern "masters.sqlite" --pattern "st2.sqlite" --pattern "st3.sqlite" \
             --pattern "masters_book.json" \
             --dir site/assets --clobber
           ls -la site/assets/
@@ -50,7 +49,7 @@ jobs:
         run: |
           python3 site/build_data.py \
             --assets site/assets --out site/data --repo-root . \
-            --require masters.sqlite cand.sqlite shadow.sqlite masters_book.json
+            --require masters.sqlite masters_book.json
           ls -la site/data/
 
       - name: Verificar que los JSON son válidos y recientes
