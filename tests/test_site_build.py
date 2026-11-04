@@ -71,7 +71,7 @@ def test_build_outputs(assets, tmp_path):
     assert r.returncode == 0, r.stderr
     s = json.load(open(os.path.join(out, "summary.json")))
     assert s["schema_version"] >= 1
-    assert set(s["strategies"]) >= {"masters", "cand", "setka"}
+    assert set(s["strategies"]) == {"st3", "masters", "st2"}      # cand / setka / ST0 / ST1 retiradas el 2026-11-04
     m = s["strategies"]["masters"]
     # 6 prematch fuertes (5 con resultado fuerte + 1 imputed va a weak) —
     # strong = W/L/P con observed/results_api/legado
@@ -99,9 +99,11 @@ def test_gates_structure(assets, tmp_path):
     out = str(tmp_path / "data")
     assert run_build(assets, out).returncode == 0
     s = json.load(open(os.path.join(out, "summary.json")))
-    for k in ("h_a", "h_b", "cand"):
+    assert s["gates"]["h_a"] is not None
+    for k in ("h_a",):
         g = s["gates"][k]
         assert {"n", "need_n", "ci_ok", "mdd_ok", "progress"} <= set(g)
+    assert "h_b" not in s["gates"] or s["gates"]["h_b"] is None
 
 
 def test_missing_required_fails(assets, tmp_path):
@@ -143,6 +145,5 @@ def test_shadow_ledger_optional(assets, tmp_path):
     out = str(tmp_path / "data2")
     assert run_build(assets, out).returncode == 0
     s = json.load(open(os.path.join(out, "summary.json")))
-    assert "st0" in s["strategies"]
-    st0 = json.load(open(os.path.join(out, "strategy_st0.json")))
-    assert st0["n"] == 1 and st0["roi"] == pytest.approx(1.0)
+    assert "st0" not in s["strategies"]            # el motor de Devin (ST0/ST1) está retirado de la web
+    assert not os.path.exists(os.path.join(out, "strategy_st0.json"))

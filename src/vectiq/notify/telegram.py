@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import html
 import os
+from datetime import datetime, timedelta, timezone
 
 import requests
 
@@ -120,3 +121,103 @@ def format_report(title: str, summ: dict, sprt: str, drawdown: float) -> str:
             f"Apuestas liquidadas {summ['settled']} · P&L {summ['pnl']:+.2f} · ROI {summ['roi'] * 100:+.1f} %\n"
             f"CLV {summ['clv'] * 100:+.2f} % · banco {summ['bankroll']:.2f} · caída {drawdown * 100:.1f} %\n"
             f"Ventaja (SPRT): <b>{sprt.upper()}</b>")
+
+
+# --------------------------------------------------------------------------- ST3 alerts (Cuba time, 12 h, buttons)
+def cuba_clock(ts_s: float) -> str:
+    """Wall clock in Cuba, 12-hour style (``8:20 PM``). Falls back to a fixed UTC-5 when tz data is missing."""
+    try:
+        from zoneinfo import ZoneInfo
+        d = datetime.fromtimestamp(ts_s, ZoneInfo("America/Havana"))
+    except Exception:  # noqa: BLE001 - tzdata may be absent on a slim runner
+        d = datetime.fromtimestamp(ts_s, timezone(timedelta(hours=-5)))
+    return f"{d.hour % 12 or 12}:{d.minute:02d} {'AM' if d.hour < 12 else 'PM'}"
+
+
+def cuba_day(ts_s: float) -> str:
+    try:
+        from zoneinfo import ZoneInfo
+        d = datetime.fromtimestamp(ts_s, ZoneInfo("America/Havana"))
+    except Exception:  # noqa: BLE001
+        d = datetime.fromtimestamp(ts_s, timezone(timedelta(hours=-5)))
+    return d.strftime("%d/%m")
+
+
+def exec_buttons(game_id: int) -> list[list[tuple[str, str]]]:
+    return [[("Aceptada", f"x:{game_id}:ok"), ("Cuota menor", f"x:{game_id}:low")],
+            [("No llegué / rechazada", f"x:{game_id}:no")]]
+
+
+def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
+    """ST3 bet alert: decision first, one number per line, time in Cuba 12-hour clock."""
+    e = html.escape
+    a, b = al.set1
+    stake = bankroll * stake_frac
+    lines = [
+        "<b>ST3 · APUESTA YA</b>",
+        f"<b>MENOS DE {al.line:g}  @ {al.price:.2f}</b>   (mínima {2.00:.2f}; si baja de eso, no apuestes)",
+        f"{e(al.players)} · {e(al.league)}",
+        f"Set 1: {a}-{b} (ventaja {abs(a - b)}) · alerta {cuba_clock(al.ts_ms / 1000)} Cuba",
+        f"Apostar ≈ ${stake:,.2f} ({stake_frac * 100:.1f} % de ${bankroll:,.2f})",
+    ]
+    if note:
+        lines.append(e(note))
+    lines.append(f'<a href="{e(url)}">Abrir partido en Betwinner</a>')
+    return "\n".join(lines)
+
+
+def format_st3_arm(players: str, league: str, score: tuple[int, int], url: str, ts_s: float) -> str:
+    e = html.escape
+    return "\n".join([
+        "<b>ST3 · PREPÁRATE</b>",
+        f"{e(players)} · {e(league)}",
+        f"Set 1 va {score[0]}-{score[1]} · {cuba_clock(ts_s)} Cuba",
+        "Si termina con ventaja de 5 o más, en segundos llega la alerta de apuesta.",
+        f'<a href="{e(url)}">Abrir partido en Betwinner</a>',
+    ])
+
+
+def send_alert(text: str, buttons: list[list[tuple[str, str]]] | None = None, silent: bool = False,
+               token: str | None = None, chat_id: str | None = None) -> int | None:
+    """Like ``send`` but returns the message id and can attach inline buttons ``[[(label, callback_data), ...], ...]``."""
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        return None
+    body: dict = {"chat_id": chat_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True,
+                  "disable_notification": silent}
+    if buttons:
+        body["reply_markup"] = {"inline_keyboard": [[{"text": t, "callback_data": d} for t, d in row] for row in buttons]}
+    r = requests.post(f"https://api.telegram.org/bot{token}/sendMessage", timeout=10, json=body)
+    return r.json()["result"]["message_id"] if r.ok else None
+
+
+def get_updates(offset: int | None = None, token: str | None = None) -> list[dict]:
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    if not token:
+        return []
+    params: dict = {"timeout": 0, "allowed_updates": '["callback_query"]'}
+    if offset is not None:
+        params["offset"] = offset
+    try:
+        r = requests.get(f"https://api.telegram.org/bot{token}/getUpdates", params=params, timeout=10)
+        return r.json().get("result", []) if r.ok else []
+    except Exception:  # noqa: BLE001 - polling is best-effort
+        return []
+
+
+def ack_callback(callback_id: str, text: str, chat_id: str | None = None, message_id: int | None = None,
+                 label: str | None = None, token: str | None = None) -> None:
+    """Toast the user and replace the buttons with one line saying what was recorded."""
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    if not token:
+        return
+    base = f"https://api.telegram.org/bot{token}"
+    try:
+        requests.post(f"{base}/answerCallbackQuery", timeout=10, json={"callback_query_id": callback_id, "text": text})
+        if chat_id and message_id and label:
+            requests.post(f"{base}/editMessageReplyMarkup", timeout=10, json={
+                "chat_id": chat_id, "message_id": message_id,
+                "reply_markup": {"inline_keyboard": [[{"text": label, "callback_data": "noop"}]]}})
+    except Exception:  # noqa: BLE001
+        pass

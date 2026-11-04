@@ -18,6 +18,9 @@ const int = x => x == null ? "—" : String(Math.round(x));
 const ciTxt = ci => ci ? `[${(ci[0] * 100).toFixed(1)}, ${(ci[1] * 100).toFixed(1)}]` : "—";
 const ciOk = ci => ci && ci[0] > 0;
 const dayOf = ts => new Date(ts).toISOString().slice(0, 10);
+// Hora de Cuba en formato de 12 horas: "03/11 8:20 PM"
+const cubaStamp = ts => new Date(ts).toLocaleString("en-GB", { timeZone: "America/Havana", day: "2-digit", month: "2-digit",
+  hour: "numeric", minute: "2-digit", hour12: true }).replace(",", "").replace(/ ([ap])m$/i, (m, x) => " " + x.toUpperCase() + "M");
 const ageTxt = min => {
   if (min == null) return "—";
   if (min < 60) return `${Math.round(min)} min`;
@@ -149,8 +152,7 @@ function histChart(book, { w = 920, h = 220 } = {}) {
 
 /* ---------- renderers ---------- */
 function stratLabel(key, s) {
-  const names = { masters: "Telegram (modelo)", cand: "Manus (regla fija)", st2: "ST2-core (sombra)",
-    setka: "Setka / viejo", st0: "Devin ST0", st1: "Devin ST1" };
+  const names = { st3: "ST3 (alertas)", masters: "Telegram (modelo, silenciado)", st2: "ST2-core (sombra)" };
   return names[key] || s.meta?.name || key;
 }
 function renderResumen() {
@@ -189,7 +191,7 @@ function renderResumen() {
     body.append(tr);
   }
   tbl.append(body);
-  $("#generated").textContent = "Datos al " + new Date(s.generated_at).toLocaleString("es", { dateStyle: "short", timeStyle: "short" });
+  $("#generated").textContent = "Datos al " + cubaStamp(s.generated_at) + " (hora de Cuba)";
   $("#resumen-sources").textContent = "Fuentes: " + Object.entries(s.sources)
     .map(([k, v]) => `${k} (${(v.bytes / 1024).toFixed(0)} KB)`).join(" · ");
   // curva comparativa: carga detalles
@@ -282,11 +284,11 @@ function renderStratDetail(key, d) {
   body.append(el("h3", { class: "chart-title" }, `Últimas apuestas (${settled.length || bets.length} en el filtro)`));
   const tbl = el("table", { class: "dense" });
   tbl.append(el("thead", {}, el("tr", {},
-    ...["Fecha", "Partido", "Liga", "Etapa", "Línea", "Cuota", "Resultado", "PnL", "Fuente"]
+    ...["Hora Cuba", "Partido", "Liga", "Etapa", "Línea", "Cuota", "Resultado", "PnL", "Fuente"]
       .map((h, i) => el("th", { class: i >= 4 && i <= 7 ? "num" : "" }, h)))));
   const tb = el("tbody", {});
   bets.slice(-60).reverse().forEach(b => tb.append(el("tr", {},
-    el("td", { class: "mono" }, dayOf(b.ts)),
+    el("td", { class: "mono" }, cubaStamp(b.ts)),
     el("td", {}, b.players || `#${b.gid}`),
     el("td", {}, b.league || "—"),
     el("td", {}, STAGE_LABELS[Math.min(b.stage || 0, 3)]),
@@ -327,7 +329,7 @@ function renderPuertas() {
     card.append(ul);
     return card;
   };
-  ["h_a", "h_b", "cand", "st2", "st0", "st1"].forEach(k => g[k] && wrap.append(mk(g[k])));
+  ["st3", "st2", "h_a"].forEach(k => g[k] && wrap.append(mk(g[k])));
 }
 function renderEjecucion() {
   const c = state.summary.capacity || {}, wrap = $("#capacity"); wrap.innerHTML = "";

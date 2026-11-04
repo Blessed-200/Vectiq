@@ -34,19 +34,22 @@ SRC_WEAK = {"imputed", "partial"}
 CUT_MAIN = 1793142468000          # corte PROMOTION.md (H_A, H_B)
 CUT_CAND = 1793154783487          # inicio prueba limpia de Manus
 
+SHOW_DEVIN = False        # ST0/ST1 (motor Devin) retirados el 2026-11-04: sin evidencia de ventaja
+
 STRATEGIES = {
+    "st3": {
+        "name": "ST3 (alertas)",
+        "db": "st3.sqlite",
+        "desc": "Under tras set 1 si el ganador del set 1 le sacó 5+ puntos, en la línea más baja con cuota ≥ 2,00. "
+                "Banca de $100 con 1 % por apuesta (compuesta). Una posición por partido; es la que lanza las alertas.",
+        "hypothesis": "ST3 (backtest +14 %, forward +10 % con 319 apuestas: falta confirmar)",
+        "cut": None,          # el ledger nace en el despliegue: todo lo liquidado es prospectivo
+    },
     "masters": {
         "name": "Telegram (modelo)",
         "db": "masters.sqlite",
         "desc": "Masters Under con modelo. Etapas: prepartido, tras set 1, tras set 2.",
         "hypothesis": "H_A (solo etapa prepartido)",
-    },
-    "cand": {
-        "name": "Manus (regla fija)",
-        "db": "cand.sqlite",
-        "desc": "Regla fija MS_G17_UNDER_K1_PB12_BUD6, stake plano ~$1.",
-        "hypothesis": None,
-        "cut": CUT_CAND,
     },
     "st2": {
         "name": "ST2-core (sombra)",
@@ -54,12 +57,6 @@ STRATEGIES = {
         "desc": "Under tras set 1 (k=1), línea central, cuota < 1,85, stake plano ~$1. Una posición por partido.",
         "hypothesis": "ST2 (backtest +7 %, falta forward)",
         "cut": None,          # el ledger nace en el despliegue: todo lo liquidado es prospectivo
-    },
-    "setka": {
-        "name": "Setka / viejo",
-        "db": "shadow.sqlite",
-        "desc": "Under tras set 1 en ligas de 5 sets. Silenciado.",
-        "hypothesis": "H_B (solo tras set 1)",
     },
 }
 PRICE_BANDS = [(0, 1.7, "<1.70"), (1.7, 1.9, "1.70–1.89"),
@@ -483,12 +480,9 @@ def gates(strategies: dict, shadow: dict) -> dict:
         "h_a": gate("H_A — Masters Under prepartido",
                     strategies["masters"]["forward"], 400, 5)
                     if "masters" in strategies else None,
-        "h_b": gate("H_B — Setka Under tras set 1",
-                    strategies["setka"]["forward"], 200, 5)
-                    if "setka" in strategies else None,
-        "cand": gate("Manus — prueba limpia",
-                     strategies["cand"]["forward"], 1000, 5)
-                     if "cand" in strategies else None,
+        "st3": gate("ST3 — prueba forward",
+                    strategies["st3"]["forward"], 1000, 5)
+                    if "st3" in strategies and not strategies["st3"].get("empty") else None,
         "st2": gate("ST2-core — prueba forward",
                     strategies["st2"]["forward"], 1000, 5)
                     if "st2" in strategies and not strategies["st2"].get("empty") else None,
@@ -520,7 +514,7 @@ def build(assets: str, out_dir: str, repo_root: str) -> dict:
         res["empty"] = False
         strategies[key] = res
 
-    shadow = load_shadow_state(assets)
+    shadow = load_shadow_state(assets) if SHOW_DEVIN else None
     shadow_res = analyze_shadow(shadow)
     if os.path.exists(os.path.join(assets, "state.tar.gz")):
         sources["state.tar.gz"] = _src_info(

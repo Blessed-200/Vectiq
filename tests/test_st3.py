@@ -1,0 +1,169 @@
+import sqlite3
+
+from test_masters import state
+
+from vectiq.notify import telegram
+from vectiq.signals import st3
+from vectiq.signals.paper import PaperLedger
+
+# ladder: low rung 2.15 (>= 2.00), middle 1.90, top 1.65
+LAD = ((100.5, 1.62, 2.15), (103.5, 1.85, 1.95), (106.5, 2.20, 1.65))
+
+
+def _s(sets, **kw):
+    return state(sets=sets, live=True, lines=kw.pop("lines", LAD), **kw)
+
+
+def test_blowout_bets_the_lowest_rung_paying_two():
+    al = st3.evaluate(_s([(11, 5)]))
+    assert al and al.line == 100.5 and al.price == 2.15 and al.set1 == (11, 5) and al.inplay == (0, 0)
+    sig = st3.signal_from(al, st3.STAKE_FRAC)
+    assert sig.side == "under" and sig.line == 100.5 and sig.stake_frac == 0.01
+
+
+def test_margin_below_five_is_no_bet():
+    assert st3.evaluate(_s([(11, 7)])) is None            # margin 4
+    assert st3.evaluate(_s([(11, 6)])) is not None        # margin 5 is the threshold
+    assert st3.evaluate(_s([(5, 11)])) is not None        # the away player may be the blowout winner
+
+
+def test_needs_a_rung_paying_two():
+    assert st3.evaluate(_s([(11, 3)], lines=((103.5, 1.85, 1.95), (106.5, 2.2, 1.65)))) is None
+
+
+def test_inplay_limit_and_other_filters():
+    assert st3.evaluate(_s([(11, 3), (2, 1)])) is not None                 # 3 points of set 2: still inside the window
+    assert st3.evaluate(_s([(11, 3), (4, 2)])) is None                     # 6 points: window closed
+    assert st3.evaluate(_s([])) is None                                    # nothing completed yet
+    assert st3.evaluate(_s([(11, 3), (11, 4)])) is None                    # k = 2 is never bet
+    assert st3.evaluate(_s([(11, 3)], league="Masters. China")) is None
+    assert st3.evaluate(_s([(11, 3)], league="Masters. Super League")) is None
+    assert st3.evaluate(_s([(11, 3)], best_of=5)) is None
+    assert st3.evaluate(state(sets=[(11, 3)], live=False, lines=LAD)) is None
+
+
+def test_blocked_or_one_sided_lines_are_ignored():
+    import dataclasses
+    s = _s([(11, 3)])
+    s.quotes = [dataclasses.replace(q, blocked=True) if q.line == 100.5 else q for q in s.quotes]
+    assert st3.evaluate(s) is None                        # the only rung paying 2.00 is blocked: no bet
+    lad = ((97.5, 1.45, 2.60),) + LAD
+    s2 = _s([(11, 3)], lines=lad)
+    s2.quotes = [dataclasses.replace(q, blocked=True) if q.line == 97.5 else q for q in s2.quotes]
+    assert st3.evaluate(s2).line == 100.5                  # blocked 97.5 skipped, next rung paying 2.00
+
+
+def test_stake_fraction_ladder():
+    assert st3.stake_fraction(0.0) == 0.01 and st3.stake_fraction(0.14) == 0.01
+    assert st3.stake_fraction(0.15) == 0.005 and st3.stake_fraction(0.29) == 0.005
+    assert st3.stake_fraction(0.30) == 0.0
+
+
+def _bet(led, gid, won, ts):
+    al = st3.evaluate(_s([(11, 3)], gid=gid))
+    led.open_bet(st3.signal_from(al, 0.01), ts)
+    led.settle(gid, 90 if won else 120)
+
+
+def test_guard_rolling_roi_and_day_stop(tmp_path):
+    led = PaperLedger(tmp_path / "st3.sqlite", start_bankroll=100.0)
+    now_s = 1_800_000_000.0
+    ok, _ = st3.guard(led.db, led.bankroll, led.drawdown(), now_s)
+    assert ok
+    for i in range(150):                       # 150 straight losses: rolling ROI -100 %
+        _bet(led, 1000 + i, False, int((now_s - 3 * 86400) * 1000) + i)
+    ok, why = st3.guard(led.db, led.bankroll, led.drawdown(), now_s)
+    assert not ok and ("ROI" in why or "caída" in why)
+    led2 = PaperLedger(tmp_path / "st3b.sqlite", start_bankroll=100.0)
+    day0 = (int(now_s) // 86400) * 86400 * 1000
+    for i in range(11):                        # 11 losses of 1 % today: -10.4 % of the bankroll
+        _bet(led2, 2000 + i, False, day0 + 1000 + i)
+    ok, why = st3.guard(led2.db, led2.bankroll, 0.0, now_s)
+    assert not ok and "día" in why
+
+
+def test_alert_and_exec_log_are_idempotent(tmp_path):
+    db = sqlite3.connect(tmp_path / "x.sqlite")
+    al = st3.evaluate(_s([(11, 3)]))
+    assert st3.record_alert(db, al, "bet", 7) and not st3.record_alert(db, al, "bet", 8)
+    assert st3.record_exec(db, 11, al.game_id, "aceptada") and not st3.record_exec(db, 11, al.game_id, "aceptada")
+    assert st3.record_exec(db, 12, al.game_id, "no_llego")
+    assert st3.exec_summary(db) == {"alerts": 1, "aceptada": 1, "no_llego": 1}
+
+
+def test_cuba_clock_is_12_hour():
+    # 2026-11-04 01:14 UTC is 8:14 PM in Cuba (UTC-5 once DST ends)
+    assert telegram.cuba_clock(1793754840) == "8:14 PM"
+    assert telegram.cuba_clock(1793754840 - 20 * 3600) == "12:14 AM" or telegram.cuba_clock(1793754840 - 20 * 3600).endswith("M")
+    assert telegram.cuba_day(1793754840) == "03/11"
+
+
+def test_alert_text_has_decision_first_and_cuba_time():
+    al = st3.evaluate(_s([(11, 5)]))
+    txt = telegram.format_st3(al, 100.0, 0.01, "https://betwinner2.com/es/live/x")
+    lines = txt.split("\n")
+    assert lines[0].startswith("<b>ST3") and "MENOS DE 100.5" in lines[1] and "@ 2.15" in lines[1]
+    assert "Cuba" in txt and ("AM" in txt or "PM" in txt) and "$1.00" in txt and "betwinner2.com" in txt
+    assert telegram.exec_buttons(5)[0][0][1] == "x:5:ok"
+
+
+def test_collector_flow_arm_alert_button_settle_and_silenced_legacy(tmp_path):
+    from test_masters import NOW, FakeClient
+
+    from vectiq.collector import Collector
+    from vectiq.signals import masters
+    from vectiq.store.tape import TapeWriter
+
+    legacy, sent, acks = [], [], []
+    gid = 383584934
+    ups = [{"update_id": 5, "callback_query": {"id": "c1", "data": f"x:{gid}:ok", "from": {"first_name": "A"},
+                                              "message": {"message_id": 42}}}]
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    st = PaperLedger(tmp_path / "st3.sqlite", 100.0)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
+                    st3_ledger=st, alerts="st3", notify=lambda m: legacy.append(m) or True,
+                    notify_alert=lambda m, b=None, silent=False: sent.append((m, b)) or 42,
+                    poll_updates=lambda off: ups if off is None else [], ack_callback=lambda *a: acks.append(a),
+                    alert_chat="1")
+    col._masters(_s([(9, 4)], start_in_min=-5), NOW)                       # 9-4 is only 5 ahead: arms
+    col._masters(_s([(9, 4)], start_in_min=-5), NOW + 3)                   # same match again: no second heads-up
+    assert len(sent) == 1 and "PREPÁRATE" in sent[0][0]
+    col._masters(_s([(11, 5)], start_in_min=-5), NOW + 10)                 # set 1 closes with a 6-point margin: bet alert
+    assert len(sent) == 2 and "APUESTA YA" in sent[1][0] and sent[1][1][0][0][1] == f"x:{gid}:ok"
+    col._masters(_s([(11, 5), (1, 0)], start_in_min=-5), NOW + 13)         # later snapshots of the same match: nothing new
+    assert len(sent) == 2 and st.summary()["settled"] == 0 and st.open_games() == {gid}
+    col._poll_exec(NOW + 20)
+    assert st3.exec_summary(st.db) == {"alerts": 1, "aceptada": 1} and acks and acks[0][4] == "Registrado: aceptada"
+    col._poll_exec(NOW + 40)                                               # same update again: not counted twice
+    assert st3.exec_summary(st.db)["aceptada"] == 1
+    st.settle(gid, 90)                                                     # Under 100.5 wins at 2.15
+    assert round(st.summary()["pnl"], 2) == 1.15 and legacy == []          # legacy Masters model stays silent
+
+
+def test_paused_guard_records_paper_but_does_not_alert(tmp_path):
+    from test_masters import NOW, FakeClient
+
+    from vectiq.collector import Collector
+    from vectiq.signals import masters
+    from vectiq.store.tape import TapeWriter
+
+    sent = []
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    st = PaperLedger(tmp_path / "st3.sqlite", 100.0)
+    for i in range(41):                                                    # 41 straight losses: drawdown > 30 %
+        _bet(st, 5000 + i, False, int(NOW * 1000) - 5 * 86400_000 + i)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
+                    st3_ledger=st, alerts="st3", notify=lambda m: True,
+                    notify_alert=lambda m, b=None, silent=False: sent.append(m) or 1)
+    col._masters(_s([(11, 3)], start_in_min=-5), NOW)
+    assert any("EN PAUSA" in m for m in sent) and not any("APUESTA YA" in m for m in sent)
+    assert st.game_stake(383584934) > 0                                    # paper bet still recorded
+
+
+def test_arm_trigger_thresholds():
+    assert st3.arm(_s([(9, 4)])) == (9, 4)
+    assert st3.arm(_s([(4, 10)])) == (4, 10)               # works for either player
+    assert st3.arm(_s([(9, 5)])) is None                   # lead 4 is below the calibrated 5
+    assert st3.arm(_s([(8, 2)])) is None                   # leader below 9 points
+    assert st3.arm(_s([(11, 5), (9, 4)])) is None          # only while set 1 is in progress
+    assert st3.arm(_s([(9, 4)], league="Masters. China")) is None
