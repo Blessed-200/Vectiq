@@ -124,23 +124,27 @@ def format_report(title: str, summ: dict, sprt: str, drawdown: float) -> str:
 
 
 # --------------------------------------------------------------------------- ST3 alerts (Cuba time, 12 h, buttons)
-def cuba_clock(ts_s: float) -> str:
-    """Wall clock in Cuba, 12-hour style (``8:20 PM``). Falls back to a fixed UTC-5 when tz data is missing."""
+def _cuba_dt(ts_s: float) -> datetime:
+    """Cuba wall clock as a fixed UTC offset (default -4, what Cuban phones show now).
+
+    tzdata is NOT used on purpose: its Havana rules disagree with what Cuba actually applies this autumn, and a slim
+    runner may not have it. If Cuba changes its clock again, set VECTIQ_CUBA_UTC (hours, e.g. -5) without a code change.
+    """
     try:
-        from zoneinfo import ZoneInfo
-        d = datetime.fromtimestamp(ts_s, ZoneInfo("America/Havana"))
-    except Exception:  # noqa: BLE001 - tzdata may be absent on a slim runner
-        d = datetime.fromtimestamp(ts_s, timezone(timedelta(hours=-5)))
+        off = float(os.environ.get("VECTIQ_CUBA_UTC", "-4"))
+    except ValueError:
+        off = -4.0
+    return datetime.fromtimestamp(ts_s, timezone(timedelta(hours=off)))
+
+
+def cuba_clock(ts_s: float) -> str:
+    """Wall clock in Cuba, 12-hour style (``8:20 PM``)."""
+    d = _cuba_dt(ts_s)
     return f"{d.hour % 12 or 12}:{d.minute:02d} {'AM' if d.hour < 12 else 'PM'}"
 
 
 def cuba_day(ts_s: float) -> str:
-    try:
-        from zoneinfo import ZoneInfo
-        d = datetime.fromtimestamp(ts_s, ZoneInfo("America/Havana"))
-    except Exception:  # noqa: BLE001
-        d = datetime.fromtimestamp(ts_s, timezone(timedelta(hours=-5)))
-    return d.strftime("%d/%m")
+    return _cuba_dt(ts_s).strftime("%d/%m")
 
 
 def exec_buttons(game_id: int) -> list[list[tuple[str, str]]]:
