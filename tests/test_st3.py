@@ -171,3 +171,58 @@ def test_arm_trigger_thresholds():
     assert st3.arm(_s([(8, 2)])) is None                   # leader below 9 points
     assert st3.arm(_s([(11, 5), (9, 4)])) is None          # only while set 1 is in progress
     assert st3.arm(_s([(9, 4)], league="Masters. China")) is None
+
+
+def _pre_col(tmp_path, sent, **kw):
+    from test_masters import FakeClient
+
+    from vectiq.collector import Collector
+    from vectiq.signals import masters
+    from vectiq.store.tape import TapeWriter
+
+    led = PaperLedger(tmp_path / "m.sqlite", 100.0)
+    st = PaperLedger(tmp_path / "st3.sqlite", 100.0)
+    col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
+                    st3_ledger=st, alerts=kw.pop("alerts", "st3,pre"), notify=lambda m: True,
+                    notify_alert=lambda m, b=None, silent=False: sent.append((m, b)) or 7, **kw)
+    return col, led, st
+
+
+def test_prematch_alert_uses_the_same_channel_with_buttons_and_minimum_odds(tmp_path):
+    from test_masters import NOW
+    sent = []
+    col, led, st = _pre_col(tmp_path, sent)
+    col._masters(state(), NOW)
+    assert len(sent) == 1
+    txt, buttons = sent[0]
+    assert txt.startswith("<b>PRE") and "MENOS DE" in txt and "mínima" in txt and "Cuba" in txt and "betwinner2.com" in txt
+    assert buttons == telegram.exec_buttons(383584934)
+    assert st3.already_alerted(st.db, 383584934, "pre") and led.game_stake(383584934) > 0
+    col._masters(state(), NOW + 20)                                         # same match again: still one alert
+    assert len(sent) == 1
+
+
+def test_old_model_live_entries_are_off_by_default(tmp_path):
+    from test_masters import NOW
+    sent = []
+    col, led, st = _pre_col(tmp_path, sent)
+    col._masters(state(sets=[(11, 9)], live=True, lines=((95.5, 1.5, 2.6), (99.5, 1.4, 3.0))), NOW)
+    assert led.db.execute("select count(*) from bets").fetchone()[0] == 0 and sent == []
+
+
+def test_pre_and_st3_on_one_match_share_a_1_5_percent_cap(tmp_path):
+    from test_masters import NOW
+    sent = []
+    col, led, st = _pre_col(tmp_path, sent)
+    col._masters(state(), NOW)                                              # PRE bet: 1 % of its book
+    col._masters(_s([(11, 5)], start_in_min=-5), NOW + 900)                 # then ST3 on the same match
+    st3_msg = [m for m, _ in sent if m.startswith("<b>ST3 · APUESTA")]
+    assert st3_msg and "0.5 %" in st3_msg[0] and "tope 1,5 %" in st3_msg[0]
+
+
+def test_combined_day_loss_counts_both_books(tmp_path):
+    from test_masters import NOW
+    col, led, st = _pre_col(tmp_path, [])
+    for i in range(6):
+        _bet(st, 7000 + i, False, int(NOW * 1000))
+    assert col._combined_day_loss(NOW) > 0.05

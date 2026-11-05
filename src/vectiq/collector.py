@@ -34,7 +34,9 @@ class Collector:
                  notify_doc: Callable[[str, str], bool] | None = None, dashboard_dir: Path | None = None,
                  dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
-                 shadow_state_dir: Path | None = None) -> None:
+                 shadow_state_dir: Path | None = None, masters_live: bool = False) -> None:
+        self.masters_live = masters_live         # the old Telegram model's after-set-1 entries: off (3-7 % ROI, below ST3)
+        self._pre_pause = ""
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
         self.mledger, self.book, self.cand, self.st2 = mledger, book, cand, st2_ledger
         self.arm_mode = arm                      # on | silent | off: heads-up while set 1 looks like a blowout
@@ -278,9 +280,16 @@ class Collector:
         self._armed.discard(s.game_id)
         al.url = masters.match_url(s)
         ok, why = st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)
+        if ok and self.mledger is not None and self._combined_day_loss(now_s) >= st3.DAY_STOP:
+            ok, why = False, "pérdida del día entre PRE y ST3 en el límite"
         frac = st3.stake_fraction(self.st3.drawdown())
-        if talk and ok and frac > 0:
-            note = "Banca en caída: apuesta reducida a la mitad." if frac < st3.STAKE_FRAC else ""
+        note = "Banca en caída: apuesta reducida a la mitad." if 0 < frac < st3.STAKE_FRAC else ""
+        if self.mledger is not None and self.mledger.bankroll > 0:      # PRE and ST3 on the same match: 1.5 % in total
+            left = st3.PER_MATCH_CAP - self.mledger.game_stake(s.game_id) / self.mledger.bankroll
+            if left < frac:
+                frac = max(0.0, left)
+                note = "Ya hay apuesta PRE en este partido: tope 1,5 % entre las dos."
+        if talk and ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st3(al, self.st3.bankroll, frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, al, "bet", mid)
@@ -355,6 +364,9 @@ class Collector:
         self.why[why if pick is None else "signal"] = self.why.get(why if pick is None else "signal", 0) + 1
         if pick is None:
             return
+        if pick.k != 0 and not self.masters_live:       # one tool: pre-match from this model, live from ST3 only
+            self.why["live_off"] = self.why.get("live_off", 0) + 1
+            return
         if self.mledger.has_stage(s.game_id, pick.k):   # one bet per match and entry stage, never a second line
             return
         if self.sprt == "off":
@@ -362,11 +374,63 @@ class Collector:
             return
         if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start, champ_id=s.league_id, start_ts=s.start_ts):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
-            if "masters" in self.alerts:        # the legacy Masters model keeps its paper book but is silent by default
+            if "pre" in self.alerts and pick.k == 0:
+                self._alert_pre(pick, s, now_s)
+            elif "masters" in self.alerts:        # legacy format, silent by default
                 self._alert_t = now_s
                 self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
+
+    def _combined_day_loss(self, now_s: float) -> float:
+        """Today's (UTC day) loss of the two books together, as a fraction of each bankroll (real money is one pot)."""
+        loss = 0.0
+        for led, kind in ((self.st3, "st3"), (self.mledger, "pre")):
+            if led is None or led.bankroll <= 0:
+                continue
+            day0 = (int(now_s) // 86400) * 86400 * 1000
+            q = "SELECT COALESCE(SUM(pnl),0) FROM bets WHERE result IN ('W','L') AND ts_ms>=?"
+            if kind == "pre":
+                q += " AND lead_min IS NOT NULL"
+            loss += led.db.execute(q, (day0,)).fetchone()[0] / led.bankroll
+        return -loss
+
+    def _pre_guard(self, now_s: float) -> tuple[bool, str]:
+        m = self.mledger
+        if m.drawdown() >= st3.PAUSE_DD:
+            return False, f"caída de banca {m.drawdown() * 100:.0f} % (límite {st3.PAUSE_DD * 100:.0f} %)"
+        rows = m.db.execute("SELECT pnl,stake FROM bets WHERE result IN ('W','L') AND lead_min IS NOT NULL "
+                            "ORDER BY ts_ms DESC, id DESC LIMIT ?", (st3.KILL_WINDOW,)).fetchall()
+        if len(rows) >= st3.KILL_WINDOW:
+            stake = sum(r[1] for r in rows)
+            if stake and sum(r[0] for r in rows) / stake < st3.KILL_ROI:
+                return False, f"ROI de las últimas {st3.KILL_WINDOW} apuestas de prepartido por debajo de {st3.KILL_ROI * 100:.0f} %"
+        loss = self._combined_day_loss(now_s)
+        if loss >= st3.DAY_STOP:
+            return False, f"pérdida del día entre PRE y ST3 {loss * 100:.0f} % (límite {st3.DAY_STOP * 100:.0f} %)"
+        return True, ""
+
+    def _alert_pre(self, pick, s: MatchState, now_s: float) -> None:
+        """Pre-match alert from the old Telegram model (the other half of the tool). Same channel, buttons and risk
+        stops as ST3; the paper position was already recorded."""
+        if self.notify_alert is None or self.st3 is None:
+            return
+        ok, why = self._pre_guard(now_s)
+        frac = min(pick.signal.stake_frac, st3.stake_fraction(self.st3.drawdown()), st3.PRE_CAP)
+        if ok and frac > 0:
+            start_s = now_s + (pick.minutes_to_start or 0) * 60
+            mid = self.notify_alert(telegram.format_pre(pick, self.st3.bankroll, frac, start_s),
+                                    telegram.exec_buttons(s.game_id))
+            st3.record_alert(self.st3.db, st3.Alert(s.game_id, pick.signal.players, s.league, (0, 0), (0, 0), pick.signal.line,
+                                                    pick.signal.price, [], s.fetched_ms), "pre", mid)
+            self._alert_t = now_s
+            log.info("pre alert %s under %s @%s", pick.signal.players, pick.signal.line, pick.signal.price)
+        elif not ok and why != self._pre_pause:
+            self._pre_pause = why
+            self.notify_alert(f"<b>PRE · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+        if ok and self._pre_pause:
+            self._pre_pause = ""
+            self.notify_alert("<b>PRE · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
 
     def _sweep_orphans(self, now_s: float) -> None:
         """No bet may stay open: every ledger's stale bets are settled from the match itself (detail endpoint) or from
