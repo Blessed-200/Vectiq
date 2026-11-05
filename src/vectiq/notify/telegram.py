@@ -170,6 +170,23 @@ def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = 
     return "\n".join(lines)
 
 
+def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note: str = "") -> str:
+    """Pre-match alert (old Telegram model): same layout as ST3, Cuba 12-hour clock."""
+    e = html.escape
+    sg = pick.signal
+    lines = [
+        "<b>PRE · APUESTA ANTES DE EMPEZAR</b>",
+        f"<b>MENOS DE {sg.line:g}  @ {sg.price:.2f}</b>   (mínima {pick.min_odds:.2f}; si baja de eso, no apuestes)",
+        f"{e(sg.players)} · {e(sg.league)}",
+        f"Empieza {cuba_clock(start_s)} Cuba (en {pick.minutes_to_start or 0:.0f} min)",
+        f"Apostar ≈ ${bankroll * stake_frac:,.2f} ({stake_frac * 100:.1f} % de ${bankroll:,.2f})",
+    ]
+    if note:
+        lines.append(e(note))
+    lines.append(f'<a href="{e(pick.url)}">Abrir partido en Betwinner</a>')
+    return "\n".join(lines)
+
+
 def format_st3_arm(players: str, league: str, score: tuple[int, int], url: str, ts_s: float) -> str:
     e = html.escape
     return "\n".join([

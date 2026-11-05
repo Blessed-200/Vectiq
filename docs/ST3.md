@@ -35,7 +35,7 @@ mismo (+16,6 % contra +16,4 % en días no vistos), por eso se queda la regla sim
 * La línea elegida vive ~18 s de mediana: con 10 s de retraso queda ejecutable ~57 % de las señales (el ROI de las que quedan
   no baja).
 * El Telegram viejo (modelo Masters) **queda en silencio**: sigue registrando en `masters.sqlite` para comparar.
-  `VECTIQ_ALERTS=st3` (por defecto) | `masters` | `st3,masters`.
+  `VECTIQ_ALERTS=st3,pre` (por defecto): ST3 (palizas en vivo) + PRE (prepartido del modelo Telegram viejo). `masters` = formato antiguo. `VECTIQ_MASTERS_LIVE=on` reactiva las entradas en vivo del modelo viejo (apagadas: +3 a +7 % de ROI, por debajo de ST3). Tope 1,5 % por partido entre PRE y ST3 y paro del día (-10 %) contando los dos.
 
 ## Controles de riesgo (para dinero real; el libro en papel siempre registra)
 
