@@ -91,11 +91,15 @@ def test_alert_and_exec_log_are_idempotent(tmp_path):
     assert st3.exec_summary(db) == {"alerts": 1, "aceptada": 1, "no_llego": 1}
 
 
-def test_cuba_clock_is_12_hour():
-    # 2026-11-04 01:14 UTC is 8:14 PM in Cuba (UTC-5 once DST ends)
-    assert telegram.cuba_clock(1793754840) == "8:14 PM"
-    assert telegram.cuba_clock(1793754840 - 20 * 3600) == "12:14 AM" or telegram.cuba_clock(1793754840 - 20 * 3600).endswith("M")
+def test_cuba_clock_is_12_hour(monkeypatch):
+    monkeypatch.delenv("VECTIQ_CUBA_UTC", raising=False)
+    # 2026-11-04 01:14 UTC is 9:14 PM on 03/11 in Cuba (UTC-4, as the user's phone shows)
+    assert telegram.cuba_clock(1793754840) == "9:14 PM"
     assert telegram.cuba_day(1793754840) == "03/11"
+    # 12:11 UTC is 8:11 AM (the screenshot case); midnight and noon use 12
+    assert telegram.cuba_clock(1793754840 + 11 * 3600 - 3 * 60) == "8:11 AM"
+    monkeypatch.setenv("VECTIQ_CUBA_UTC", "-5")
+    assert telegram.cuba_clock(1793754840) == "8:14 PM"
 
 
 def test_alert_text_has_decision_first_and_cuba_time():
