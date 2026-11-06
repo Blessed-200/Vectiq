@@ -162,7 +162,7 @@ def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = 
         f"<b>MENOS DE {al.line:g}  @ {al.price:.2f}</b>   (mínima {2.00:.2f}; si baja de eso, no apuestes)",
         f"{e(al.players)} · {e(al.league)}",
         f"Set 1: {a}-{b} (ventaja {abs(a - b)}) · alerta {cuba_clock(al.ts_ms / 1000)} Cuba",
-        f"Apostar ≈ ${stake:,.2f} ({stake_frac * 100:.1f} % de ${bankroll:,.2f})",
+        f"Apostar ≈ ${stake:,.2f} ({stake_frac * 100:.1f} % de tu banca de ${bankroll:,.2f})",
     ]
     if note:
         lines.append(e(note))
@@ -179,7 +179,7 @@ def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note
         f"<b>MENOS DE {sg.line:g}  @ {sg.price:.2f}</b>   (mínima {pick.min_odds:.2f}; si baja de eso, no apuestes)",
         f"{e(sg.players)} · {e(sg.league)}",
         f"Empieza {cuba_clock(start_s)} Cuba (en {pick.minutes_to_start or 0:.0f} min)",
-        f"Apostar ≈ ${bankroll * stake_frac:,.2f} ({stake_frac * 100:.1f} % de ${bankroll:,.2f})",
+        f"Apostar ≈ ${bankroll * stake_frac:,.2f} ({stake_frac * 100:.1f} % de tu banca de ${bankroll:,.2f})",
     ]
     if note:
         lines.append(e(note))
