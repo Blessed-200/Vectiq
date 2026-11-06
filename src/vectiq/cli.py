@@ -11,6 +11,7 @@ from pathlib import Path
 
 from vectiq.collector import Collector
 from vectiq.notify import telegram
+from vectiq.signals.calibra import Calibra
 from vectiq.signals.masters import MastersBook
 from vectiq.feed.client import BetwinnerClient
 from vectiq.signals.paper import PaperLedger
@@ -57,7 +58,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "tg_status.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "calibra.sqlite", "tg_status.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -95,7 +96,7 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "tg_status.json",
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json",
                     "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
@@ -105,6 +106,8 @@ def _handoff_in(col: Collector, out: Path) -> None:
         col.st2.reopen()
     if col.st3 is not None:
         col.st3.reopen()
+    if col.calibra is not None:
+        col.calibra.reopen()
     loaded = MastersBook.load(out / "masters_book.json")
     for gid, (sets, _) in col.finals.items():  # finals this run saw before taking over
         loaded.add_match(gid, sets)
@@ -130,12 +133,13 @@ def cmd_collect(args: argparse.Namespace) -> int:
     st2_ledger = PaperLedger(out / "st2.sqlite", start_bankroll=1000.0)   # ST2-core shadow, flat ~$1 + observation log
     st3_ledger = PaperLedger(out / "st3.sqlite", start_bankroll=100.0)    # ST3: compounding 1 % of a $100 bankroll
     mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
+    calibra = Calibra(out / "calibra.sqlite")                              # CALIBRA: shadow learning layer
     book = MastersBook.load(out / "masters_book.json")
     t0 = time.time()
     chat = telegram.shadow_chat()
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
-        st3_ledger=st3_ledger, alerts=os.environ.get("VECTIQ_ALERTS", "st3,pre"),   # st3 | pre | masters (legacy) | any mix
+        st3_ledger=st3_ledger, calibra=calibra, alerts=os.environ.get("VECTIQ_ALERTS", "st3,pre"),   # st3 | pre | masters (legacy) | any mix
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
         notify_alert=lambda m, b=None, silent=False: telegram.send_alert(m, b, silent, chat_id=chat),
         arm=os.environ.get("VECTIQ_ARM", "on"),          # on | silent | off

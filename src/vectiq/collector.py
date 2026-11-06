@@ -11,6 +11,7 @@ from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
+from vectiq.signals import calibra as calibra_mod
 from vectiq.signals import candidate, engine, masters, st2, st3
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
@@ -34,7 +35,8 @@ class Collector:
                  notify_doc: Callable[[str, str], bool] | None = None, dashboard_dir: Path | None = None,
                  dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
-                 shadow_state_dir: Path | None = None, masters_live: bool = False) -> None:
+                 shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None) -> None:
+        self.calibra = calibra                   # CALIBRA: shadow learning layer, never touches stakes or alerts
         self.masters_live = masters_live         # the old Telegram model's after-set-1 entries: off (3-7 % ROI, below ST3)
         self._pre_pause = ""
         self.client, self.tape, self.ledger, self.shadow = client, tape, ledger, shadow
@@ -122,6 +124,7 @@ class Collector:
         if prev and max(prev.sets_won) >= need and len(prev.completed_sets) == sum(prev.sets_won):
             done = prev.completed_sets
             self.finals[gid] = (done, sum(a + b for a, b in done))
+            self._calibra_final(gid)
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
             for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3):
@@ -140,6 +143,7 @@ class Collector:
 
     def _settle_final(self, gid: int, st: MatchState, done: list[tuple[int, int]], src: str) -> None:
         self.finals[gid] = (done, sum(a + b for a, b in done))
+        self._calibra_final(gid)
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
@@ -278,6 +282,7 @@ class Collector:
         if not self.st3.open_bet(st3.signal_from(al, st3.STAKE_FRAC), s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
             return
         self._armed.discard(s.game_id)
+        self._calibra_shadow("st3", self.st3, s, al.price, st3.STAKE_FRAC)
         al.url = masters.match_url(s)
         ok, why = st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)
         if ok and self.mledger is not None and self._combined_day_loss(now_s) >= st3.DAY_STOP:
@@ -343,6 +348,11 @@ class Collector:
             except Exception:  # noqa: BLE001 - a shadow book must never stop the collector
                 log.warning("st2 shadow failed", exc_info=True)
             try:
+                if self.calibra is not None:
+                    self.calibra.observe(s)
+            except Exception:  # noqa: BLE001 - CALIBRA is shadow: it must never stop the collector
+                log.warning("calibra observe failed", exc_info=True)
+            try:
                 self._st3(s, now_s)
             except Exception:  # noqa: BLE001 - never stop collection because of an alert
                 log.warning("st3 failed", exc_info=True)
@@ -374,6 +384,8 @@ class Collector:
             return
         if self.mledger.open_bet(pick.signal, s.fetched_ms, pick.minutes_to_start, champ_id=s.league_id, start_ts=s.start_ts):
             self.exposure[s.game_id] = self.exposure.get(s.game_id, 0.0) + pick.signal.stake_frac
+            if pick.k == 0:
+                self._calibra_shadow("pre", self.mledger, s, pick.signal.price, pick.signal.stake_frac)
             if "pre" in self.alerts and pick.k == 0:
                 self._alert_pre(pick, s, now_s)
             elif "masters" in self.alerts:        # legacy format, silent by default
@@ -381,6 +393,21 @@ class Collector:
                 self.notify(telegram.format_masters(pick, bk, sprt=self.sprt, drawdown=self.mledger.drawdown()))
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
+
+    def _calibra_final(self, gid: int) -> None:
+        if self.calibra is not None:
+            try:
+                self.calibra.set_final(gid, self.finals[gid][1])
+            except Exception:  # noqa: BLE001 - shadow layer
+                log.warning("calibra final failed", exc_info=True)
+
+    def _calibra_shadow(self, strat: str, ledger, s: MatchState, price: float, ancla_frac: float) -> None:
+        if self.calibra is None or ledger is None:
+            return
+        try:
+            self.calibra.shadow_decide(strat, ledger.db, s.game_id, s.league, price, ancla_frac, int(s.fetched_ms))
+        except Exception:  # noqa: BLE001 - shadow layer
+            log.warning("calibra shadow failed", exc_info=True)
 
     def _combined_day_loss(self, now_s: float) -> float:
         """Today's (UTC day) loss of the two books together, as a fraction of each bankroll (real money is one pot)."""
@@ -574,7 +601,14 @@ class Collector:
     def _daily_report(self, now_s: float) -> None:
         d = time.strftime("%Y-%m-%d", time.gmtime(now_s))
         if d != self.day:
-            self.day = d
+            prev, self.day = self.day, d
+            if self.calibra is not None and self.trading(now_s):
+                try:
+                    msg = self.calibra.close_day(prev)
+                    if msg:
+                        self.notify(msg)
+                except Exception:  # noqa: BLE001 - shadow layer
+                    log.warning("calibra daily failed", exc_info=True)
             if self.mledger is not None and self.trading(now_s) and "masters" in self.alerts:
                 self.notify(telegram.format_report("resumen diario · Masters Under", self.mledger.summary(), self.sprt,
                                                    self.mledger.drawdown()))
