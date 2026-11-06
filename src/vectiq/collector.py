@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Callable
@@ -62,6 +63,10 @@ class Collector:
         self.finals: dict[int, tuple[list[tuple[int, int]], int]] = {}
         self.exposure: dict[int, float] = {}
         self.sprt = "on"
+        try:                                       # alerts quote the REAL bank (default $100), never the paper ledger's compounded one
+            self.real_bank = float(os.environ.get("VECTIQ_REAL_BANK", "100"))
+        except ValueError:
+            self.real_bank = 100.0
         self.day = time.strftime("%Y-%m-%d", time.gmtime())
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
@@ -295,7 +300,7 @@ class Collector:
                 frac = max(0.0, left)
                 note = "Ya hay apuesta PRE en este partido: tope 1,5 % entre las dos."
         if talk and ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st3(al, self.st3.bankroll, frac, al.url, note=note),
+            mid = self.notify_alert(telegram.format_st3(al, self.real_bank, frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, al, "bet", mid)
             self._st3_t = now_s
@@ -446,7 +451,7 @@ class Collector:
         frac = min(pick.signal.stake_frac, st3.stake_fraction(self.st3.drawdown()), st3.PRE_CAP)
         if ok and frac > 0:
             start_s = now_s + (pick.minutes_to_start or 0) * 60
-            mid = self.notify_alert(telegram.format_pre(pick, self.st3.bankroll, frac, start_s),
+            mid = self.notify_alert(telegram.format_pre(pick, self.real_bank, frac, start_s),
                                     telegram.exec_buttons(s.game_id))
             st3.record_alert(self.st3.db, st3.Alert(s.game_id, pick.signal.players, s.league, (0, 0), (0, 0), pick.signal.line,
                                                     pick.signal.price, [], s.fetched_ms), "pre", mid)
@@ -615,7 +620,7 @@ class Collector:
             if self.st3 is not None and self.trading(now_s):
                 sm, ex = self.st3.summary(), st3.exec_summary(self.st3.db)
                 self.notify(f"<b>VECTIQ · resumen diario ST3</b>\nLiquidadas {sm['settled']} · ROI {sm['roi'] * 100:+.1f} % · "
-                            f"banca ${sm['bankroll']:.2f} · caída {self.st3.drawdown() * 100:.1f} %\n"
+                            f"banca de papel ${sm['bankroll']:.2f} (solo medición) · caída {self.st3.drawdown() * 100:.1f} %\n"
                             f"Alertas {ex.get('alerts', 0)} · aceptadas {ex.get('aceptada', 0)} · cuota menor "
                             f"{ex.get('cuota_menor', 0)} · no llegué {ex.get('no_llego', 0)}")
 

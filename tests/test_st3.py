@@ -226,3 +226,15 @@ def test_combined_day_loss_counts_both_books(tmp_path):
     for i in range(6):
         _bet(st, 7000 + i, False, int(NOW * 1000))
     assert col._combined_day_loss(NOW) > 0.05
+
+
+def test_alerts_quote_the_real_bank_not_the_compounded_paper_bank(tmp_path):
+    from test_masters import NOW
+    sent = []
+    col, led, st = _pre_col(tmp_path, sent)
+    st.db.execute("UPDATE meta SET v='250' WHERE k='start'")               # paper ledger drifted far from the real $100
+    st.db.commit()
+    col._masters(state(), NOW)
+    col._masters(_s([(11, 5)], start_in_min=-5, gid=111), NOW + 900)
+    txt = " ".join(m for m, _ in sent)
+    assert "$100.00" in txt and "$250" not in txt and "tu banca" in txt
