@@ -152,50 +152,66 @@ def exec_buttons(game_id: int) -> list[list[tuple[str, str]]]:
             [("No llegué / rechazada", f"x:{game_id}:no")]]
 
 
-def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
-    """ST3 bet alert: decision first, one number per line, time in Cuba 12-hour clock."""
+def _liga(league: str) -> str:
+    """'Masters. Rusia. Mujeres' -> 'Rusia · Mujeres' (what the user scans for on Betwinner's live list)."""
+    parts = [x.strip() for x in league.split(". ") if x.strip()]
+    if parts and parts[0].lower().startswith("masters"):
+        parts = parts[1:] or parts
+    return " · ".join(parts)
+
+
+def _names(players: str) -> str:
+    """Each player in its own monospace span: one tap copies that name to the clipboard (Telegram behaviour)."""
     e = html.escape
-    a, b = al.set1
-    stake = bankroll * stake_frac
-    lines = [
-        "<b>ST3 · APUESTA YA</b>",
-        f"<b>MENOS DE {al.line:g}  @ {al.price:.2f}</b>   (mínima {2.00:.2f}; si baja de eso, no apuestes)",
-        f"{e(al.players)} · {e(al.league)}",
-        f"Set 1: {a}-{b} (ventaja {abs(a - b)}) · alerta {cuba_clock(al.ts_ms / 1000)} Cuba",
-        f"Apostar ≈ ${stake:,.2f} ({stake_frac * 100:.1f} % de tu banca de ${bankroll:,.2f})",
-    ]
+    two = [x.strip() for x in players.split(" vs ")]
+    if len(two) == 2:
+        return f"<code>{e(two[0])}</code> vs <code>{e(two[1])}</code>"
+    return f"<code>{e(players)}</code>"
+
+
+_SEP = "──────"
+
+
+def _tail(lines: list[str], note: str, url: str) -> str:
+    e = html.escape
     if note:
         lines.append(e(note))
     lines.append(f'<a href="{e(url)}">Abrir partido en Betwinner</a>')
     return "\n".join(lines)
 
 
+def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
+    """Live bet alert. The first four lines are what the iPhone lock screen shows: type, players, bet, stake."""
+    a, b = al.set1
+    return _tail([
+        f"🔴 <b>EN VIVO</b> · {html.escape(_liga(al.league))}",
+        _names(al.players),
+        f"<b>MENOS DE {al.line:g} @ {al.price:.2f}</b> (mín {2.00:.2f})",
+        f"💵 <b>${bankroll * stake_frac:,.2f}</b> · {stake_frac * 100:.1f} %",
+        _SEP,
+        f"Set 1: {a}-{b} · {cuba_clock(al.ts_ms / 1000)} Cuba",
+    ], note, url)
+
+
 def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note: str = "") -> str:
-    """Pre-match alert (old Telegram model): same layout as ST3, Cuba 12-hour clock."""
-    e = html.escape
+    """Pre-match bet alert, same four-line head."""
     sg = pick.signal
-    lines = [
-        "<b>PRE · APUESTA ANTES DE EMPEZAR</b>",
-        f"<b>MENOS DE {sg.line:g}  @ {sg.price:.2f}</b>   (mínima {pick.min_odds:.2f}; si baja de eso, no apuestes)",
-        f"{e(sg.players)} · {e(sg.league)}",
-        f"Empieza {cuba_clock(start_s)} Cuba (en {pick.minutes_to_start or 0:.0f} min)",
-        f"Apostar ≈ ${bankroll * stake_frac:,.2f} ({stake_frac * 100:.1f} % de tu banca de ${bankroll:,.2f})",
-    ]
-    if note:
-        lines.append(e(note))
-    lines.append(f'<a href="{e(pick.url)}">Abrir partido en Betwinner</a>')
-    return "\n".join(lines)
+    return _tail([
+        f"🔵 <b>PREPARTIDO</b> · en {pick.minutes_to_start or 0:.0f} min · {html.escape(_liga(sg.league))}",
+        _names(sg.players),
+        f"<b>MENOS DE {sg.line:g} @ {sg.price:.2f}</b> (mín {pick.min_odds:.2f})",
+        f"💵 <b>${bankroll * stake_frac:,.2f}</b> · {stake_frac * 100:.1f} %",
+        _SEP,
+        f"Empieza {cuba_clock(start_s)} Cuba",
+    ], note, pick.url)
 
 
 def format_st3_arm(players: str, league: str, score: tuple[int, int], url: str, ts_s: float) -> str:
-    e = html.escape
-    return "\n".join([
-        "<b>ST3 · PREPÁRATE</b>",
-        f"{e(players)} · {e(league)}",
-        f"Set 1 va {score[0]}-{score[1]} · {cuba_clock(ts_s)} Cuba",
-        "Si termina con ventaja de 5 o más, en segundos llega la alerta de apuesta.",
-        f'<a href="{e(url)}">Abrir partido en Betwinner</a>',
-    ])
+    return _tail([
+        f"🟡 <b>PREPÁRATE</b> · {html.escape(_liga(league))}",
+        f"{_names(players)} · set 1 va {score[0]}-{score[1]}",
+        "Si cierra con ventaja de 5 o más, llega la apuesta.",
+    ], "", url)
 
 
 def send_alert(text: str, buttons: list[list[tuple[str, str]]] | None = None, silent: bool = False,

@@ -147,7 +147,7 @@ def test_collector_wiring_logs_shadow_stake_final_and_never_alters_alerts(tmp_pa
                     st3_ledger=st, calibra=c, alerts="st3,pre", notify=lambda m: legacy.append(m) or True,
                     notify_alert=lambda m, b=None, silent=False: sent.append(m) or 7)
     col._masters(state(), NOW)
-    assert len(sent) == 1 and sent[0].startswith("<b>PRE")                      # same alert as without CALIBRA
+    assert len(sent) == 1 and sent[0].startswith("🔵")                      # same alert as without CALIBRA
     row = c.db.execute("SELECT strat, ancla, calibra FROM shadow").fetchone()
     assert row[0] == "pre" and row[1] > 0 and 0 <= row[2] <= cb.TECHO
     assert c.db.execute("SELECT COUNT(*) FROM mkt WHERE k=0").fetchone()[0] == 1
