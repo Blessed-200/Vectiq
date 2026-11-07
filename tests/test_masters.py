@@ -488,3 +488,8 @@ def test_devin_books_chart_and_pinned_status(tmp_path, monkeypatch):
     assert calls == ["sendMessage", "pinChatMessage"]
     calls.clear()
     assert telegram.upsert_status("y", sf, token="t", chat_id="c") and calls == ["editMessageText"]   # edited in place
+
+
+def test_super_league_and_china_never_trade():
+    assert masters.is_masters(state()) and not masters.is_masters(state(league="Masters. Super League"))
+    assert not masters.is_masters(state(league="Masters. Super League. Mujeres")) and not masters.is_masters(state(league="Masters. China"))
