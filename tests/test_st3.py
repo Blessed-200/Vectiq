@@ -106,7 +106,7 @@ def test_alert_text_has_decision_first_and_cuba_time():
     al = st3.evaluate(_s([(11, 5)]))
     txt = telegram.format_st3(al, 100.0, 0.01, "https://betwinner2.com/es/live/x")
     lines = txt.split("\n")
-    assert lines[0].startswith("<b>ST3") and "MENOS DE 100.5" in lines[1] and "@ 2.15" in lines[1]
+    assert lines[0].startswith("🔴") and "MENOS DE 100.5" in lines[2] and "@ 2.15" in lines[2] and "$1.00" in lines[3]
     assert "Cuba" in txt and ("AM" in txt or "PM" in txt) and "$1.00" in txt and "betwinner2.com" in txt
     assert telegram.exec_buttons(5)[0][0][1] == "x:5:ok"
 
@@ -133,7 +133,7 @@ def test_collector_flow_arm_alert_button_settle_and_silenced_legacy(tmp_path):
     col._masters(_s([(9, 4)], start_in_min=-5), NOW + 3)                   # same match again: no second heads-up
     assert len(sent) == 1 and "PREPÁRATE" in sent[0][0]
     col._masters(_s([(11, 5)], start_in_min=-5), NOW + 10)                 # set 1 closes with a 6-point margin: bet alert
-    assert len(sent) == 2 and "APUESTA YA" in sent[1][0] and sent[1][1][0][0][1] == f"x:{gid}:ok"
+    assert len(sent) == 2 and "EN VIVO" in sent[1][0] and sent[1][1][0][0][1] == f"x:{gid}:ok"
     col._masters(_s([(11, 5), (1, 0)], start_in_min=-5), NOW + 13)         # later snapshots of the same match: nothing new
     assert len(sent) == 2 and st.summary()["settled"] == 0 and st.open_games() == {gid}
     col._poll_exec(NOW + 20)
@@ -160,7 +160,7 @@ def test_paused_guard_records_paper_but_does_not_alert(tmp_path):
                     st3_ledger=st, alerts="st3", notify=lambda m: True,
                     notify_alert=lambda m, b=None, silent=False: sent.append(m) or 1)
     col._masters(_s([(11, 3)], start_in_min=-5), NOW)
-    assert any("EN PAUSA" in m for m in sent) and not any("APUESTA YA" in m for m in sent)
+    assert any("EN PAUSA" in m for m in sent) and not any("EN VIVO" in m for m in sent)
     assert st.game_stake(383584934) > 0                                    # paper bet still recorded
 
 
@@ -195,7 +195,7 @@ def test_prematch_alert_uses_the_same_channel_with_buttons_and_minimum_odds(tmp_
     col._masters(state(), NOW)
     assert len(sent) == 1
     txt, buttons = sent[0]
-    assert txt.startswith("<b>PRE") and "MENOS DE" in txt and "mínima" in txt and "Cuba" in txt and "betwinner2.com" in txt
+    assert txt.startswith("🔵") and "PREPARTIDO" in txt and "MENOS DE" in txt and "mín" in txt and "Cuba" in txt and "betwinner2.com" in txt
     assert buttons == telegram.exec_buttons(383584934)
     assert st3.already_alerted(st.db, 383584934, "pre") and led.game_stake(383584934) > 0
     col._masters(state(), NOW + 20)                                         # same match again: still one alert
@@ -216,7 +216,7 @@ def test_pre_and_st3_on_one_match_share_a_1_5_percent_cap(tmp_path):
     col, led, st = _pre_col(tmp_path, sent)
     col._masters(state(), NOW)                                              # PRE bet: 1 % of its book
     col._masters(_s([(11, 5)], start_in_min=-5), NOW + 900)                 # then ST3 on the same match
-    st3_msg = [m for m, _ in sent if m.startswith("<b>ST3 · APUESTA")]
+    st3_msg = [m for m, _ in sent if m.startswith("🔴")]
     assert st3_msg and "0.5 %" in st3_msg[0] and "tope 1,5 %" in st3_msg[0]
 
 
@@ -237,4 +237,13 @@ def test_alerts_quote_the_real_bank_not_the_compounded_paper_bank(tmp_path):
     col._masters(state(), NOW)
     col._masters(_s([(11, 5)], start_in_min=-5, gid=111), NOW + 900)
     txt = " ".join(m for m, _ in sent)
-    assert "$100.00" in txt and "$250" not in txt and "tu banca" in txt
+    assert "$1.00" in txt and "$2.50" not in txt
+
+
+def test_alert_head_fits_the_lock_screen_and_names_copy_with_one_tap():
+    from vectiq.notify.telegram import _liga, _names
+    assert _liga("Masters. Rusia. Mujeres") == "Rusia · Mujeres" and _liga("Masters. Belarús") == "Belarús"
+    assert _names("Marina Dobryanskaya vs Veronika Kan") == "<code>Marina Dobryanskaya</code> vs <code>Veronika Kan</code>"
+    txt = telegram.format_st3(st3.evaluate(_s([(11, 5)])), 100.0, 0.01, "https://x")
+    head = txt.split("\n")[:4]
+    assert head[0].startswith("🔴") and "<code>" in head[1] and "MENOS DE" in head[2] and "$1.00" in head[3]
