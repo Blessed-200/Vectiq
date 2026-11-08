@@ -23,9 +23,9 @@ from vectiq.signals.engine import Signal
 
 MIN_MS = int(os.environ.get("VECTIQ_ST4_MS", "8"))
 MAX_INPLAY = 4
-STAKE_FRAC = 0.01
-SHARED_FRAC = 0.005                          # a PRE/ST3 bet already sits on this match
-PER_MATCH_CAP = 0.02                         # PRE + ST3 + ST4 on one match
+STAKE_FRAC = 0.015
+SHARED_FRAC = 0.0075                         # a PRE/ST3 bet already sits on this match
+PER_MATCH_CAP = 0.03                         # PRE + ST3 + ST4 on one match
 
 
 @dataclass(slots=True)

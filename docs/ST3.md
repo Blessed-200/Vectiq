@@ -51,3 +51,6 @@ botones. No hay forma de garantizar el futuro: el ROI real puede ser menor que e
 ## ST4 y ST5 (7-8 nov)
 - **ST4 «segunda oportunidad»** (`signals/st4.py`): Under tras 2-0 del mismo jugador con márgenes sumados >= 8. +15 % oct, +14.4 % a ciegas.
 - **ST5 «alta probabilidad»** (`signals/st5.py`, modelo en `signals/markov.py`): cadena de Markov del tenis de mesa con prior de fuerza ajustado solo con resultados finales (sin líneas de la casa). Under en el peldaño de mayor EV con probabilidad >= 65 % y EV >= +5 % tras el set 1 o 2. Prior congelado el 27 oct: +15.5 % (22-27 oct), +26.8 % (28-31 oct), +19.4 % (2-7 nov), acierto 62-68 %, ~30 señales/día. Stake 1 % desde el 8 nov (`VECTIQ_ST5_FRAC`; era 2 %, subir solo si las primeras 150 apuestas en vivo confirman >= 62 % de acierto). Tras el set 3 solo se mide en papel. Cuando ST5 avisa, ST4 no avisa en ese partido.
+
+## Stakes desde el 8 nov (medio agresivos)
+ST3 1.5 %, ST4 1.5 % (0.75 % si ya hay apuesta en el partido), ST5 1 % (ya en main), PRE 0.5 %. Tope por partido: 2 % PRE+ST3, 3 % con ST4/ST5. Base: en papel desde el 5 nov, ST3 +16.9 % (718 apuestas, positiva los 4 días), ST4 +13.8 %, PRE solo ~+3 %, ST5 -1.4 desviaciones bajo su backtest. Mismos frenos (paro del día -10 %, mitad a -15 %, pausa a -30 %).

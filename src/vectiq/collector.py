@@ -298,11 +298,11 @@ class Collector:
             ok, why = False, "pérdida del día entre PRE y ST3 en el límite"
         frac = st3.stake_fraction(self.st3.drawdown())
         note = "Banca en caída: apuesta reducida a la mitad." if 0 < frac < st3.STAKE_FRAC else ""
-        if self.mledger is not None and self.mledger.bankroll > 0:      # PRE and ST3 on the same match: 1.5 % in total
-            left = st3.PER_MATCH_CAP - self.mledger.game_stake(s.game_id) / self.mledger.bankroll
+        if self.mledger is not None and self.mledger.bankroll > 0:      # PRE and ST3 on the same match: 2 % in total
+            left = st3.PER_MATCH_CAP - min(self.mledger.game_stake(s.game_id) / self.mledger.bankroll, st3.PRE_CAP)   # PRE alerts never stake more than PRE_CAP
             if left < frac:
                 frac = max(0.0, left)
-                note = "Ya hay apuesta PRE en este partido: tope 1,5 % entre las dos."
+                note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
         if talk and ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st3(al, self.real_bank, frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
@@ -337,7 +337,7 @@ class Collector:
         other = 0.0
         for led in (self.mledger, self.st3, self.st4):
             if led is not None and led.bankroll > 0:
-                other += led.game_stake(s.game_id) / led.bankroll
+                other += min(led.game_stake(s.game_id) / led.bankroll, st3.PRE_CAP if led is self.mledger else 1.0)
         frac, note = st5.stake_for(self.st5.drawdown(), other)
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st5(al, self.real_bank, frac, al.url, note=note),
@@ -370,7 +370,7 @@ class Collector:
         other = 0.0
         for led in (self.mledger, self.st3):
             if led is not None and led.bankroll > 0:
-                other += led.game_stake(s.game_id) / led.bankroll
+                other += min(led.game_stake(s.game_id) / led.bankroll, st3.PRE_CAP if led is self.mledger else 1.0)
         frac, note = st4.stake_for(self.st4.drawdown(), other)
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st4(al, self.real_bank, frac, al.url, note=note),
