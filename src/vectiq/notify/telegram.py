@@ -193,6 +193,19 @@ def format_st3(al, bankroll: float, stake_frac: float, url: str, *, note: str = 
     ], note, url)
 
 
+def format_st4(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
+    """Second-chance alert (after two sets won by the same player). Same four-line head as ST3."""
+    sets = " · ".join(f"{a}-{b}" for a, b in al.sets)
+    return _tail([
+        f"🟠 <b>EN VIVO · SEGUNDA</b> · {html.escape(_liga(al.league))}",
+        _names(al.players),
+        f"<b>MENOS DE {al.line:g} @ {al.price:.2f}</b> (mín {2.00:.2f})",
+        f"💵 <b>${bankroll * stake_frac:,.2f}</b> · {stake_frac * 100:.1f} %",
+        _SEP,
+        f"Sets: {sets} · {cuba_clock(al.ts_ms / 1000)} Cuba",
+    ], note, url)
+
+
 def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note: str = "") -> str:
     """Pre-match bet alert, same four-line head."""
     sg = pick.signal
