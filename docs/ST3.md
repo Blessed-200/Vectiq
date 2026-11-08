@@ -47,3 +47,7 @@ mismo (+16,6 % contra +16,4 % en días no vistos), por eso se queda la regla sim
 
 Límite de apuesta, retraso real de la apuesta, aceptación de cuota y limitación de cuentas ganadoras. Se miden con los
 botones. No hay forma de garantizar el futuro: el ROI real puede ser menor que el del backtest.
+
+## ST4 y ST5 (7-8 nov)
+- **ST4 «segunda oportunidad»** (`signals/st4.py`): Under tras 2-0 del mismo jugador con márgenes sumados >= 8. +15 % oct, +14.4 % a ciegas.
+- **ST5 «alta probabilidad»** (`signals/st5.py`, modelo en `signals/markov.py`): cadena de Markov del tenis de mesa con prior de fuerza ajustado solo con resultados finales (sin líneas de la casa). Under en el peldaño de mayor EV con probabilidad >= 65 % y EV >= +5 % tras el set 1 o 2. Prior congelado el 27 oct: +15.5 % (22-27 oct), +26.8 % (28-31 oct), +19.4 % (2-7 nov), acierto 62-68 %, ~30 señales/día. Stake 2 % (`VECTIQ_ST5_FRAC`). Tras el set 3 solo se mide en papel. Cuando ST5 avisa, ST4 no avisa en ese partido.
