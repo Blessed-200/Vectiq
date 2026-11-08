@@ -13,7 +13,7 @@ from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
 from vectiq.signals import calibra as calibra_mod
-from vectiq.signals import candidate, engine, masters, st2, st3, st4
+from vectiq.signals import candidate, engine, masters, st2, st3, st4, st5
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -37,7 +37,9 @@ class Collector:
                  dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None,
-                 st4_ledger: PaperLedger | None = None) -> None:
+                 st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None) -> None:
+        self.st5 = st5_ledger                    # ST5 "alta probabilidad": Markov model, Under >= 65 % (supersedes ST4 when it fires)
+        self._st5_fired: set[int] = set()
         self.st4 = st4_ledger                    # ST4 "segunda oportunidad": Under after 2-0 blowouts (PRE/ST3 stay as they are)
         self.calibra = calibra                   # CALIBRA: shadow learning layer, never touches stakes or alerts
         self.masters_live = masters_live         # the old Telegram model's after-set-1 entries: off (3-7 % ROI, below ST3)
@@ -134,7 +136,7 @@ class Collector:
             self._calibra_final(gid)
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:
@@ -154,14 +156,14 @@ class Collector:
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4):
+        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4, self.st5):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -316,6 +318,40 @@ class Collector:
             if talk:
                 self.notify_alert("<b>ST3 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
 
+    def _st5(self, s: MatchState, now_s: float) -> None:
+        """ST5: paper position for k=1-3 (the measurement), Telegram alert for k=1-2; same risk stops, stake 2 %."""
+        if self.st5 is None:
+            return
+        al = st5.evaluate(s)
+        if al is None or self.st5.game_stake(s.game_id) > 0:
+            return
+        if not self.st5.open_bet(st5.signal_from(al, st5.STAKE_FRAC), s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
+            return
+        if len(al.sets) not in st5.ALERT_K or not ("st5" in self.alerts and self.notify_alert is not None and self.st3 is not None) or s.game_id in self._st5_fired:
+            return           # ST5 (same match, higher-probability rung) already told the user
+        self._st5_fired.add(s.game_id)
+        al.url = masters.match_url(s)
+        ok, why = st3.guard(self.st5.db, self.st5.bankroll, self.st5.drawdown(), now_s)
+        if ok and self._combined_day_loss(now_s) >= st3.DAY_STOP:
+            ok, why = False, "pérdida del día entre PRE, ST3, ST4 y ST5 en el límite"
+        other = 0.0
+        for led in (self.mledger, self.st3, self.st4):
+            if led is not None and led.bankroll > 0:
+                other += led.game_stake(s.game_id) / led.bankroll
+        frac, note = st5.stake_for(self.st5.drawdown(), other)
+        if ok and frac >= 0.0025:
+            mid = self.notify_alert(telegram.format_st5(al, self.real_bank, frac, al.url, note=note),
+                                    telegram.exec_buttons(al.game_id))
+            st3.record_alert(self.st3.db, st3.Alert(al.game_id, al.players, al.league, tuple(al.sets[0]), al.inplay, al.line,
+                                                    al.price, [], al.ts_ms), "st5", mid)
+            log.info("st5 alert %s under %s @%s p=%.2f", al.players, al.line, al.price, al.p)
+        elif not ok and why != getattr(self, "_st5_pause", ""):
+            self._st5_pause = why
+            self.notify_alert(f"<b>ST5 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+        if ok and getattr(self, "_st5_pause", ""):
+            self._st5_pause = ""
+            self.notify_alert("<b>ST5 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
+
     def _st4(self, s: MatchState, now_s: float) -> None:
         """ST4: one paper position per match (the measurement) and one Telegram alert, under the same risk stops."""
         if self.st4 is None:
@@ -397,6 +433,10 @@ class Collector:
             except Exception:  # noqa: BLE001 - never stop collection because of an alert
                 log.warning("st3 failed", exc_info=True)
             try:
+                self._st5(s, now_s)             # before ST4: when ST5 fires, ST4 stays on paper only
+            except Exception:  # noqa: BLE001 - never stop collection because of an alert
+                log.warning("st5 failed", exc_info=True)
+            try:
                 self._st4(s, now_s)
             except Exception:  # noqa: BLE001 - never stop collection because of an alert
                 log.warning("st4 failed", exc_info=True)
@@ -456,7 +496,7 @@ class Collector:
     def _combined_day_loss(self, now_s: float) -> float:
         """Today's (UTC day) loss of the two books together, as a fraction of each bankroll (real money is one pot)."""
         loss = 0.0
-        for led, kind in ((self.st3, "st3"), (self.mledger, "pre"), (self.st4, "st4")):
+        for led, kind in ((self.st3, "st3"), (self.mledger, "pre"), (self.st4, "st4"), (self.st5, "st5")):
             if led is None or led.bankroll <= 0:
                 continue
             day0 = (int(now_s) // 86400) * 86400 * 1000
@@ -510,7 +550,7 @@ class Collector:
         if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.shadow, self.ledger):
+        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.shadow, self.ledger):
             if led is None:
                 continue
             for gid, champ, start in led.stale_open_meta(now_s):
