@@ -206,6 +206,19 @@ def format_st4(al, bankroll: float, stake_frac: float, url: str, *, note: str = 
     ], note, url)
 
 
+def format_st5(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
+    """High-probability alert (Markov model). Same four-line head."""
+    sets = " · ".join(f"{a}-{b}" for a, b in al.sets)
+    return _tail([
+        f"🟢 <b>EN VIVO · ALTA PROB.</b> · {html.escape(_liga(al.league))}",
+        _names(al.players),
+        f"<b>MENOS DE {al.line:g} @ {al.price:.2f}</b> (mín {al.min_price:.2f})",
+        f"💵 <b>${bankroll * stake_frac:,.2f}</b> · {stake_frac * 100:.1f} %",
+        _SEP,
+        f"Modelo: {al.p * 100:.0f} % · Sets: {sets} · {cuba_clock(al.ts_ms / 1000)} Cuba",
+    ], note, url)
+
+
 def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note: str = "") -> str:
     """Pre-match bet alert, same four-line head."""
     sg = pick.signal

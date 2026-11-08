@@ -17,7 +17,7 @@ report = ["matplotlib>=3.8"]
 where = ["src"]
 
 [tool.setuptools.package-data]
-vectiq = ["signals/masters_seed.json"]
+vectiq = ["signals/masters_seed.json", "signals/markov_prior.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
