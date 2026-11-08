@@ -4,7 +4,7 @@ Backtest, frozen prior (fit 22-27 Oct), Under, after set 1 or 2, one bet per mat
 22-27 Oct +15.5 % (171 bets, 62 % won) / 28-31 Oct +26.8 % (125, 68 %) / 2-7 Nov +19.4 % (192, 64 %), ~30 signals/day,
 average price 1.88, positive on 14 of 16 days. 94 % of the signals come after set 2. After set 3 it looked similar
 (Oct only: +21 % / +26 %) but has no November data yet, so k=3 is recorded on paper and never alerted.
-Higher stake than ST3/ST4 because the win rate is higher (lower variance per unit of edge).
+Stake 1 % (was 2 % on the first day): live paper over the first 80 bets won 58.8 % vs 66.4 % predicted (-1.4 sd) and returned +6.8 % vs +19 % in the backtest; back to 2 % only after >=150 live bets confirm >= 62 %.
 """
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from vectiq.signals.engine import Signal
 MIN_P = 0.65
 MIN_EV = 0.05
 MAX_INPLAY = 4
-STAKE_FRAC = float(os.environ.get("VECTIQ_ST5_FRAC", "0.02"))
+STAKE_FRAC = float(os.environ.get("VECTIQ_ST5_FRAC", "0.01"))
 PER_MATCH_CAP = 0.03                         # PRE + ST3 + ST4 + ST5 on one match
 ALERT_K = (1, 2)                             # alerts; k = 3 is paper only
 PAPER_K = (1, 2, 3)
