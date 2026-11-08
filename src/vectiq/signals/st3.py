@@ -24,9 +24,9 @@ from vectiq.signals.engine import Signal
 MIN_MARGIN = 5
 MAX_INPLAY = 4
 MIN_ODDS = 2.00
-STAKE_FRAC = 0.01
-PRE_CAP = 0.01                                # pre-match alerts (old Telegram model): never above 1 % of the bankroll
-PER_MATCH_CAP = 0.015                         # PRE + ST3 together on one match
+STAKE_FRAC = 0.015
+PRE_CAP = 0.005                               # pre-match alerts (old Telegram model): never above 0.5 % of the bankroll (paper ROI since 5 Nov only ~+3 %)
+PER_MATCH_CAP = 0.02                          # PRE + ST3 together on one match
 KILL_WINDOW, KILL_ROI = 150, -0.08           # pause when the last 150 settled bets lose more than 8 %
 DAY_STOP = 0.10                               # pause for the rest of the day after losing 10 % of the bankroll
 HALVE_DD, PAUSE_DD = 0.15, 0.30               # drawdown from the equity peak: halve the stake / stop
