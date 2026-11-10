@@ -18,7 +18,7 @@ def test_blowout_bets_the_lowest_rung_paying_two():
     al = st3.evaluate(_s([(11, 5)]))
     assert al and al.line == 100.5 and al.price == 2.15 and al.set1 == (11, 5) and al.inplay == (0, 0)
     sig = st3.signal_from(al, st3.STAKE_FRAC)
-    assert sig.side == "under" and sig.line == 100.5 and sig.stake_frac == 0.015
+    assert sig.side == "under" and sig.line == 100.5 and sig.stake_frac == 0.01
 
 
 def test_margin_below_five_is_no_bet():
@@ -54,8 +54,10 @@ def test_blocked_or_one_sided_lines_are_ignored():
 
 
 def test_stake_fraction_ladder():
-    assert st3.stake_fraction(0.0) == 0.015 and st3.stake_fraction(0.14) == 0.015
-    assert st3.stake_fraction(0.15) == 0.0075 and st3.stake_fraction(0.29) == 0.0075
+    assert st3.stake_fraction(0.0) == 0.01
+    assert abs(st3.stake_fraction(0.125) - 0.005) < 1e-9          # smooth brake: half at a 12.5 % drawdown
+    assert abs(st3.stake_fraction(0.14) - 0.01 * 0.44) < 1e-9
+    assert abs(st3.stake_fraction(0.29) - 0.01 * 0.25) < 1e-9       # never below a quarter until the stop
     assert st3.stake_fraction(0.30) == 0.0
 
 
@@ -75,8 +77,8 @@ def test_guard_rolling_roi_and_day_stop(tmp_path):
     ok, why = st3.guard(led.db, led.bankroll, led.drawdown(), now_s)
     assert not ok and ("ROI" in why or "caída" in why)
     led2 = PaperLedger(tmp_path / "st3b.sqlite", start_bankroll=100.0)
-    day0 = (int(now_s) // 86400) * 86400 * 1000
-    for i in range(11):                        # 11 losses of 1 % today: -10.4 % of the bankroll
+    day0 = st3.day_start_ms(now_s)
+    for i in range(17):                        # 17 losses of 1 % today: -15.7 % of the bankroll (stop at 15 %)
         _bet(led2, 2000 + i, False, day0 + 1000 + i)
     ok, why = st3.guard(led2.db, led2.bankroll, 0.0, now_s)
     assert not ok and "día" in why
@@ -141,7 +143,7 @@ def test_collector_flow_arm_alert_button_settle_and_silenced_legacy(tmp_path):
     col._poll_exec(NOW + 40)                                               # same update again: not counted twice
     assert st3.exec_summary(st.db)["aceptada"] == 1
     st.settle(gid, 90)                                                     # Under 100.5 wins at 2.15
-    assert round(st.summary()["pnl"], 2) == 1.72 and legacy == []          # legacy Masters model stays silent
+    assert round(st.summary()["pnl"], 2) == 1.15 and legacy == []          # legacy Masters model stays silent
 
 
 def test_paused_guard_records_paper_but_does_not_alert(tmp_path):
@@ -210,14 +212,15 @@ def test_old_model_live_entries_are_off_by_default(tmp_path):
     assert led.db.execute("select count(*) from bets").fetchone()[0] == 0 and sent == []
 
 
-def test_pre_and_st3_on_one_match_share_a_2_percent_cap(tmp_path):
+def test_pre_and_st3_on_one_match_share_a_2_percent_cap(tmp_path, monkeypatch):
+    monkeypatch.setattr(st3, "evidence_frac", lambda db, cap, where="": cap)   # these tests are about the cap, not the evidence
     from test_masters import NOW
     sent = []
     col, led, st = _pre_col(tmp_path, sent)
     col._masters(state(), NOW)                                              # PRE bet (alerts stake at most 0.5 %)
     col._masters(_s([(11, 5)], start_in_min=-5), NOW + 900)                 # then ST3 on the same match
     st3_msg = [m for m, _ in sent if m.startswith("🔴")]
-    assert st3_msg and "1.5 %" in st3_msg[0] and "tope" not in st3_msg[0]    # PRE 0.5 % + ST3 1.5 % = the 2 % cap exactly
+    assert st3_msg and "1.0 %" in st3_msg[0] and "tope" not in st3_msg[0]    # PRE 0.5 % + ST3 1.0 % stay under the 2 % cap
 
 
 def test_combined_day_loss_counts_both_books(tmp_path):
@@ -228,7 +231,8 @@ def test_combined_day_loss_counts_both_books(tmp_path):
     assert col._combined_day_loss(NOW) > 0.05
 
 
-def test_alerts_quote_the_real_bank_not_the_compounded_paper_bank(tmp_path):
+def test_alerts_quote_the_real_bank_not_the_compounded_paper_bank(tmp_path, monkeypatch):
+    monkeypatch.setattr(st3, "evidence_frac", lambda db, cap, where="": cap)
     from test_masters import NOW
     sent = []
     col, led, st = _pre_col(tmp_path, sent)
@@ -237,7 +241,7 @@ def test_alerts_quote_the_real_bank_not_the_compounded_paper_bank(tmp_path):
     col._masters(state(), NOW)
     col._masters(_s([(11, 5)], start_in_min=-5, gid=111), NOW + 900)
     txt = " ".join(m for m, _ in sent)
-    assert "$1.50" in txt and "$3.75" not in txt
+    assert "$1.00" in txt and "$2.50" not in txt
 
 
 def test_alert_head_fits_the_lock_screen_and_names_copy_with_one_tap():

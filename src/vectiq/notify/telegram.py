@@ -259,7 +259,7 @@ def get_updates(offset: int | None = None, token: str | None = None) -> list[dic
     token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:
         return []
-    params: dict = {"timeout": 0, "allowed_updates": '["callback_query"]'}
+    params: dict = {"timeout": 0, "allowed_updates": '["callback_query","message","channel_post"]'}
     if offset is not None:
         params["offset"] = offset
     try:

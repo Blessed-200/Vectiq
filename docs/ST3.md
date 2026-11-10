@@ -54,3 +54,12 @@ botones. No hay forma de garantizar el futuro: el ROI real puede ser menor que e
 
 ## Stakes desde el 8 nov (medio agresivos)
 ST3 1.5 %, ST4 1.5 % (0.75 % si ya hay apuesta en el partido), ST5 1 % (ya en main), PRE 0.5 %. Tope por partido: 2 % PRE+ST3, 3 % con ST4/ST5. Base: en papel desde el 5 nov, ST3 +16.9 % (718 apuestas, positiva los 4 días), ST4 +13.8 %, PRE solo ~+3 %, ST5 -1.4 desviaciones bajo su backtest. Mismos frenos (paro del día -10 %, mitad a -15 %, pausa a -30 %).
+
+## Stake por evidencia, vigilante y panel (10 nov)
+- **Stake de cada alerta** = ¼ de Kelly sobre el **límite inferior** del ROI reciente: ROI de las últimas 1,000 apuestas del libro (encogido hacia 0 con un peso de 150 apuestas), menos 1 desviación estándar. Tope: ST3 1 %, ST4 1 %, ST5 1 %, PRE 0.5 %. Si el límite inferior no supera cero la alerta no sale a dinero real (queda en papel) y el bot avisa una vez; vuelve sola cuando la evidencia se recupera. Con menos de 30 apuestas: 0.5 %.
+- Además baja suave con la caída de banca del libro (a la mitad a 12.5 %, a un cuarto desde 25 %, cero a 30 %).
+- **Por qué tope 1 %:** simulaciones de 60 días a 150 apuestas/día con los resultados reales en papel (ventaja +11 %, +6 %, +3 %, muerte o caída de la ventana el día 15): con tope 1 % la probabilidad de una caída mayor al 30 % es 0-3 %; con 1.5 % sube a 5-13 %; plano 1 % sin evidencia llega a 69 % si la ventaja muere. Con 150 apuestas al día, 1 % ya da ~+16 % diario si la ventaja se mantiene: subir el stake no mejora mucho el crecimiento y sí el riesgo de ruina (Kelly completo equivale a ~3-4 % por apuesta con ROI +10 %).
+- **Vigilante CUSUM** (ST3 y ST5): ROI esperado +10 %, alarma a 5 (equivale a ~2 desviaciones de evidencia). Con alarma: stake a la mitad y un aviso; otro aviso al recuperarse.
+- **Freno del día**: ahora cuenta desde las 6 AM de Cuba (no desde las 7 PM) y el límite es 15 % de la suma de los libros en papel (10 % caía dentro del ruido normal). El aviso de pausa sale una sola vez, aunque el porcentaje cambie.
+- **Panel ▶ INICIAR / ⏹ STOP** en el canal: al iniciar, el bot pide tu saldo real (el número que escribas pasa a ser la banca en dólares de todas las alertas); al parar, pide el saldo final y registra la sesión. `/banca 103.5` corrige el saldo; `/panel` vuelve a publicar el panel. Las alertas no se detienen: mientras no haya sesión llevan una línea de recordatorio. Estado en `session.json` (viaja entre relevos).
+

@@ -23,7 +23,9 @@ def test_other_stages_and_window():
 
 
 def test_stake_halved_and_capped_when_match_already_held():
-    assert st4.stake_for(0.0, 0.0)[0] == 0.015
+    assert st4.stake_for(0.0, 0.0)[0] == 0.01
     assert st4.stake_for(0.0, 0.01)[0] == 0.0075
+    assert st4.stake_for(0.0, 0.0, 0.004)[0] == 0.004               # evidence-based fraction below the cap
+    assert st4.stake_for(0.0, 0.0, 0.05)[0] == 0.01                 # ...and never above it
     assert abs(st4.stake_for(0.0, 0.0275)[0] - 0.0025) < 1e-9       # cap 3 % in total
     assert st4.stake_for(0.31, 0.0)[0] == 0.0            # paused after 30 % drawdown

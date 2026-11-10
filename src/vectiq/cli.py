@@ -11,6 +11,7 @@ from pathlib import Path
 
 from vectiq.collector import Collector
 from vectiq.notify import telegram
+from vectiq.notify.session import Session
 from vectiq.signals.calibra import Calibra
 from vectiq.signals.masters import MastersBook
 from vectiq.feed.client import BetwinnerClient
@@ -58,7 +59,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "calibra.sqlite", "tg_status.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "calibra.sqlite", "tg_status.json", "session.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -96,10 +97,11 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json",
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json", "--pattern", "session.json",
                     "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
+    col.session.reload()                      # the balance the user typed in the previous run
     if col.cand is not None:
         col.cand.reopen()
     if col.st2 is not None:
@@ -145,7 +147,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     chat = telegram.shadow_chat()
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
-        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, calibra=calibra, alerts=os.environ.get("VECTIQ_ALERTS", "st3,pre,st4,st5"),   # st3 | pre | masters (legacy) | any mix
+        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, calibra=calibra, session=Session(out / "session.json"), alerts=os.environ.get("VECTIQ_ALERTS", "st3,pre,st4,st5"),   # st3 | pre | masters (legacy) | any mix
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
         notify_alert=lambda m, b=None, silent=False: telegram.send_alert(m, b, silent, chat_id=chat),
         arm=os.environ.get("VECTIQ_ARM", "on"),          # on | silent | off
