@@ -32,5 +32,5 @@ def test_no_alert_when_even_or_other_stages():
 def test_stake_cap_and_drawdown():
     assert st5.stake_for(0.0, 0.0)[0] == st5.STAKE_FRAC
     assert abs(st5.stake_for(0.0, 0.025)[0] - 0.005) < 1e-9
-    assert st5.stake_for(0.16, 0.0)[0] == st5.STAKE_FRAC / 2
+    assert abs(st5.stake_for(0.125, 0.0)[0] - st5.STAKE_FRAC / 2) < 1e-9
     assert st5.stake_for(0.31, 0.0)[0] == 0.0

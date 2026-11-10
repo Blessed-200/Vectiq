@@ -23,7 +23,7 @@ from vectiq.signals.engine import Signal
 
 MIN_MS = int(os.environ.get("VECTIQ_ST4_MS", "8"))
 MAX_INPLAY = 4
-STAKE_FRAC = 0.015
+STAKE_FRAC = 0.010                           # cap of the evidence-based stake (paper positions use it too)
 SHARED_FRAC = 0.0075                         # a PRE/ST3 bet already sits on this match
 PER_MATCH_CAP = 0.03                         # PRE + ST3 + ST4 on one match
 
@@ -70,10 +70,11 @@ def signal_from(al: Alert, stake_frac: float) -> Signal:
                   model_total=float(sum(a + b for a, b in al.sets)), market_median=al.line)
 
 
-def stake_for(drawdown: float, other_stake_frac: float) -> tuple[float, str]:
+def stake_for(drawdown: float, other_stake_frac: float, base: float | None = None) -> tuple[float, str]:
     """(fraction of the bankroll, note). Halved after a drawdown, halved when PRE/ST3 already hold the match, capped."""
-    base = st3.stake_fraction(drawdown, STAKE_FRAC)
-    note = "Banca en caída: apuesta reducida a la mitad." if 0 < base < STAKE_FRAC else ""
+    top = STAKE_FRAC if base is None else min(base, STAKE_FRAC)      # `base`: the evidence-based fraction (never above the cap)
+    base = st3.stake_fraction(drawdown, top)
+    note = "Banca en caída: apuesta reducida." if 0 < base < top else ""
     if other_stake_frac > 0:
         base = min(base, SHARED_FRAC)
         note = "Ya hay apuesta en este partido: esta va a la mitad."

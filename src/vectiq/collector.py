@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import time
 from pathlib import Path
 from typing import Callable
@@ -12,6 +13,7 @@ from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import telegram
+from vectiq.notify.session import PANEL_BUTTONS, PANEL_TEXT, Session
 from vectiq.signals import calibra as calibra_mod
 from vectiq.signals import candidate, engine, masters, st2, st3, st4, st5
 from vectiq.signals.paper import PaperLedger
@@ -37,7 +39,8 @@ class Collector:
                  dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None,
-                 st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None) -> None:
+                 st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None,
+                 session: Session | None = None) -> None:
         self.st5 = st5_ledger                    # ST5 "alta probabilidad": Markov model, Under >= 65 % (supersedes ST4 when it fires)
         self._st5_fired: set[int] = set()
         self.st4 = st4_ledger                    # ST4 "segunda oportunidad": Under after 2-0 blowouts (PRE/ST3 stay as they are)
@@ -48,7 +51,11 @@ class Collector:
         self.mledger, self.book, self.cand, self.st2 = mledger, book, cand, st2_ledger
         self.arm_mode = arm                      # on | silent | off: heads-up while set 1 looks like a blowout
         self.st3, self.alerts = st3_ledger, {a.strip() for a in alerts.split(",") if a.strip()}   # which engines may message Telegram
-        self.notify_alert, self.poll_updates, self.ack_callback, self.alert_chat = notify_alert, poll_updates, ack_callback, alert_chat
+        self.session = session if session is not None else Session(None)   # the user's real balance + ▶/⏹ buttons
+        self._raw_alert = notify_alert
+        self.notify_alert = self._alert_out if notify_alert is not None else None
+        self.poll_updates, self.ack_callback, self.alert_chat = poll_updates, ack_callback, alert_chat
+        self._vig: dict[str, bool] = {}
         self._upd_offset: int | None = None
         self._upd_t, self._st3_t, self._st3_pause = 0.0, 0.0, ""
         self._armed: set[int] = set()
@@ -83,6 +90,35 @@ class Collector:
         self.pending_deadline_s = 5400.0
 
     # -- helpers -----------------------------------------------------------
+    def _alert_out(self, text: str, buttons=None, silent: bool = False) -> int | None:
+        """Every alert goes through here: bet alerts get a one-line nudge while no ▶ session is running."""
+        if buttons:
+            text += self.session.footer()
+        return self._raw_alert(text, buttons, silent) if self._raw_alert is not None else None
+
+    def _bank(self) -> float:
+        """The real bank alerts quote dollars on: what the user typed at ▶ INICIAR, else the environment default."""
+        return float(self.session.bank) if self.session.bank else self.real_bank
+
+    @staticmethod
+    def _norm(why: str) -> str:
+        """Pause reason without its numbers, so a drifting percentage does not post the same pause again."""
+        return re.sub(r"\d+(\.\d+)? ?%", "", why)
+
+    def _vigilante(self, kind: str, led: PaperLedger, where: str = "") -> float:
+        """CUSUM watch on one book: 1.0 normally, 0.5 (and one Telegram warning) while the recent ROI has fallen away
+        from the +10 % the stakes assume."""
+        try:
+            alarm = st3.cusum_stat(led.db, where) >= st3.CUSUM_H
+        except Exception:  # noqa: BLE001 - a watchdog must never stop the collector
+            return 1.0
+        if alarm != self._vig.get(kind, False):
+            self._vig[kind] = alarm
+            if self.notify_alert is not None and self.trading(time.time()):
+                self.notify_alert(f"<b>🚨 VIGILANTE {kind.upper()}</b>\nLa rentabilidad reciente cayó por debajo de lo esperado: stake a la mitad hasta que se recupere."
+                                  if alarm else f"<b>✅ VIGILANTE {kind.upper()}</b>\nLa rentabilidad reciente se recuperó: stake normal.", None)
+        return 0.5 if alarm else 1.0
+
     def _anchor(self, s: MatchState) -> None:
         if s.game_id in self.anchor:
             return
@@ -296,21 +332,24 @@ class Collector:
         ok, why = st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)
         if ok and self.mledger is not None and self._combined_day_loss(now_s) >= st3.DAY_STOP:
             ok, why = False, "pérdida del día entre PRE y ST3 en el límite"
-        frac = st3.stake_fraction(self.st3.drawdown())
-        note = "Banca en caída: apuesta reducida a la mitad." if 0 < frac < st3.STAKE_FRAC else ""
+        ev = st3.evidence_frac(self.st3.db, st3.STAKE_FRAC) * self._vigilante("st3", self.st3)
+        if ok and ev <= 0:
+            ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
+        frac = st3.stake_fraction(self.st3.drawdown(), ev)
+        note = "Apuesta reducida por la evidencia reciente o por la caída." if 0 < frac < st3.STAKE_FRAC else ""
         if self.mledger is not None and self.mledger.bankroll > 0:      # PRE and ST3 on the same match: 2 % in total
             left = st3.PER_MATCH_CAP - min(self.mledger.game_stake(s.game_id) / self.mledger.bankroll, st3.PRE_CAP)   # PRE alerts never stake more than PRE_CAP
             if left < frac:
                 frac = max(0.0, left)
                 note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
         if talk and ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st3(al, self.real_bank, frac, al.url, note=note),
+            mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, al, "bet", mid)
             self._st3_t = now_s
             log.info("st3 alert %s under %s @%s", al.players, al.line, al.price)
         elif talk and not ok:
-            if why != self._st3_pause:
+            if self._norm(why) != self._norm(self._st3_pause):
                 self._st3_pause = why
                 self.notify_alert(f"<b>ST3 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
         if ok and self._st3_pause:
@@ -338,14 +377,17 @@ class Collector:
         for led in (self.mledger, self.st3, self.st4):
             if led is not None and led.bankroll > 0:
                 other += min(led.game_stake(s.game_id) / led.bankroll, st3.PRE_CAP if led is self.mledger else 1.0)
-        frac, note = st5.stake_for(self.st5.drawdown(), other)
+        ev = st3.evidence_frac(self.st5.db, st5.STAKE_FRAC) * self._vigilante("st5", self.st5)
+        if ok and ev <= 0:
+            ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
+        frac, note = st5.stake_for(self.st5.drawdown(), other, ev)
         if ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st5(al, self.real_bank, frac, al.url, note=note),
+            mid = self.notify_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, st3.Alert(al.game_id, al.players, al.league, tuple(al.sets[0]), al.inplay, al.line,
                                                     al.price, [], al.ts_ms), "st5", mid)
             log.info("st5 alert %s under %s @%s p=%.2f", al.players, al.line, al.price, al.p)
-        elif not ok and why != getattr(self, "_st5_pause", ""):
+        elif not ok and self._norm(why) != self._norm(getattr(self, "_st5_pause", "")):
             self._st5_pause = why
             self.notify_alert(f"<b>ST5 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
         if ok and getattr(self, "_st5_pause", ""):
@@ -371,14 +413,17 @@ class Collector:
         for led in (self.mledger, self.st3):
             if led is not None and led.bankroll > 0:
                 other += min(led.game_stake(s.game_id) / led.bankroll, st3.PRE_CAP if led is self.mledger else 1.0)
-        frac, note = st4.stake_for(self.st4.drawdown(), other)
+        ev = st3.evidence_frac(self.st4.db, st4.STAKE_FRAC)
+        if ok and ev <= 0:
+            ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
+        frac, note = st4.stake_for(self.st4.drawdown(), other, ev)
         if ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st4(al, self.real_bank, frac, al.url, note=note),
+            mid = self.notify_alert(telegram.format_st4(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, st3.Alert(al.game_id, al.players, al.league, tuple(al.sets[0]), al.inplay, al.line,
                                                     al.price, [], al.ts_ms), "st4", mid)
             log.info("st4 alert %s under %s @%s", al.players, al.line, al.price)
-        elif not ok and why != getattr(self, "_st4_pause", ""):
+        elif not ok and self._norm(why) != self._norm(getattr(self, "_st4_pause", "")):
             self._st4_pause = why
             self.notify_alert(f"<b>ST4 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
         if ok and getattr(self, "_st4_pause", ""):
@@ -386,22 +431,48 @@ class Collector:
             self.notify_alert("<b>ST4 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
 
     def _poll_exec(self, now_s: float) -> None:
-        """Telegram button presses -> execution log (accepted / lower odds / could not), deduplicated by update id."""
+        """Telegram button presses -> execution log (accepted / lower odds / could not), deduplicated by update id; also the
+        ▶ INICIAR / ⏹ STOP panel and the balance the user types after pressing it."""
         if self.poll_updates is None or self.st3 is None or not self.trading(now_s) or now_s - self._upd_t < 5:
             return
         self._upd_t = now_s
+        if self.notify_alert is not None and self.session.d.get("panel_id") is None:
+            self.session.d["panel_id"] = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, True) or None
+            self.session.save()
         labels = {"ok": ("aceptada", "Registrado: aceptada"), "low": ("cuota_menor", "Registrado: cuota menor"),
                   "no": ("no_llego", "Registrado: no llegué")}
         for u in self.poll_updates(self._upd_offset):
-            self._upd_offset = int(u["update_id"]) + 1
+            uid = int(u["update_id"])
+            self._upd_offset = uid + 1
             cq = u.get("callback_query")
             if not cq:
+                post = u.get("message") or u.get("channel_post") or {}
+                text = str(post.get("text") or "")
+                if not text or self.session.seen(uid):
+                    continue
+                if text.strip().lower().startswith("/panel") and self._raw_alert is not None:
+                    self.session.d["panel_id"] = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, True) or None
+                    self.session.save()
+                    continue
+                reply = self.session.submit(text, now_s)
+                if reply and self._raw_alert is not None:
+                    self._raw_alert(reply, None, False)
                 continue
-            parts = str(cq.get("data", "")).split(":")
+            data = str(cq.get("data", ""))
+            if data in ("s:start", "s:stop"):
+                if self.session.seen(uid):
+                    continue
+                reply = self.session.press(data[2:], now_s)
+                if self.ack_callback is not None:
+                    self.ack_callback(cq.get("id", ""), "Escribe tu saldo en el chat", None, None, None)
+                if self._raw_alert is not None:
+                    self._raw_alert(reply, None, False)
+                continue
+            parts = data.split(":")
             if len(parts) != 3 or parts[0] != "x" or parts[2] not in labels:
                 continue
             status, label = labels[parts[2]]
-            st3.record_exec(self.st3.db, int(u["update_id"]), int(parts[1]), status, (cq.get("from") or {}).get("first_name", ""))
+            st3.record_exec(self.st3.db, uid, int(parts[1]), status, (cq.get("from") or {}).get("first_name", ""))
             if self.ack_callback is not None:
                 msg = cq.get("message") or {}
                 self.ack_callback(cq.get("id", ""), "Anotado", self.alert_chat, msg.get("message_id"), label)
@@ -499,7 +570,7 @@ class Collector:
         for led, kind in ((self.st3, "st3"), (self.mledger, "pre"), (self.st4, "st4"), (self.st5, "st5")):
             if led is None or led.bankroll <= 0:
                 continue
-            day0 = (int(now_s) // 86400) * 86400 * 1000
+            day0 = st3.day_start_ms(now_s)
             q = "SELECT COALESCE(SUM(pnl),0) FROM bets WHERE result IN ('W','L') AND ts_ms>=?"
             if kind == "pre":
                 q += " AND lead_min IS NOT NULL"
@@ -509,7 +580,7 @@ class Collector:
     def _pre_guard(self, now_s: float) -> tuple[bool, str]:
         m = self.mledger
         if m.drawdown() >= st3.PAUSE_DD:
-            return False, f"caída de banca {m.drawdown() * 100:.0f} % (límite {st3.PAUSE_DD * 100:.0f} %)"
+            return False, f"caída de banca en el límite ({st3.PAUSE_DD * 100:.0f} %)"
         rows = m.db.execute("SELECT pnl,stake FROM bets WHERE result IN ('W','L') AND lead_min IS NOT NULL "
                             "ORDER BY ts_ms DESC, id DESC LIMIT ?", (st3.KILL_WINDOW,)).fetchall()
         if len(rows) >= st3.KILL_WINDOW:
@@ -518,7 +589,7 @@ class Collector:
                 return False, f"ROI de las últimas {st3.KILL_WINDOW} apuestas de prepartido por debajo de {st3.KILL_ROI * 100:.0f} %"
         loss = self._combined_day_loss(now_s)
         if loss >= st3.DAY_STOP:
-            return False, f"pérdida del día entre PRE y ST3 {loss * 100:.0f} % (límite {st3.DAY_STOP * 100:.0f} %)"
+            return False, f"pérdida del día entre PRE y ST3 en el límite ({st3.DAY_STOP * 100:.0f} %)"
         return True, ""
 
     def _alert_pre(self, pick, s: MatchState, now_s: float) -> None:
@@ -527,16 +598,19 @@ class Collector:
         if self.notify_alert is None or self.st3 is None:
             return
         ok, why = self._pre_guard(now_s)
-        frac = min(pick.signal.stake_frac, st3.stake_fraction(self.st3.drawdown()), st3.PRE_CAP)
+        ev = st3.evidence_frac(self.mledger.db, st3.PRE_CAP, "lead_min IS NOT NULL")
+        if ok and ev <= 0:
+            ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
+        frac = min(pick.signal.stake_frac, st3.stake_fraction(self.st3.drawdown(), ev), st3.PRE_CAP)
         if ok and frac > 0:
             start_s = now_s + (pick.minutes_to_start or 0) * 60
-            mid = self.notify_alert(telegram.format_pre(pick, self.real_bank, frac, start_s),
+            mid = self.notify_alert(telegram.format_pre(pick, self._bank(), frac, start_s),
                                     telegram.exec_buttons(s.game_id))
             st3.record_alert(self.st3.db, st3.Alert(s.game_id, pick.signal.players, s.league, (0, 0), (0, 0), pick.signal.line,
                                                     pick.signal.price, [], s.fetched_ms), "pre", mid)
             self._alert_t = now_s
             log.info("pre alert %s under %s @%s", pick.signal.players, pick.signal.line, pick.signal.price)
-        elif not ok and why != self._pre_pause:
+        elif not ok and self._norm(why) != self._norm(self._pre_pause):
             self._pre_pause = why
             self.notify_alert(f"<b>PRE · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
         if ok and self._pre_pause:

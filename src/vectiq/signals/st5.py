@@ -63,9 +63,10 @@ def signal_from(al: Alert, stake_frac: float) -> Signal:
                   model_total=float(sum(a + b for a, b in al.sets)), market_median=al.line)
 
 
-def stake_for(drawdown: float, other_stake_frac: float) -> tuple[float, str]:
-    base = st3.stake_fraction(drawdown, STAKE_FRAC)
-    note = "Banca en caída: apuesta reducida a la mitad." if 0 < base < STAKE_FRAC else ""
+def stake_for(drawdown: float, other_stake_frac: float, base: float | None = None) -> tuple[float, str]:
+    top = STAKE_FRAC if base is None else min(base, STAKE_FRAC)      # `base`: the evidence-based fraction (never above the cap)
+    base = st3.stake_fraction(drawdown, top)
+    note = "Banca en caída: apuesta reducida." if 0 < base < top else ""
     left = PER_MATCH_CAP - other_stake_frac
     if left < base:
         base, note = max(0.0, left), "Ya hay apuestas en este partido: tope 3 % entre todas."
