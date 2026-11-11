@@ -90,3 +90,12 @@ def test_panel_buttons_and_typed_balance_drive_the_alert_dollars(tmp_path, monke
     col._masters(_s([(11, 5)], start_in_min=-5, gid=333), NOW + 900)
     txt = " ".join(m for m, _ in sent)
     assert "$2.00" in txt and "no iniciada" not in txt           # 1 % of the typed $200, session running
+
+
+def test_typed_commands_work_like_the_buttons(tmp_path):
+    s = Session(tmp_path / "s.json")
+    assert "saldo real" in s.submit("/iniciar", 1000.0)
+    assert "Sesión iniciada" in s.submit("96.5", 1010.0) and s.bank == 96.5
+    assert "Sesión iniciada" in s.submit("/iniciar 100", 1020.0) and s.bank == 100.0
+    assert "Sesión cerrada" in s.submit("/stop 104", 1030.0) and not s.active and s.bank == 104.0
+    assert "Comandos" in s.submit("/cosa", 1040.0)

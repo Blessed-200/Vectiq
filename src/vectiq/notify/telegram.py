@@ -255,6 +255,19 @@ def send_alert(text: str, buttons: list[list[tuple[str, str]]] | None = None, si
     return r.json()["result"]["message_id"] if r.ok else None
 
 
+def pin_message(message_id: int, token: str | None = None, chat_id: str | None = None) -> None:
+    """Pin a message in the channel (needs the bot to be admin with that right; best-effort, silent)."""
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    chat_id = chat_id or os.environ.get("TELEGRAM_CHAT_ID")
+    if not token or not chat_id or not message_id:
+        return
+    try:
+        requests.post(f"https://api.telegram.org/bot{token}/pinChatMessage", timeout=10,
+                      json={"chat_id": chat_id, "message_id": message_id, "disable_notification": True})
+    except Exception:  # noqa: BLE001
+        pass
+
+
 def get_updates(offset: int | None = None, token: str | None = None) -> list[dict]:
     token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
     if not token:

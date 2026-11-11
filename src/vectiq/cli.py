@@ -151,7 +151,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
         notify_alert=lambda m, b=None, silent=False: telegram.send_alert(m, b, silent, chat_id=chat),
         arm=os.environ.get("VECTIQ_ARM", "on"),          # on | silent | off
-        poll_updates=lambda off: telegram.get_updates(off),
+        poll_updates=lambda off: telegram.get_updates(off), pin=telegram.pin_message,
         ack_callback=lambda cid, txt, ch, mid, lab: telegram.ack_callback(cid, txt, ch, mid, lab), alert_chat=chat,
         notify=lambda m: telegram.send(m, chat_id=chat), book_path=out / "masters_book.json",
         notify_doc=lambda path, cap: telegram.send_document(path, cap, chat_id=chat), dashboard_dir=out,
