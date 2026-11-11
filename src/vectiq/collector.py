@@ -40,7 +40,7 @@ class Collector:
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None,
                  st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None,
-                 session: Session | None = None) -> None:
+                 session: Session | None = None, pin=None) -> None:
         self.st5 = st5_ledger                    # ST5 "alta probabilidad": Markov model, Under >= 65 % (supersedes ST4 when it fires)
         self._st5_fired: set[int] = set()
         self.st4 = st4_ledger                    # ST4 "segunda oportunidad": Under after 2-0 blowouts (PRE/ST3 stay as they are)
@@ -56,6 +56,7 @@ class Collector:
         self.notify_alert = self._alert_out if notify_alert is not None else None
         self.poll_updates, self.ack_callback, self.alert_chat = poll_updates, ack_callback, alert_chat
         self._vig: dict[str, bool] = {}
+        self.pin = pin
         self._upd_offset: int | None = None
         self._upd_t, self._st3_t, self._st3_pause = 0.0, 0.0, ""
         self._armed: set[int] = set()
@@ -95,6 +96,13 @@ class Collector:
         if buttons:
             text += self.session.footer()
         return self._raw_alert(text, buttons, silent) if self._raw_alert is not None else None
+
+    def _post_panel(self) -> int | None:
+        """Publish the ▶/⏹ panel with sound and try to pin it so it is always at the top of the channel."""
+        mid = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, False) if self._raw_alert is not None else None
+        if mid and self.pin is not None:
+            self.pin(mid)
+        return mid or None
 
     def _bank(self) -> float:
         """The real bank alerts quote dollars on: what the user typed at ▶ INICIAR, else the environment default."""
@@ -437,7 +445,7 @@ class Collector:
             return
         self._upd_t = now_s
         if self.notify_alert is not None and self.session.d.get("panel_id") is None:
-            self.session.d["panel_id"] = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, True) or None
+            self.session.d["panel_id"] = self._post_panel()
             self.session.save()
         labels = {"ok": ("aceptada", "Registrado: aceptada"), "low": ("cuota_menor", "Registrado: cuota menor"),
                   "no": ("no_llego", "Registrado: no llegué")}
@@ -451,7 +459,7 @@ class Collector:
                 if not text or self.session.seen(uid):
                     continue
                 if text.strip().lower().startswith("/panel") and self._raw_alert is not None:
-                    self.session.d["panel_id"] = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, True) or None
+                    self.session.d["panel_id"] = self._post_panel()
                     self.session.save()
                     continue
                 reply = self.session.submit(text, now_s)
