@@ -34,7 +34,7 @@ jobs:
           set -euo pipefail
           mkdir -p site/assets
           gh release download ledger \
-            --pattern "masters.sqlite" --pattern "st2.sqlite" --pattern "st3.sqlite" \
+            --pattern "masters.sqlite" --pattern "st2.sqlite" --pattern "st3.sqlite" --pattern "st4.sqlite" --pattern "st5.sqlite" \
             --pattern "masters_book.json" \
             --dir site/assets --clobber
           ls -la site/assets/

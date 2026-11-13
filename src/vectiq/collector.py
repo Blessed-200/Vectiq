@@ -77,8 +77,9 @@ class Collector:
         self.sprt = "on"
         try:                                       # alerts quote the REAL bank (default $100), never the paper ledger's compounded one
             self.real_bank = float(os.environ.get("VECTIQ_REAL_BANK", "100"))
+            self.flat_stake = float(os.environ.get("VECTIQ_FLAT_STAKE", "2"))
         except ValueError:
-            self.real_bank = 100.0
+            self.real_bank, self.flat_stake = 100.0, 2.0
         self.day = time.strftime("%Y-%m-%d", time.gmtime())
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
@@ -107,6 +108,14 @@ class Collector:
     def _bank(self) -> float:
         """The real bank alerts quote dollars on: what the user typed at ▶ INICIAR, else the environment default."""
         return float(self.session.bank) if self.session.bank else self.real_bank
+
+    def _flat(self, frac: float, note: str = "") -> tuple[float, str]:
+        """ST3/ST5 alerts use ONE fixed dollar stake (VECTIQ_FLAT_STAKE, default $2; 0 = evidence/drawdown sizing).
+        Mixed stakes across strategies that bet the same outcome lengthened the drawdown and earned less (12 nov study).
+        The hard stops stay: frac == 0 (evidence, 30 % drawdown) still silences the alert."""
+        if self.flat_stake > 0 and frac > 0 and self._bank() > 0:
+            return min(self.flat_stake / self._bank(), 0.05), "Stake fijo."
+        return frac, note
 
     @staticmethod
     def _norm(why: str) -> str:
@@ -350,6 +359,7 @@ class Collector:
             if left < frac:
                 frac = max(0.0, left)
                 note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
+        frac, note = self._flat(frac, note)
         if talk and ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
@@ -389,6 +399,7 @@ class Collector:
         if ok and ev <= 0:
             ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
         frac, note = st5.stake_for(self.st5.drawdown(), other, ev)
+        frac, note = self._flat(frac, note)
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))

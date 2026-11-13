@@ -152,7 +152,7 @@ function histChart(book, { w = 920, h = 220 } = {}) {
 
 /* ---------- renderers ---------- */
 function stratLabel(key, s) {
-  const names = { st3: "ST3 (alertas)", masters: "Telegram (modelo, silenciado)", st2: "ST2-core (sombra)" };
+  const names = { st3: "ST3 (alertas)", masters: "Telegram (modelo, silenciado)", st2: "ST2-core (sombra)", st4: "ST4 (solo papel)", st5: "ST5 (alertas)" };
   return names[key] || s.meta?.name || key;
 }
 function renderResumen() {

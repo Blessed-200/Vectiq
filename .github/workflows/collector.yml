@@ -70,7 +70,10 @@ jobs:
               gh workflow run collector.yml --repo "$GITHUB_REPOSITORY" -f chained=true || true
               CHAINED=1
             fi
-            if [ $((NOW-LAST)) -ge 1200 ]; then python -m vectiq publish || true; LAST=$NOW; fi
+            if [ $((NOW-LAST)) -ge 1200 ]; then
+              python -m vectiq publish || true; LAST=$NOW
+              gh workflow run pages.yml --repo "$GITHUB_REPOSITORY" || true     # the page follows the ledgers (cron alone ran every 5-8 h)
+            fi
           done
           wait $PID || true
           python -m vectiq publish || true

@@ -45,6 +45,20 @@ STRATEGIES = {
         "hypothesis": "ST3 (backtest +14 %, forward +10 % con 319 apuestas: falta confirmar)",
         "cut": None,          # el ledger nace en el despliegue: todo lo liquidado es prospectivo
     },
+    "st5": {
+        "name": "ST5 (alertas)",
+        "db": "st5.sqlite",
+        "desc": "Under por modelo de Markov (P ≥ 0,65 y EV ≥ 5 %), mejor escalón de la escalera. Una posición por partido; alerta con $ fijo.",
+        "hypothesis": "ST5 (calibración H3: falta forward)",
+        "cut": None,
+    },
+    "st4": {
+        "name": "ST4 (solo papel)",
+        "db": "st4.sqlite",
+        "desc": "Under en k=2 si el mismo jugador ganó los dos sets con margen acumulado ≥ 8. Solo papel: sin alertas.",
+        "hypothesis": "ST4 (aporta caída sin ganancia extra: papel)",
+        "cut": None,
+    },
     "masters": {
         "name": "Telegram (modelo)",
         "db": "masters.sqlite",

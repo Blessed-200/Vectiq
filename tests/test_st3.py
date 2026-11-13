@@ -187,6 +187,7 @@ def _pre_col(tmp_path, sent, **kw):
     col = Collector(FakeClient(), TapeWriter(tmp_path / "t"), None, mledger=led, book=masters.MastersBook.from_seed(),
                     st3_ledger=st, alerts=kw.pop("alerts", "st3,pre"), notify=lambda m: True,
                     notify_alert=lambda m, b=None, silent=False: sent.append((m, b)) or 7, **kw)
+    col.flat_stake = 0.0     # these tests exercise the evidence/cap sizing; the fixed stake has its own test
     return col, led, st
 
 
