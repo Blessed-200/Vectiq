@@ -71,7 +71,7 @@ def test_build_outputs(assets, tmp_path):
     assert r.returncode == 0, r.stderr
     s = json.load(open(os.path.join(out, "summary.json")))
     assert s["schema_version"] >= 1
-    assert set(s["strategies"]) == {"st3", "masters", "st2"}      # cand / setka / ST0 / ST1 retiradas el 2026-11-04
+    assert set(s["strategies"]) == {"st3", "masters", "st2", "st4", "st5"}      # cand / setka / ST0 / ST1 retiradas el 2026-11-04
     m = s["strategies"]["masters"]
     # 6 prematch fuertes (5 con resultado fuerte + 1 imputed va a weak) —
     # strong = W/L/P con observed/results_api/legado

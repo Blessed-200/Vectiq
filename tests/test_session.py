@@ -99,3 +99,16 @@ def test_typed_commands_work_like_the_buttons(tmp_path):
     assert "Sesión iniciada" in s.submit("/iniciar 100", 1020.0) and s.bank == 100.0
     assert "Sesión cerrada" in s.submit("/stop 104", 1030.0) and not s.active and s.bank == 104.0
     assert "Comandos" in s.submit("/cosa", 1040.0)
+
+
+def test_flat_stake_replaces_sizing_but_keeps_the_hard_stop(monkeypatch):
+    from vectiq.collector import Collector
+    c = Collector.__new__(Collector)
+    c.flat_stake, c.real_bank = 2.0, 100.0
+    c.session = Session(None)
+    assert c._flat(0.004)[0] == 0.02                       # any positive size becomes $2 of a $100 bank
+    assert c._flat(0.0)[0] == 0.0                          # evidence / 30 % drawdown stop still silences it
+    c.session.d["bank"] = 200.0
+    assert c._flat(0.01)[0] == 0.01                        # $2 of a $200 bank
+    c.flat_stake = 0.0
+    assert c._flat(0.004) == (0.004, "")                   # 0 turns the fixed stake off

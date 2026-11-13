@@ -63,3 +63,15 @@ ST3 1.5 %, ST4 1.5 % (0.75 % si ya hay apuesta en el partido), ST5 1 % (ya en ma
 - **Freno del día**: ahora cuenta desde las 6 AM de Cuba (no desde las 7 PM) y el límite es 15 % de la suma de los libros en papel (10 % caía dentro del ruido normal). El aviso de pausa sale una sola vez, aunque el porcentaje cambie.
 - **Panel ▶ INICIAR / ⏹ STOP** en el canal: al iniciar, el bot pide tu saldo real (el número que escribas pasa a ser la banca en dólares de todas las alertas); al parar, pide el saldo final y registra la sesión. `/banca 103.5` corrige el saldo; `/panel` vuelve a publicar el panel. Las alertas no se detienen: mientras no haya sesión llevan una línea de recordatorio. Estado en `session.json` (viaja entre relevos).
 
+
+
+## Stake fijo en ST3 y ST5, PRE y ST4 en papel (12 nov)
+
+Estudio de las 2.157 alertas reales del 8 al 11 nov: las estrategias que coinciden en un partido son casi la misma apuesta
+(correlación 0.74–0.89), así que sumar PRE y ST4 apila riesgo sin diversificar. Con $2 fijo en ST3+ST5: +146 USD, caída 28.6 %;
+con el stake variable de hoy: +126 USD, caída 35.1 %. Cambios:
+
+* Las alertas de ST3 y ST5 llevan un stake fijo en dólares (`VECTIQ_FLAT_STAKE`, por defecto 2; 0 = tamaño por evidencia).
+  Los frenos duros siguen: evidencia insuficiente, vigilante, parada del día y caída del 30 % apagan la alerta.
+* `VECTIQ_ALERTS` por defecto es `st3,st5`. PRE y ST4 siguen registrando en papel, sin avisar.
+* La página se reconstruye al terminar cada subida del colector (cada 20 min) y ya muestra ST4 y ST5.
