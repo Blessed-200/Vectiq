@@ -89,7 +89,7 @@ class Session:
             v = parse_amount(m.group(1))
             if v is None:
                 return "No entendí el saldo. Escribe /banca 103.5"
-            self.d["bank"] = v
+            self.d.update(bank=v, bank_ts=now, stake_base=None)
             self.save()
             return f"✅ Banca corregida: <b>${v:,.2f}</b>. Los dólares de las alertas usan este saldo."
         if cmd and cmd.group(1).lower() not in ("banca", "panel"):
@@ -102,14 +102,14 @@ class Session:
             return "No entendí el número. Escribe solo el saldo, por ejemplo 103.5"
         self.d["ask"] = None
         if ask == "start":
-            self.d.update(active=True, bank=v, start_bank=v, start_ts=now)
+            self.d.update(active=True, bank=v, start_bank=v, start_ts=now, bank_ts=now, stake_base=None)
             self.save()
             return (f"✅ <b>Sesión iniciada</b> con saldo real <b>${v:,.2f}</b>.\n"
                     f"Los dólares de cada alerta se calculan sobre esta banca. Banca fija durante la sesión.")
         start = self.d.get("start_bank")
         res = {"start_ts": self.d.get("start_ts"), "stop_ts": now, "start_bank": start, "end_bank": v}
         self.d["log"] = (self.d.get("log") or [])[-49:] + [res]
-        self.d.update(active=False, bank=v)
+        self.d.update(active=False, bank=v, bank_ts=now, stake_base=None)
         self.save()
         if start:
             pnl = v - start

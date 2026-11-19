@@ -12,7 +12,7 @@ from vectiq.feed.client import BetwinnerClient, CircuitOpen
 from vectiq.feed.scheduler import DetailScheduler
 from vectiq.feed.results import day_window, parse_results
 from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
-from vectiq.notify import telegram
+from vectiq.notify import bankroll, telegram
 from vectiq.notify.session import PANEL_BUTTONS, PANEL_TEXT, Session
 from vectiq.signals import calibra as calibra_mod
 from vectiq.signals import candidate, engine, masters, st2, st3, st4, st5
@@ -23,6 +23,7 @@ log = logging.getLogger("vectiq.collector")
 
 
 class Collector:
+    stake_pct = 0.0                          # class default (tests build bare collectors); __init__ reads VECTIQ_STAKE_PCT
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
                  *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
                  scheduler: DetailScheduler | None = None, mledger: PaperLedger | None = None,
@@ -78,8 +79,9 @@ class Collector:
         try:                                       # alerts quote the REAL bank (default $100), never the paper ledger's compounded one
             self.real_bank = float(os.environ.get("VECTIQ_REAL_BANK", "100"))
             self.flat_stake = float(os.environ.get("VECTIQ_FLAT_STAKE", "2"))
+            self.stake_pct = float(os.environ.get("VECTIQ_STAKE_PCT", str(bankroll.STAKE_PCT)))   # % of the live bank per alert; 0 = old fixed $ stake
         except ValueError:
-            self.real_bank, self.flat_stake = 100.0, 2.0
+            self.real_bank, self.flat_stake, self.stake_pct = 100.0, 2.0, bankroll.STAKE_PCT
         self.day = time.strftime("%Y-%m-%d", time.gmtime())
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
@@ -107,12 +109,27 @@ class Collector:
 
     def _bank(self) -> float:
         """The real bank alerts quote dollars on: what the user typed at ▶ INICIAR, else the environment default."""
-        return float(self.session.bank) if self.session.bank else self.real_bank
+        anchor = float(self.session.bank) if self.session.bank else self.real_bank
+        if self.stake_pct > 0 and self.st3 is not None:
+            try:
+                st5db = self.st5.db if self.st5 is not None else None
+                return bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db)[0] or anchor
+            except Exception:  # noqa: BLE001 - never block an alert over bookkeeping
+                log.warning("tracked bank failed", exc_info=True)
+        return anchor
 
     def _flat(self, frac: float, note: str = "") -> tuple[float, str]:
         """ST3/ST5 alerts use ONE fixed dollar stake (VECTIQ_FLAT_STAKE, default $2; 0 = evidence/drawdown sizing).
         Mixed stakes across strategies that bet the same outcome lengthened the drawdown and earned less (12 nov study).
         The hard stops stay: frac == 0 (evidence, 30 % drawdown) still silences the alert."""
+        if self.stake_pct > 0 and frac > 0 and self._bank() > 0:
+            bank = self._bank()
+            stake, redo = bankroll.stake_now(self.session.d, bank, time.time(), self.stake_pct)
+            if redo:
+                self.session.save()
+                note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta ({self.stake_pct * 100:.2f} %)."
+            self._last_stake = stake
+            return min(stake / bank, 0.05), note
         if self.flat_stake > 0 and frac > 0 and self._bank() > 0:
             return min(self.flat_stake / self._bank(), 0.05), "Stake fijo."
         return frac, note
@@ -366,6 +383,7 @@ class Collector:
             mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, al, "bet", mid)
+            bankroll.record_quote(self.st3.db, al.game_id, "bet", al.ts_ms, round(self._bank() * frac, 2))
             self._st3_t = now_s
             log.info("st3 alert %s under %s @%s", al.players, al.line, al.price)
         elif talk and not ok:
@@ -409,6 +427,7 @@ class Collector:
                                     telegram.exec_buttons(al.game_id))
             st3.record_alert(self.st3.db, st3.Alert(al.game_id, al.players, al.league, tuple(al.sets[0]), al.inplay, al.line,
                                                     al.price, [], al.ts_ms), "st5", mid)
+            bankroll.record_quote(self.st3.db, al.game_id, "st5", al.ts_ms, round(self._bank() * frac, 2))
             log.info("st5 alert %s under %s @%s p=%.2f", al.players, al.line, al.price, al.p)
         elif not ok and self._norm(why) != self._norm(getattr(self, "_st5_pause", "")):
             self._st5_pause = why
@@ -477,6 +496,9 @@ class Collector:
                     self.session.d["panel_id"] = self._post_panel()
                     self.session.save()
                     continue
+                if text.strip().lower().startswith("/estado") and self._raw_alert is not None:
+                    self._raw_alert(self._estado(now_s), None, False)
+                    continue
                 reply = self.session.submit(text, now_s)
                 if reply and self._raw_alert is not None:
                     self._raw_alert(reply, None, False)
@@ -499,6 +521,17 @@ class Collector:
             if self.ack_callback is not None:
                 msg = cq.get("message") or {}
                 self.ack_callback(cq.get("id", ""), "Anotado", self.alert_chat, msg.get("message_id"), label)
+
+    def _estado(self, now_s: float) -> str:
+        """/estado: the bot's picture of the real bank and the stake it is quoting."""
+        anchor = float(self.session.bank) if self.session.bank else self.real_bank
+        st5db = self.st5.db if self.st5 is not None else None
+        bank, n, ex = bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db)
+        stake, _ = bankroll.stake_now(dict(self.session.d), bank, now_s, self.stake_pct or bankroll.STAKE_PCT)
+        return (f"<b>VECTIQ · ESTADO</b>\nÚltimo saldo que escribiste: <b>${anchor:,.2f}</b>\n"
+                f"Desde entonces: {n} alertas liquidadas ({ex} marcadas «No llegué»)\n"
+                f"Banca que calcula el bot: <b>${bank:,.2f}</b>\nStake por alerta: <b>${stake:,.2f}</b>\n"
+                f"<i>Si tu saldo real en Betwinner es otro, escribe /banca 123.45 y el bot se ajusta.</i>")
 
     def _st3_watchdog(self, now_s: float) -> None:
         if self.st3 is None or "st3" not in self.alerts or self.notify_alert is None or not self.trading(now_s):
