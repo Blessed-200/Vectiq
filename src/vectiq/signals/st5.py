@@ -22,6 +22,8 @@ STAKE_FRAC = float(os.environ.get("VECTIQ_ST5_FRAC", "0.01"))
 PER_MATCH_CAP = 0.03                         # PRE + ST3 + ST4 + ST5 on one match
 ALERT_K = (1, 2)                             # alerts; k = 3 is paper only
 PAPER_K = (1, 2, 3)
+ALERT_EV_MIN = float(os.environ.get("VECTIQ_ST5_ALERT_EV_MIN", "0.15"))   # Telegram only for 0.15 < EV <= 0.30 (validated 19 nov; other bets stay on paper)
+ALERT_EV_MAX = float(os.environ.get("VECTIQ_ST5_ALERT_EV_MAX", "0.30"))
 
 
 @dataclass(slots=True)

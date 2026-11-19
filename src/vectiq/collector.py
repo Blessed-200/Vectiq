@@ -345,6 +345,8 @@ class Collector:
             return
         self._armed.discard(s.game_id)
         self._calibra_shadow("st3", self.st3, s, al.price, st3.STAKE_FRAC)
+        if al.price < st3.ALERT_MIN_PRICE - 1e-9:
+            return           # paper only: the validated Telegram set is ST3 with price >= 2.10
         al.url = masters.match_url(s)
         ok, why = st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)
         if ok and self.mledger is not None and self._combined_day_loss(now_s) >= st3.DAY_STOP:
@@ -386,6 +388,8 @@ class Collector:
             return
         if len(al.sets) not in st5.ALERT_K or not ("st5" in self.alerts and self.notify_alert is not None and self.st3 is not None) or s.game_id in self._st5_fired:
             return           # ST5 (same match, higher-probability rung) already told the user
+        if not (st5.ALERT_EV_MIN < al.ev <= st5.ALERT_EV_MAX + 1e-9):
+            return           # paper only: the validated Telegram set is ST5 with 0.15 < EV <= 0.30
         self._st5_fired.add(s.game_id)
         al.url = masters.match_url(s)
         ok, why = st3.guard(self.st5.db, self.st5.bankroll, self.st5.drawdown(), now_s)

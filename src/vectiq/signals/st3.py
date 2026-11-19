@@ -14,6 +14,7 @@ the blowout (it breaks the market's "both players are identical" prior) and the 
 """
 from __future__ import annotations
 
+import os
 import sqlite3
 import time
 from dataclasses import dataclass
@@ -24,6 +25,7 @@ from vectiq.signals.engine import Signal
 MIN_MARGIN = 5
 MAX_INPLAY = 4
 MIN_ODDS = 2.00
+ALERT_MIN_PRICE = float(os.environ.get("VECTIQ_ST3_ALERT_MIN_PRICE", "2.10"))   # Telegram only for price >= 2.10 (validated 19 nov; lower rungs stay on paper)
 STAKE_FRAC = 0.010                            # CAP of the evidence-based stake (60-day simulations on the real bets: 0-3 % chance of a 30 % drawdown)
 PRE_CAP = 0.005                               # pre-match alerts (old Telegram model): never above 0.5 % of the bankroll (paper ROI since 5 Nov only ~+3 %)
 PER_MATCH_CAP = 0.02                          # PRE + ST3 together on one match
