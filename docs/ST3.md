@@ -75,3 +75,9 @@ con el stake variable de hoy: +126 USD, caída 35.1 %. Cambios:
   Los frenos duros siguen: evidencia insuficiente, vigilante, parada del día y caída del 30 % apagan la alerta.
 * `VECTIQ_ALERTS` por defecto es `st3,st5`. PRE y ST4 siguen registrando en papel, sin avisar.
 * La página se reconstruye al terminar cada subida del colector (cada 20 min) y ya muestra ST4 y ST5.
+
+## Banca viva y stake dinámico (19 nov)
+* Stake por alerta = 1.75 % de la banca (`VECTIQ_STAKE_PCT`, 0 = stake fijo anterior), redondeado a $0.50, mín $1, máx $3,000.
+* La banca la lleva el bot: último saldo que escribiste (▶ INICIAR, /banca, ⏹ STOP) + resultado de cada alerta enviada después, al stake que cotizó. Una alerta cuenta como tomada salvo que pulses «No llegué».
+* El stake se recalcula cada hora o cuando la banca se mueve ±5 %; la alerta lo avisa con una línea «📊 Stake recalculado».
+* `/estado` muestra la banca que calcula el bot y el stake vigente. `/banca 123.45` corrige cualquier desvío (teléfono apagado, sin conexión).
