@@ -126,6 +126,7 @@ class Collector:
         The hard stops stay: frac == 0 (evidence, 30 % drawdown) still silences the alert."""
         if self.stake_pct > 0 and frac > 0 and self._bank() > 0:
             bank = self._bank()
+            note = ""          # the evidence/drawdown "Apuesta reducida" note is stale here: this stake ignores those brakes
             stake, redo = bankroll.stake_now(self.session.d, bank, time.time(), self.stake_pct)
             if redo:
                 self.session.save()

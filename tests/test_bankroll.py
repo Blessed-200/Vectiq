@@ -57,3 +57,13 @@ def _db_ledger():
     class L:
         db = _db()
     return L()
+
+
+def test_flat_drops_stale_reduced_stake_note(tmp_path):
+    from vectiq.collector import Collector
+    from vectiq.notify.session import Session
+    c = Collector.__new__(Collector)
+    c.session, c.real_bank, c.flat_stake, c.stake_pct = Session(tmp_path / "s.json"), 1000.0, 2.0, 0.0175
+    c.st3, c.st5 = _db_ledger(), None
+    c._flat(0.01)                                                   # first call recalculates
+    assert c._flat(0.005, "Apuesta reducida por la evidencia reciente o por la caída.")[1] == ""
