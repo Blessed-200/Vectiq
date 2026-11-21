@@ -5,3 +5,8 @@ import pytest
 def _legacy_fixed_stake(monkeypatch):
     """Existing tests exercise the fixed-$ / evidence sizing; the dynamic %-of-bank stake has its own tests."""
     monkeypatch.setenv("VECTIQ_STAKE_PCT", "0")
+
+
+@pytest.fixture(autouse=True)
+def _no_player_tilt(monkeypatch):
+    monkeypatch.setenv("VECTIQ_PLAYER_TILT", "0")
