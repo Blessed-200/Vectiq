@@ -15,7 +15,7 @@ from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import bankroll, telegram
 from vectiq.notify.session import PANEL_BUTTONS, PANEL_TEXT, Session
 from vectiq.signals import calibra as calibra_mod
-from vectiq.signals import candidate, engine, masters, st2, st3, st4, st5
+from vectiq.signals import candidate, engine, masters, players, st2, st3, st4, st5
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
@@ -23,6 +23,7 @@ log = logging.getLogger("vectiq.collector")
 
 
 class Collector:
+    ratings = None                           # player-rating stake tilt (signals/players.py); None = off
     stake_pct = 0.0                          # class default (tests build bare collectors); __init__ reads VECTIQ_STAKE_PCT
     def __init__(self, client: BetwinnerClient, tape: TapeWriter, ledger: PaperLedger | None = None,
                  *, shadow: PaperLedger | None = None, notify: Callable[[str], bool] | None = None,
@@ -82,6 +83,7 @@ class Collector:
             self.stake_pct = float(os.environ.get("VECTIQ_STAKE_PCT", str(bankroll.STAKE_PCT)))   # % of the live bank per alert; 0 = old fixed $ stake
         except ValueError:
             self.real_bank, self.flat_stake, self.stake_pct = 100.0, 2.0, bankroll.STAKE_PCT
+        self.ratings = players.Ratings() if os.environ.get("VECTIQ_PLAYER_TILT", "1") != "0" else None
         self.day = time.strftime("%Y-%m-%d", time.gmtime())
         self.notify = notify or telegram.send
         self.sched = scheduler or DetailScheduler()
@@ -118,7 +120,7 @@ class Collector:
                 log.warning("tracked bank failed", exc_info=True)
         return anchor
 
-    def _flat(self, frac: float, note: str = "") -> tuple[float, str]:
+    def _flat(self, frac: float, note: str = "", players_: str = "") -> tuple[float, str]:
         """ST3/ST5 alerts use ONE fixed dollar stake (VECTIQ_FLAT_STAKE, default $2; 0 = evidence/drawdown sizing).
         Mixed stakes across strategies that bet the same outcome lengthened the drawdown and earned less (12 nov study).
         The hard stops stay: frac == 0 (evidence, 30 % drawdown) still silences the alert."""
@@ -128,11 +130,28 @@ class Collector:
             if redo:
                 self.session.save()
                 note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta ({self.stake_pct * 100:.2f} %)."
+            m = self._tilt(players_)
+            if abs(m - 1.0) > 1e-9:
+                stake = min(bankroll.MAX_STAKE, max(bankroll.MIN_STAKE, round(stake * m * 2) / 2))
+                if m >= 1.15:
+                    note = (note + "\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{m:.1f}."
+                elif m <= 0.85:
+                    note = (note + "\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{m:.1f}."
             self._last_stake = stake
             return min(stake / bank, 0.05), note
         if self.flat_stake > 0 and frac > 0 and self._bank() > 0:
             return min(self.flat_stake / self._bank(), 0.05), "Stake fijo."
         return frac, note
+
+    def _tilt(self, players_: str) -> float:
+        """Stake multiplier from the player ratings (1.0 when off, unknown players or too little history)."""
+        if self.ratings is None or not players_ or self.st2 is None or self.calibra is None:
+            return 1.0
+        try:
+            self.ratings.maybe_refit(self.st2.db, self.calibra.db, time.time())
+            return self.ratings.mult(players_)
+        except Exception:  # noqa: BLE001
+            return 1.0
 
     @staticmethod
     def _norm(why: str) -> str:
@@ -378,7 +397,7 @@ class Collector:
             if left < frac:
                 frac = max(0.0, left)
                 note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
-        frac, note = self._flat(frac, note)
+        frac, note = self._flat(frac, note, al.players)
         if talk and ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
@@ -421,7 +440,7 @@ class Collector:
         if ok and ev <= 0:
             ok, why = False, "evidencia reciente insuficiente: el ROI de las últimas apuestas no supera cero con margen"
         frac, note = st5.stake_for(self.st5.drawdown(), other, ev)
-        frac, note = self._flat(frac, note)
+        frac, note = self._flat(frac, note, al.players)
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))

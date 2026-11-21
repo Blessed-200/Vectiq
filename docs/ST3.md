@@ -81,3 +81,6 @@ con el stake variable de hoy: +126 USD, caída 35.1 %. Cambios:
 * La banca la lleva el bot: último saldo que escribiste (▶ INICIAR, /banca, ⏹ STOP) + resultado de cada alerta enviada después, al stake que cotizó. Una alerta cuenta como tomada salvo que pulses «No llegué».
 * El stake se recalcula cada hora o cuando la banca se mueve ±5 %; la alerta lo avisa con una línea «📊 Stake recalculado».
 * `/estado` muestra la banca que calcula el bot y el stake vigente. `/banca 123.45` corrige cualquier desvío (teléfono apagado, sin conexión).
+
+## Ratings de jugadores → stake inclinado (21 nov)
+Los jugadores explican parte de por qué el total cae bajo o sobre el mercado. `signals/players.py` ajusta un ridge sobre partidos ya terminados (`final − centro tras el set 1 = μ + θa + θb`, vida media 5 días, λ=250) y multiplica el stake de cada alerta por `clip(1 − 0.52·z, 0.4, 1.6)` renormalizado a media 1 (jugadores de pocos puntos ×1.5, de muchos puntos ×0.5). No decide qué alertas salen, solo mueve el stake entre ellas. Fuera de muestra (12–20 nov, 1,485 alertas): ROI +16.0 % → +19.3 %, mejora IC95 [+1.1, +5.5] pts; permutación p≈0.02. Apagar con `VECTIQ_PLAYER_TILT=0`.
