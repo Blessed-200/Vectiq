@@ -2,105 +2,198 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>VECTIQ — Panel de evidencia</title>
-<meta name="description" content="Panel de decisión: estrategias de tenis de mesa evaluadas en papel sobre datos reales.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VECTIQ · Panel</title>
+<meta name="description" content="Panel de ST3, ST5 y su combinación: solo las alertas que llegan a Telegram.">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#15181d;--mut:#6a7280;--line:#e4e2da;--pos:#1f7a4d;--neg:#b3382c;--acc:#1b3a5c;--acc2:#8a6d2f;--posbg:#e5f2ea;--negbg:#f7e4e1;--shadow:0 1px 2px rgba(20,24,29,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#101318;--card:#171b22;--ink:#e8eaee;--mut:#8f98a6;--line:#262c36;--pos:#4cc38a;--neg:#f0786b;--acc:#8fb4e3;--acc2:#d4b36a;--posbg:#16301f;--negbg:#3a1d1a;--shadow:none}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:0 16px 48px}
+.wrap{max-width:980px;margin:0 auto}
+header{padding:22px 0 10px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;letter-spacing:.14em;font-weight:700}
+.sub{color:var(--mut);font-size:13px;margin-top:2px}
+.clock{font-variant-numeric:tabular-nums;color:var(--mut);font-size:12.5px;text-align:right}
+.clock b{color:var(--ink);font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.card h2{margin:0 0 10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--mut);padding:9px 6px;border-radius:9px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.seg button.on{background:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.seg button.on{background:var(--acc);color:#0c1118}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px inherit;font-family:inherit;cursor:pointer}
+.chip.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.rng{color:var(--mut);font-size:12.5px;margin-left:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.k{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card)}
+.k .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.k .l{color:var(--mut);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}.k .s{color:var(--mut);font-size:11.5px;margin-top:1px}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+svg{display:block;width:100%;height:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%);z-index:5;display:none;font-variant-numeric:tabular-nums}
+.chart{position:relative}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);text-align:right;font-weight:600;padding:6px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+tr.clk{cursor:pointer}tr.clk:hover td,tr.sel td{background:var(--bg)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px;letter-spacing:.04em}
+.t3{background:#e3ebf5;color:#1b3a5c}.t5{background:#f1e9d6;color:#7a5d1f}
+@media (prefers-color-scheme:dark){.t3{background:#1c2a3d;color:#8fb4e3}.t5{background:#33291a;color:#d4b36a}}
+.res{font-weight:700}.W{color:var(--pos)}.L{color:var(--neg)}.O{color:var(--mut)}
+.note{color:var(--mut);font-size:12.5px;margin-top:8px}
+input[type=number]{width:84px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 7px;font:inherit}
+.two{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--acc);border-radius:8px;padding:4px 10px;font:600 12px inherit;font-family:inherit;cursor:pointer}
+</style>
 </head>
 <body>
-<header class="site-head">
-  <div class="wrap head-grid">
-    <div>
-      <h1>VECTIQ</h1>
-      <p class="sub">Laboratorio de mercado — tenis de mesa, Betwinner</p>
-    </div>
-    <div class="head-meta">
-      <span id="generated" class="mono"></span>
-      <span class="badge-paper">Evidencia en papel · no dinero real</span>
-    </div>
-  </div>
-  <nav class="wrap tabs" id="tabs" role="tablist" aria-label="Secciones">
-    <button data-tab="resumen" role="tab">Resumen</button>
-    <button data-tab="estrategias" role="tab">Estrategias</button>
-    <button data-tab="puertas" role="tab">Puertas</button>
-    <button data-tab="ejecucion" role="tab">Ejecución</button>
-    <button data-tab="calidad" role="tab">Calidad</button>
-    <button data-tab="metodo" role="tab">Método</button>
-  </nav>
+<div class="wrap">
+<header>
+  <div><h1>VECTIQ</h1><div class="sub">Under en tenis de mesa · solo lo que llega a Telegram</div></div>
+  <div class="clock">Hora de Cuba (UTC<span id="off"></span>)<br><b id="now">--:--</b> · datos <span id="gen">--</span></div>
 </header>
 
-<main class="wrap">
-  <div id="loading" class="state">Cargando datos…</div>
-  <div id="error" class="state state-error" hidden></div>
+<div class="card">
+  <div class="seg" id="leg"><button data-v="C" class="on">Combinada</button><button data-v="0">ST3</button><button data-v="1">ST5</button></div>
+  <div class="chips" id="chips"></div>
+  <div class="chips"><span class="rng" id="rng" style="margin-left:0"></span><button class="btn" id="unzoom" hidden>Quitar zoom</button></div>
+</div>
 
-  <section id="view-resumen" class="view" hidden>
-    <div class="sec-head"><h2>Resumen comparativo</h2>
-      <p class="note">Cada número sale de los ledgers reales. <em>Hacia adelante</em> = solo apuestas posteriores al corte fijado antes de ver datos nuevos. Un ROI cuyo intervalo incluye 0 <strong>no es prueba</strong>.</p></div>
-    <div class="table-scroll"><table id="tbl-resumen" class="dense"></table></div>
-    <h3 class="chart-title">Curva acumulada (unidades, 1 por apuesta)</h3>
-    <div id="chart-equity-all" class="chart"></div>
-    <p class="foot-note" id="resumen-sources"></p>
-  </section>
+<div class="card"><h2>Resumen del período</h2><div class="kpis" id="kpis"></div><div class="note" id="kpinote"></div></div>
 
-  <section id="view-estrategias" class="view" hidden>
-    <div class="sec-head"><h2>Estrategias</h2>
-      <div class="pills" id="strat-pills"></div></div>
-    <div id="strat-filters" class="filters">
-      <label>Liga <select id="f-league"><option value="">Todas</option></select></label>
-      <label>Etapa <select id="f-stage"><option value="">Todas</option></select></label>
-      <label>Desde <input type="date" id="f-from"></label>
-      <label>Hasta <input type="date" id="f-to"></label>
-      <button id="f-clear" class="ghost">Limpiar</button>
-    </div>
-    <div id="strat-body"></div>
-  </section>
+<div class="card"><h2>Curva acumulada y caída (1 u por alerta)</h2><div class="chart" id="c1"></div><div class="note">Toca para ver cada alerta · arrastra para hacer zoom en ese tramo.</div></div>
 
-  <section id="view-puertas" class="view" hidden>
-    <div class="sec-head"><h2>Puertas de decisión</h2>
-      <p class="note">Criterios fijados en <code>docs/PROMOTION.md</code> antes de observar datos nuevos. Ninguna puerta se mueve después.</p></div>
-    <div id="gates" class="gate-grid"></div>
-    <div class="prose">
-      <h3>Por qué 400 apuestas no alcanzan para un edge de +5 %</h3>
-      <p>Con cuotas medias ~2.0 la desviación típica por apuesta es ≈1 unidad. El error estándar del ROI tras <em>n</em> apuestas es ≈1/√n: en 400 apuestas ≈±5 pp, así que un ROI real de +5 % puede observarse como −0 % sin sorpresa. Para que el límite inferior del IC95 % supere 0 con un edge de +5 % se necesitan del orden de 1.000–1.500 apuestas. Por eso las puertas piden volumen <em>además</em> de signo.</p>
-    </div>
-  </section>
+<div class="card"><h2>Banca simulada con 1.75 %</h2><div class="note" style="margin:0 0 8px">Banca inicial $<input type="number" id="b0" value="100" min="10" step="10"> · tope $3,000 por apuesta</div><div class="chart" id="c2"></div><div class="note" id="banknote"></div></div>
 
-  <section id="view-ejecucion" class="view" hidden>
-    <div class="sec-head"><h2>Ejecución y capacidad</h2>
-      <p class="note">Telemetría del probe <code>UpdateCoupon</code> por cada decisión BET: el máximo que la casa acepta en esa selección, si el mercado está bloqueado y si la cuota se movió. <strong>Aviso:</strong> es una consulta anónima, no el límite de la cuenta del usuario.</p></div>
-    <div id="capacity"></div>
-  </section>
+<div class="card"><h2>ROI por día (día = 6 AM a 6 AM, hora de Cuba) · toca una barra</h2><div class="chart" id="c3"></div></div>
 
-  <section id="view-calidad" class="view" hidden>
-    <div class="sec-head"><h2>Calidad de datos</h2>
-      <p class="note">Procedencia de cada final. Solo <code>observed</code> y <code>results_api</code> cuentan como verificados; <code>imputed</code>/<code>partial</code> se reportan aparte y <code>void</code> nunca cuenta.</p></div>
-    <div class="table-scroll"><table id="tbl-calidad" class="dense"></table></div>
-  </section>
+<div class="card"><h2>Historial por día</h2><div class="scroll"><table id="days"></table></div></div>
 
-  <section id="view-metodo" class="view" hidden>
-    <div class="sec-head"><h2>Método y glosario</h2></div>
-    <div class="prose" id="glossary">
-      <h3>Cómo se calcula</h3>
-      <p><strong>ROI unitario.</strong> 1 unidad por apuesta: <code>cuota−1</code> si gana, <code>−1</code> si pierde, <code>0</code> si se anula (push). Comparable entre bots porque ignora el stake.</p>
-      <p><strong>IC95 %.</strong> Intervalo de confianza por bootstrap agrupado por partido (2.000 remuestreos): los partidos se re-muestrean enteros porque las apuestas del mismo partido no son independientes. Si el intervalo incluye 0, el ROI no está demostrado.</p>
-      <p><strong>P(ROI&gt;0) / P(ROI&gt;3 %).</strong> Fracción de remuestreos con ROI por encima del umbral. No es una garantía de futuro: mide la fuerza de la evidencia observada.</p>
-      <p><strong>CLV.</strong> <em>Closing Line Value</em>: cuota tomada ÷ cuota de cierre − 1. Positivo y persistente indica que se bate al mercado; es la señal más temprana de ventaja real.</p>
-      <p><strong>Drawdown.</strong> Mayor caída desde un máximo de la curva acumulada. También se simula con stake del 1 % del bankroll: la puerta exige &lt;15 %.</p>
-      <p><strong>Hacia adelante vs histórico.</strong> El histórico sirvió para descubrir; solo lo posterior al corte prueba. Por eso el panel los separa siempre.</p>
-      <p><strong>Sesgo de selección.</strong> Todo umbral añadido después de ver resultados queda fuera hasta repetir la prueba en datos nuevos. Las variantes descartadas se registran en <code>docs/</code>.</p>
-      <h3>Fuentes</h3>
-      <p id="src-list" class="mono"></p>
-    </div>
-  </section>
-</main>
+<div class="two">
+<div class="card"><h2>Por liga</h2><div class="scroll"><table id="liga"></table></div></div>
+<div class="card"><h2>Por banda de cuota</h2><div class="scroll"><table id="banda"></table></div></div>
+</div>
 
-<footer class="site-foot wrap">
-  <span>VECTIQ — panel de evidencia · repo <a href="https://github.com/Blessed-200/Vectiq">Blessed-200/Vectiq</a></span>
-  <span id="foot-commit" class="mono"></span>
-</footer>
-<script src="app.js"></script>
+<div class="card"><h2>Últimas alertas del período</h2><div class="scroll"><table id="last"></table></div></div>
+<div class="note">Set definitivo aplicado a todo el historial: ST3 con cuota ≥ 2.10 · ST5 con EV entre 0.15 y 0.30. Evidencia en papel; ganar o perder es por apuesta de 1 u. La banca simulada recalcula el stake cada hora o al moverse ±5 % y liquida cada apuesta ~10 min después de la alerta.</div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), H=3600e3, D=864e5;
+let DOC=null, OFF=-4*H, LEG="C", RANGE=null, SEL=null;
+const fmt=(v,d=1)=>(v>=0?"+":"")+v.toFixed(d), pc=v=>fmt(v*100,1)+"%", cls=v=>v>0?"pos":v<0?"neg":"";
+const cd=ts=>new Date(ts+OFF);                       // "Cuba clock" date: read with getUTC*
+const p2=n=>String(n).padStart(2,"0");
+const hm=ts=>{const d=cd(ts);return p2(d.getUTCHours())+":"+p2(d.getUTCMinutes())};
+const dm=ts=>{const d=cd(ts);return p2(d.getUTCDate())+"/"+p2(d.getUTCMonth()+1)};
+const dayKey=ts=>Math.floor((ts+OFF-6*H)/D), dayStart=k=>k*D+6*H-OFF;
+const dayLabel=k=>dm(dayStart(k)+6*H);
+
+fetch("data/panel.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{DOC=d;OFF=d.cuba_utc*H;$("#off").textContent=(d.cuba_utc>=0?"+":"")+d.cuba_utc;
+  DOC.bets=d.bets.map(r=>({t:r[0],leg:r[1],u:r[2],price:r[3],line:r[4],gid:r[5],pl:r[6],lg:r[7],day:dayKey(r[0])}));init();}).catch(e=>{document.body.insertAdjacentHTML("beforeend",'<p class="note">No se pudo cargar data/panel.json</p>')});
+
+function init(){
+  const now=Date.now(); const today=dayKey(Math.max(now,DOC.bets.at(-1).t));
+  const chips=[["Hoy",()=>[dayStart(today),dayStart(today+1)]],["Ayer",()=>[dayStart(today-1),dayStart(today)]],["3 días",()=>[dayStart(today-2),dayStart(today+1)]],["7 días",()=>[dayStart(today-6),dayStart(today+1)]],["Todo",()=>null]];
+  $("#chips").innerHTML=chips.map((c,i)=>`<button class="chip" data-i="${i}">${c[0]}</button>`).join("");
+  $("#chips").onclick=e=>{const i=e.target.dataset.i;if(i==null)return;RANGE=chips[i][1]();SEL=i;render()};
+  $("#leg").onclick=e=>{const v=e.target.dataset.v;if(v==null)return;LEG=v;[...$("#leg").children].forEach(b=>b.classList.toggle("on",b===e.target));render()};
+  $("#unzoom").onclick=()=>{RANGE=null;SEL=4;render()}; $("#b0").onchange=render; SEL=4;
+  $("#gen").textContent=dm(DOC.generated_ms)+" "+hm(DOC.generated_ms);
+  setInterval(()=>$("#now").textContent=hm(Date.now()),15000); $("#now").textContent=hm(Date.now());
+  addEventListener("resize",()=>render()); render();
+}
+const inLeg=b=>LEG==="C"||b.leg===+LEG;
+function sel(applyRange=true){return DOC.bets.filter(b=>inLeg(b)&&(!applyRange||!RANGE||(b.t>=RANGE[0]&&b.t<RANGE[1])))}
+function stats(bs){const s=bs.filter(b=>b.u!=null);const n=s.length;if(!n)return{n:0};
+  const w=s.filter(b=>b.u>0).length,net=s.reduce((a,b)=>a+b.u,0),roi=net/n,sd=Math.sqrt(s.reduce((a,b)=>a+(b.u-roi)**2,0)/Math.max(n-1,1)),ci=1.96*sd/Math.sqrt(n);
+  let cur=0,mxL=0,mxW=0,cw=0,cum=0,pk=0,dd=0;for(const b of s){if(b.u<=0){cur++;mxL=Math.max(mxL,cur);cw=0}else{cur=0;cw++;mxW=Math.max(mxW,cw)};cum+=b.u;pk=Math.max(pk,cum);dd=Math.max(dd,pk-cum)}
+  return{n,w,l:n-w,net,roi,ci,mxL,mxW,dd,acc:w/n,open:bs.length-n}}
+function sim(bs,b0){ // misma regla que el bot: stake = 1.75 % de la base; base se recalcula cada hora o ±5 %
+  const f=DOC.stake_pct;let bank=b0,base=b0,lastRe=-1e15,pk=b0,mdd=0;const ev=[];
+  const s=bs.filter(b=>b.u!=null);for(const b of s){ev.push([b.t,0,b]);ev.push([b.t+10*60e3,1,b])}ev.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
+  const stk=new Map(),pts=[[ev.length?ev[0][0]:0,b0]];
+  for(const[t,ty,b]of ev){if(ty===0){if(t-lastRe>=H||Math.abs(bank/base-1)>=.05){base=bank;lastRe=t}stk.set(b,Math.min(3000,Math.max(1,f*base)))}
+    else{bank=Math.max(0,bank+stk.get(b)*b.u);pk=Math.max(pk,bank);mdd=Math.max(mdd,1-bank/pk);pts.push([t,bank])}}
+  return{pts,bank,pk,mdd}}
+
+function render(){
+  const all=sel(false),bs=sel(true),st=stats(bs);
+  [...$("#chips").children].forEach((c,i)=>c.classList.toggle("on",String(i)===String(SEL)&&!(RANGE&&SEL==null)));
+  $("#unzoom").hidden=!(RANGE&&SEL==null);
+  const first=bs[0]?.t,last=bs.at(-1)?.t;
+  $("#rng").textContent=bs.length?`${dm(first)} ${hm(first)} → ${dm(last)} ${hm(last)} (Cuba)`:"sin alertas en este período";
+  // KPIs
+  const k=(v,l,s="",c="")=>`<div class="k"><div class="v ${c}">${v}</div><div class="l">${l}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
+  const bk=sim(bs,+$("#b0").value||100);
+  $("#kpis").innerHTML=st.n?[k(st.n,"Alertas",st.open?st.open+" abiertas":""),k(pc(st.acc).replace("+",""),"Acierto",`${st.w}G · ${st.l}P`),k(pc(st.roi),"ROI",`IC95 ±${(st.ci*100).toFixed(1)}`,cls(st.roi)),k(fmt(st.net,1)+" u","Neto",`${st.n?fmt(st.net/Math.max(1,new Set(bs.map(b=>b.day)).size),1):0} u/día`,cls(st.net)),k(st.mxL,"Peor racha L",`mejor racha G ${st.mxW}`),k("−"+(bk.mdd*100).toFixed(1)+"%","Caída máx banca","simulada 1.75 %","neg")].join(""):'<div class="note">Sin alertas liquidadas.</div>';
+  $("#kpinote").textContent=st.n?`ROI de ${LEG==="C"?"ST3+ST5":LEG==="0"?"ST3":"ST5"} = ganancia media por cada 1 u apostada. Caída en unidades: ${st.dd.toFixed(1)} u.`:"";
+  line("#c1",curve(bs));
+  const pts=bk.pts.map(p=>({t:p[0],v:p[1]}));line("#c2",{pts:pts,peak:(()=>{let m=-Infinity;return pts.map(p=>(m=Math.max(m,p.v)))})(),money:true,min0:false});
+  $("#banknote").textContent=st.n?`Con $${(+$("#b0").value||100).toFixed(0)} y la regla del bot terminarías con $${bk.bank.toFixed(2)}; pico $${bk.pk.toFixed(2)}; ahora ${(100*(1-bk.bank/bk.pk)).toFixed(1)}% bajo el pico.`:"";
+  bars(all); dayTable(all); breakdown(bs); lastTable(bs);
+}
+function curve(bs){const s=bs.filter(b=>b.u!=null);let c=0,pk=0;const pts=[],peak=[];for(const b of s){c+=b.u;pk=Math.max(pk,c);pts.push({t:b.t,v:c,b});peak.push(pk)}return{pts,peak,min0:true}}
+function line(id,d){
+  const el=$(id),W=Math.max(300,el.clientWidth||600),Ht=230,m={l:44,r:8,t:10,b:22},P=d.pts;
+  if(P.length<2){el.innerHTML='<div class="note">Muy pocos datos.</div>';return}
+  const x0=P[0].t,x1=P.at(-1).t,vs=P.map(p=>p.v).concat(d.peak||[]);let lo=Math.min(...vs,d.min0?0:Infinity),hi=Math.max(...vs,d.min0?0:-Infinity);const pad=(hi-lo)*.08||1;lo-=pad;hi+=pad;
+  const X=t=>m.l+(t-x0)/(x1-x0||1)*(W-m.l-m.r),Y=v=>m.t+(1-(v-lo)/(hi-lo))*(Ht-m.t-m.b),f=v=>d.money?"$"+(v>=1000?(v/1000).toFixed(1)+"k":v.toFixed(0)):v.toFixed(0);
+  let g="";for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,y=Y(v);g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${m.l-6}" y="${y+4}" text-anchor="end" font-size="10.5" fill="var(--mut)">${f(v)}</text>`}
+  const ticks=W<520?2:4,lab=t=>(x1-x0)<2*D?hm(t):(x1-x0)<9*D?dm(t)+" "+hm(t):dm(t);for(let i=0;i<=ticks;i++){const t=x0+(x1-x0)*i/ticks;g+=`<text x="${X(t)}" y="${Ht-6}" text-anchor="${i==0?"start":i==ticks?"end":"middle"}" font-size="10.5" fill="var(--mut)">${lab(t)}</text>`}
+  const path=P.map((p,i)=>(i?"L":"M")+X(p.t).toFixed(1)+" "+Y(p.v).toFixed(1)).join(""),dd=d.peak?P.map((p,i)=>(i?"L":"M")+X(p.t).toFixed(1)+" "+Y(d.peak[i]).toFixed(1)).join(""):"";
+  const area=d.peak?`<path d="${dd} L${X(P.at(-1).t)} ${Y(P.at(-1).v)} ${P.slice().reverse().map(p=>"L"+X(p.t).toFixed(1)+" "+Y(p.v).toFixed(1)).join("")} Z" fill="var(--neg)" opacity=".13"/>`:"";
+  const col=P.at(-1).v>=P[0].v?"var(--pos)":"var(--neg)";
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}" width="${W}" height="${Ht}">${g}${area}<path d="${path}" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"/><line class="cx" y1="${m.t}" y2="${Ht-m.b}" stroke="var(--acc)" stroke-dasharray="3 3" opacity="0"/><circle class="cd" r="4.5" fill="var(--acc)" opacity="0"/><rect class="sr" y="${m.t}" height="${Ht-m.t-m.b}" fill="var(--acc)" opacity="0"/><rect class="hit" x="${m.l}" y="0" width="${W-m.l-m.r}" height="${Ht}" fill="transparent"/></svg><div class="tip"></div>`;
+  const svg=el.querySelector("svg"),tip=el.querySelector(".tip"),cx=svg.querySelector(".cx"),cdot=svg.querySelector(".cd"),sr=svg.querySelector(".sr");let down=null;
+  const px=e=>{const r=svg.getBoundingClientRect();return(e.clientX-r.left)*(W/r.width)};
+  const near=x=>{const t=x0+(x-m.l)/(W-m.l-m.r)*(x1-x0);let a=0,b=P.length-1;while(b-a>1){const c=(a+b)>>1;P[c].t<t?a=c:b=c}return Math.abs(P[a].t-t)<Math.abs(P[b].t-t)?a:b};
+  const show=e=>{const x=px(e),i=near(x),p=P[i];cx.setAttribute("x1",X(p.t));cx.setAttribute("x2",X(p.t));cx.setAttribute("opacity",1);cdot.setAttribute("cx",X(p.t));cdot.setAttribute("cy",Y(p.v));cdot.setAttribute("opacity",1);
+    const r=svg.getBoundingClientRect(),left=Math.min(Math.max(X(p.t)*r.width/W,70),r.width-70);tip.style.display="block";tip.style.left=left+"px";tip.style.top=(Y(p.v)*r.height/Ht)+"px";
+    tip.innerHTML=`${dm(p.t)} ${hm(p.t)} · <b>${d.money?"$"+p.v.toFixed(2):fmt(p.v,1)+" u"}</b>${p.b?`<br>${p.b.pl} · Menos de ${p.b.line} @${p.b.price} · ${p.b.u>0?"G":"P"}`:""}`};
+  svg.onpointerdown=e=>{down=px(e);svg.setPointerCapture(e.pointerId);show(e)};
+  svg.onpointermove=e=>{show(e);if(down!=null){const a=Math.min(down,px(e)),b=Math.max(down,px(e));sr.setAttribute("x",a);sr.setAttribute("width",b-a);sr.setAttribute("opacity",.15)}};
+  svg.onpointerup=e=>{if(down==null)return;const a=down,b=px(e);down=null;sr.setAttribute("opacity",0);if(Math.abs(b-a)>14){const ta=P[near(Math.min(a,b))].t,tb=P[near(Math.max(a,b))].t;RANGE=[ta,tb+1];SEL=null;render()}};
+  svg.onpointerleave=()=>{if(down==null){cx.setAttribute("opacity",0);cdot.setAttribute("opacity",0);tip.style.display="none"}};
+}
+function perDay(bs){const m=new Map();for(const b of bs){if(b.u==null)continue;(m.get(b.day)||m.set(b.day,[]).get(b.day)).push(b)}return m}
+function bars(all){
+  const el=$("#c3"),m=perDay(all),ks=[...m.keys()].sort((a,b)=>a-b).slice(-30),W=Math.max(300,el.clientWidth||600),Ht=190,mg={l:34,r:6,t:16,b:30};
+  if(!ks.length){el.innerHTML="";return}
+  const r=ks.map(k=>{const s=stats(m.get(k));return{k,roi:s.roi,n:s.n}}),mx=Math.max(.05,...r.map(x=>Math.abs(x.roi)))*1.15,bw=(W-mg.l-mg.r)/ks.length,y0=mg.t+(Ht-mg.t-mg.b)/2,sc=(Ht-mg.t-mg.b)/2/mx;
+  const selDays=RANGE?new Set(r.filter(x=>dayStart(x.k)>=RANGE[0]-1&&dayStart(x.k)<RANGE[1]).map(x=>x.k)):new Set();
+  let g=`<line x1="${mg.l}" x2="${W-mg.r}" y1="${y0}" y2="${y0}" stroke="var(--line)"/>`;
+  r.forEach((x,i)=>{const h=Math.abs(x.roi)*sc,y=x.roi>=0?y0-h:y0,xx=mg.l+i*bw+bw*.12;
+    g+=`<rect data-k="${x.k}" x="${xx}" y="${y}" width="${bw*.76}" height="${Math.max(h,1)}" rx="3" fill="${x.roi>=0?"var(--pos)":"var(--neg)"}" opacity="${RANGE&&!selDays.has(x.k)?.35:1}" style="cursor:pointer"/>`;
+    if(bw>22)g+=`<text x="${xx+bw*.38}" y="${x.roi>=0?y-3:y+h+11}" text-anchor="middle" font-size="9.5" fill="var(--mut)">${(x.roi*100).toFixed(0)}</text>`;
+    if(i%Math.ceil(ks.length/10)===0||i===ks.length-1)g+=`<text x="${xx+bw*.38}" y="${Ht-14}" text-anchor="middle" font-size="10" fill="var(--mut)">${dayLabel(x.k)}</text><text x="${xx+bw*.38}" y="${Ht-3}" text-anchor="middle" font-size="9" fill="var(--mut)">n${x.n}</text>`});
+  g+=`<text x="${mg.l-5}" y="${mg.t+4}" text-anchor="end" font-size="10" fill="var(--mut)">${(mx*100).toFixed(0)}%</text><text x="${mg.l-5}" y="${Ht-mg.b+2}" text-anchor="end" font-size="10" fill="var(--mut)">−${(mx*100).toFixed(0)}%</text>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}" width="${W}" height="${Ht}">${g}</svg>`;
+  el.querySelectorAll("rect[data-k]").forEach(rc=>rc.onclick=()=>{const k=+rc.dataset.k;RANGE=[dayStart(k),dayStart(k+1)];SEL=null;render()});
+}
+function dayTable(all){
+  const m=perDay(all),ks=[...m.keys()].sort((a,b)=>b-a);const full=DOC.bets;
+  const roi=(k,leg)=>{const s=stats(full.filter(b=>b.day===k&&(leg==null||b.leg===leg)));return s.n?pc(s.roi):"–"};
+  $("#days").innerHTML=`<tr><th>Día</th><th>Alertas</th><th>G–P</th><th>Acierto</th><th>ROI</th><th>Neto u</th><th>Racha L</th><th>ST3</th><th>ST5</th></tr>`+ks.map(k=>{const s=stats(m.get(k));
+    return`<tr class="clk" data-k="${k}"><td>${dayLabel(k)}</td><td>${s.n}</td><td>${s.w}–${s.l}</td><td>${(s.acc*100).toFixed(0)}%</td><td class="${cls(s.roi)}"><b>${pc(s.roi)}</b></td><td class="${cls(s.net)}">${fmt(s.net,1)}</td><td>${s.mxL}</td><td>${roi(k,0)}</td><td>${roi(k,1)}</td></tr>`}).join("");
+  $("#days").querySelectorAll("tr.clk").forEach(tr=>tr.onclick=()=>{const k=+tr.dataset.k;RANGE=[dayStart(k),dayStart(k+1)];SEL=null;render();scrollTo({top:0,behavior:"smooth"})});
+}
+function group(bs,keyf,order){const m=new Map();for(const b of bs){if(b.u==null)continue;const k=keyf(b);(m.get(k)||m.set(k,[]).get(k)).push(b)}return[...m.entries()].map(([k,v])=>({k,...stats(v)})).sort(order)}
+function breakdown(bs){
+  const row=g=>`<tr><td>${g.k}</td><td>${g.n}</td><td>${(g.acc*100).toFixed(0)}%</td><td class="${cls(g.roi)}"><b>${pc(g.roi)}</b></td></tr>`;
+  const head="<tr><th></th><th>N</th><th>Acierto</th><th>ROI</th></tr>";
+  $("#liga").innerHTML=head+group(bs,b=>b.lg,(a,b)=>b.n-a.n).map(row).join("");
+  const band=p=>p<2.1?"< 2.10":p<2.3?"2.10–2.29":p<2.6?"2.30–2.59":p<3?"2.60–2.99":"≥ 3.00";const ord=["< 2.10","2.10–2.29","2.30–2.59","2.60–2.99","≥ 3.00"];
+  $("#banda").innerHTML=head+group(bs,b=>band(b.price),(a,b)=>ord.indexOf(a.k)-ord.indexOf(b.k)).map(row).join("");
+}
+function lastTable(bs){
+  const L=bs.slice(-25).reverse();
+  $("#last").innerHTML=`<tr><th>Hora</th><th></th><th>Partido</th><th>Apuesta</th><th>Res.</th></tr>`+L.map(b=>`<tr><td>${dm(b.t)} ${hm(b.t)}</td><td><span class="tag ${b.leg?"t5":"t3"}">${b.leg?"ST5":"ST3"}</span></td><td style="text-align:left;white-space:normal;min-width:150px">${b.pl}</td><td>Menos de ${b.line} @${b.price}</td><td class="res ${b.u==null?"O":b.u>0?"W":"L"}">${b.u==null?"abierta":b.u>0?"G "+fmt(b.u,2):"P −1"}</td></tr>`).join("");
+}
+</script>
 </body>
 </html>
