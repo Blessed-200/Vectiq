@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VECTIQ — Panel de evidencia</title>
+<meta name="description" content="Panel de decisión: estrategias de tenis de mesa evaluadas en papel sobre datos reales.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="site-head">
+  <div class="wrap head-grid">
+    <div>
+      <h1>VECTIQ</h1>
+      <p class="sub">Laboratorio de mercado — tenis de mesa, Betwinner</p>
+    </div>
+    <div class="head-meta">
+      <span id="generated" class="mono"></span>
+      <span class="badge-paper">Evidencia en papel · no dinero real</span>
+    </div>
+  </div>
+  <nav class="wrap tabs" id="tabs" role="tablist" aria-label="Secciones">
+    <button data-tab="resumen" role="tab">Resumen</button>
+    <button data-tab="estrategias" role="tab">Estrategias</button>
+    <button data-tab="puertas" role="tab">Puertas</button>
+    <button data-tab="ejecucion" role="tab">Ejecución</button>
+    <button data-tab="calidad" role="tab">Calidad</button>
+    <button data-tab="metodo" role="tab">Método</button>
+  </nav>
+</header>
+
+<main class="wrap">
+  <div id="loading" class="state">Cargando datos…</div>
+  <div id="error" class="state state-error" hidden></div>
+
+  <section id="view-resumen" class="view" hidden>
+    <div class="sec-head"><h2>Resumen comparativo</h2>
+      <p class="note">Cada número sale de los ledgers reales. <em>Hacia adelante</em> = solo apuestas posteriores al corte fijado antes de ver datos nuevos. Un ROI cuyo intervalo incluye 0 <strong>no es prueba</strong>.</p></div>
+    <div class="table-scroll"><table id="tbl-resumen" class="dense"></table></div>
+    <h3 class="chart-title">Curva acumulada (unidades, 1 por apuesta)</h3>
+    <div id="chart-equity-all" class="chart"></div>
+    <p class="foot-note" id="resumen-sources"></p>
+  </section>
+
+  <section id="view-estrategias" class="view" hidden>
+    <div class="sec-head"><h2>Estrategias</h2>
+      <div class="pills" id="strat-pills"></div></div>
+    <div id="strat-filters" class="filters">
+      <label>Liga <select id="f-league"><option value="">Todas</option></select></label>
+      <label>Etapa <select id="f-stage"><option value="">Todas</option></select></label>
+      <label>Desde <input type="date" id="f-from"></label>
+      <label>Hasta <input type="date" id="f-to"></label>
+      <button id="f-clear" class="ghost">Limpiar</button>
+    </div>
+    <div id="strat-body"></div>
+  </section>
+
+  <section id="view-puertas" class="view" hidden>
+    <div class="sec-head"><h2>Puertas de decisión</h2>
+      <p class="note">Criterios fijados en <code>docs/PROMOTION.md</code> antes de observar datos nuevos. Ninguna puerta se mueve después.</p></div>
+    <div id="gates" class="gate-grid"></div>
+    <div class="prose">
+      <h3>Por qué 400 apuestas no alcanzan para un edge de +5 %</h3>
+      <p>Con cuotas medias ~2.0 la desviación típica por apuesta es ≈1 unidad. El error estándar del ROI tras <em>n</em> apuestas es ≈1/√n: en 400 apuestas ≈±5 pp, así que un ROI real de +5 % puede observarse como −0 % sin sorpresa. Para que el límite inferior del IC95 % supere 0 con un edge de +5 % se necesitan del orden de 1.000–1.500 apuestas. Por eso las puertas piden volumen <em>además</em> de signo.</p>
+    </div>
+  </section>
+
+  <section id="view-ejecucion" class="view" hidden>
+    <div class="sec-head"><h2>Ejecución y capacidad</h2>
+      <p class="note">Telemetría del probe <code>UpdateCoupon</code> por cada decisión BET: el máximo que la casa acepta en esa selección, si el mercado está bloqueado y si la cuota se movió. <strong>Aviso:</strong> es una consulta anónima, no el límite de la cuenta del usuario.</p></div>
+    <div id="capacity"></div>
+  </section>
+
+  <section id="view-calidad" class="view" hidden>
+    <div class="sec-head"><h2>Calidad de datos</h2>
+      <p class="note">Procedencia de cada final. Solo <code>observed</code> y <code>results_api</code> cuentan como verificados; <code>imputed</code>/<code>partial</code> se reportan aparte y <code>void</code> nunca cuenta.</p></div>
+    <div class="table-scroll"><table id="tbl-calidad" class="dense"></table></div>
+  </section>
+
+  <section id="view-metodo" class="view" hidden>
+    <div class="sec-head"><h2>Método y glosario</h2></div>
+    <div class="prose" id="glossary">
+      <h3>Cómo se calcula</h3>
+      <p><strong>ROI unitario.</strong> 1 unidad por apuesta: <code>cuota−1</code> si gana, <code>−1</code> si pierde, <code>0</code> si se anula (push). Comparable entre bots porque ignora el stake.</p>
+      <p><strong>IC95 %.</strong> Intervalo de confianza por bootstrap agrupado por partido (2.000 remuestreos): los partidos se re-muestrean enteros porque las apuestas del mismo partido no son independientes. Si el intervalo incluye 0, el ROI no está demostrado.</p>
+      <p><strong>P(ROI&gt;0) / P(ROI&gt;3 %).</strong> Fracción de remuestreos con ROI por encima del umbral. No es una garantía de futuro: mide la fuerza de la evidencia observada.</p>
+      <p><strong>CLV.</strong> <em>Closing Line Value</em>: cuota tomada ÷ cuota de cierre − 1. Positivo y persistente indica que se bate al mercado; es la señal más temprana de ventaja real.</p>
+      <p><strong>Drawdown.</strong> Mayor caída desde un máximo de la curva acumulada. También se simula con stake del 1 % del bankroll: la puerta exige &lt;15 %.</p>
+      <p><strong>Hacia adelante vs histórico.</strong> El histórico sirvió para descubrir; solo lo posterior al corte prueba. Por eso el panel los separa siempre.</p>
+      <p><strong>Sesgo de selección.</strong> Todo umbral añadido después de ver resultados queda fuera hasta repetir la prueba en datos nuevos. Las variantes descartadas se registran en <code>docs/</code>.</p>
+      <h3>Fuentes</h3>
+      <p id="src-list" class="mono"></p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-foot wrap">
+  <span>VECTIQ — panel de evidencia · repo <a href="https://github.com/Blessed-200/Vectiq">Blessed-200/Vectiq</a></span>
+  <span id="foot-commit" class="mono"></span>
+</footer>
+<script src="app.js"></script>
+</body>
+</html>

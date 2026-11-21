@@ -50,6 +50,7 @@ jobs:
           python3 site/build_data.py \
             --assets site/assets --out site/data --repo-root . \
             --require masters.sqlite masters_book.json
+          python3 site/build_panel.py --assets site/assets --out site/data
           ls -la site/data/
 
       - name: Verificar que los JSON son válidos y recientes
