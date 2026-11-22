@@ -33,6 +33,7 @@ class Collector:
                  notify_alert: Callable[..., int | None] | None = None,
                  poll_updates: Callable[[int | None], list] | None = None,
                  ack_callback: Callable[..., None] | None = None, alert_chat: str | None = None,
+                 users=None, send_to: Callable[..., int | None] | None = None,
                  trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
@@ -59,6 +60,7 @@ class Collector:
         self._raw_alert = notify_alert
         self.notify_alert = self._alert_out if notify_alert is not None else None
         self.poll_updates, self.ack_callback, self.alert_chat = poll_updates, ack_callback, alert_chat
+        self.users, self.send_to = users, send_to
         self._vig: dict[str, bool] = {}
         self.pin = pin
         self._upd_offset: int | None = None
@@ -379,8 +381,8 @@ class Collector:
         if arm is not None and s.game_id not in self._armed:
             self._armed.add(s.game_id)
             if st3.guard(self.st3.db, self.st3.bankroll, self.st3.drawdown(), now_s)[0]:
-                self.notify_alert(telegram.format_st3_arm(f"{s.home} vs {s.away}", s.league, arm, masters.match_url(s),
-                                                          s.fetched_ms / 1000.0), None, self.arm_mode == "silent")
+                self._tell(telegram.format_st3_arm(f"{s.home} vs {s.away}", s.league, arm, masters.match_url(s),
+                                                   s.fetched_ms / 1000.0), self.arm_mode == "silent")
         al = st3.evaluate(s)
         if al is None or self.st3.game_stake(s.game_id) > 0:
             return
@@ -408,6 +410,8 @@ class Collector:
         if talk and ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
+            self._fan("bet", al.game_id, al.ts_ms, al.players, self.stake_pct,
+                      lambda b, f, n: telegram.format_st3(al, b, f, al.url, note=n))
             st3.record_alert(self.st3.db, al, "bet", mid)
             bankroll.record_quote(self.st3.db, al.game_id, "bet", al.ts_ms, round(self._bank() * frac, 2))
             self._st3_t = now_s
@@ -415,7 +419,7 @@ class Collector:
         elif talk and not ok:
             if self._norm(why) != self._norm(self._st3_pause):
                 self._st3_pause = why
-                self.notify_alert(f"<b>ST3 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+                self._tell(f"<b>ST3 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.")
         if ok and self._st3_pause:
             self._st3_pause = ""
             if talk:
@@ -452,12 +456,14 @@ class Collector:
         frac, note = self._flat(frac, "", al.players, pct=st0.STAKE_PCT)
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st0(al, self._bank(), frac, al.url, note=note), telegram.exec_buttons(al.game_id))
+            self._fan("st0", al.game_id, al.ts_ms, al.players, st0.STAKE_PCT,
+                      lambda b, f, n: telegram.format_st0(al, b, f, al.url, note=n))
             st3.record_alert(self.st3.db, al, "st0", mid)
             bankroll.record_quote(self.st3.db, al.game_id, "st0", al.ts_ms, round(self._bank() * frac, 2))
             log.info("st0 alert %s under %s @%s", al.players, al.line, al.price)
         elif not ok and self._norm(why) != self._norm(getattr(self, "_st0_pause", "")):
             self._st0_pause = why
-            self.notify_alert(f"<b>ST0 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+            self._tell(f"<b>ST0 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.")
         if ok and getattr(self, "_st0_pause", ""):
             self._st0_pause = ""
             self.notify_alert("<b>ST0 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
@@ -492,13 +498,15 @@ class Collector:
         if ok and frac >= 0.0025:
             mid = self.notify_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
+            self._fan("st5", al.game_id, al.ts_ms, al.players, self.stake_pct,
+                      lambda b, f, n: telegram.format_st5(al, b, f, al.url, note=n))
             st3.record_alert(self.st3.db, st3.Alert(al.game_id, al.players, al.league, tuple(al.sets[0]), al.inplay, al.line,
                                                     al.price, [], al.ts_ms), "st5", mid)
             bankroll.record_quote(self.st3.db, al.game_id, "st5", al.ts_ms, round(self._bank() * frac, 2))
             log.info("st5 alert %s under %s @%s p=%.2f", al.players, al.line, al.price, al.p)
         elif not ok and self._norm(why) != self._norm(getattr(self, "_st5_pause", "")):
             self._st5_pause = why
-            self.notify_alert(f"<b>ST5 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+            self._tell(f"<b>ST5 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.")
         if ok and getattr(self, "_st5_pause", ""):
             self._st5_pause = ""
             self.notify_alert("<b>ST5 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
@@ -534,10 +542,114 @@ class Collector:
             log.info("st4 alert %s under %s @%s", al.players, al.line, al.price)
         elif not ok and self._norm(why) != self._norm(getattr(self, "_st4_pause", "")):
             self._st4_pause = why
-            self.notify_alert(f"<b>ST4 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+            self._tell(f"<b>ST4 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.")
         if ok and getattr(self, "_st4_pause", ""):
             self._st4_pause = ""
             self.notify_alert("<b>ST4 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
+
+
+    # -- multi-user private mode ---------------------------------------------------
+    def _tell(self, text: str, silent: bool = False) -> None:
+        """Operational notice (heads-up, pauses): the channel and every active private user."""
+        self.notify_alert(text, None, silent)
+        if self.users is not None and self.send_to is not None:
+            for uid, _ in self.users.active():
+                try:
+                    self.send_to(uid, text, None, silent)
+                except Exception:  # noqa: BLE001
+                    log.warning("send to %s failed", uid, exc_info=True)
+
+    def _dbs(self) -> dict:
+        return {"bet": self.st3.db if self.st3 is not None else None, "st5": self.st5.db if self.st5 is not None else None,
+                "st0": self.st0.db if self.st0 is not None else None}
+
+    def _fan(self, kind: str, gid: int, ts_ms: int, players_: str, pct: float, build) -> None:
+        """The same alert to every approved private user, sized on HIS bank (stake = pct x bank x player tilt)."""
+        if self.users is None or self.send_to is None:
+            return
+        m, now = self._tilt(players_), time.time()
+        for uid, u in self.users.active():
+            try:
+                bank = self.users.bank(u, self._dbs())
+                if bank <= 0:
+                    continue
+                stake, redo = self.users.stake(u, bank, now, pct, m)
+                frac = min(stake / bank, 0.05)
+                stake = round(bank * frac, 2)
+                note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta." if redo else ""
+                if m >= 1.15:
+                    note += ("\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{m:.1f}."
+                elif m <= 0.85:
+                    note += ("\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{m:.1f}."
+                if self.send_to(uid, build(bank, frac, note), telegram.exec_buttons(gid), False) is not None:
+                    self.users.record(u, gid, kind, ts_ms, stake)
+            except Exception:  # noqa: BLE001 - one broken chat must not stop the others
+                log.warning("fan-out to %s failed", uid, exc_info=True)
+        self.users.save()
+
+    def _poll_private(self, u: dict, now_s: float) -> bool:
+        """Private-chat message or button. True when handled here (never reaches the channel session)."""
+        if self.users is None or self.send_to is None:
+            return False
+        cq = u.get("callback_query")
+        if cq:
+            msg = cq.get("message") or {}
+            chat = msg.get("chat") or {}
+            data = str(cq.get("data", ""))
+            if chat.get("type") != "private":
+                if data.startswith("u:") and len(data.split(":")) == 3:          # owner (channel) approves / rejects
+                    _, act, uid = data.split(":")
+                    self._approve(uid, act == "ok", cq.get("id", ""))
+                    return True
+                return False
+            if self.users.seen(int(u["update_id"])):
+                return True
+            uid = str(chat.get("id"))
+            usr = self.users.get(uid)
+            parts = data.split(":")
+            if usr and usr.get("ok") and len(parts) == 3 and parts[0] == "x" and parts[2] in ("ok", "low", "no"):
+                if parts[2] == "no":
+                    self.users.mark_skip(usr, int(parts[1]))
+                    self.users.save()
+                lab = {"ok": "Registrado: aceptada", "low": "Registrado: cuota menor", "no": "Registrado: no llegué"}[parts[2]]
+                if self.ack_callback is not None:
+                    self.ack_callback(cq.get("id", ""), "Anotado", uid, msg.get("message_id"), lab)
+            return True
+        post = u.get("message") or {}
+        chat = post.get("chat") or {}
+        if chat.get("type") == "private":
+            text = str(post.get("text") or "")
+            if text and not self.users.seen(int(u["update_id"])):
+                uid, name = str(chat.get("id")), (post.get("from") or {}).get("first_name", "")
+                reply, notice = self.users.handle(uid, name, text, now_s, self._dbs(), self.stake_pct or bankroll.STAKE_PCT)
+                self.send_to(uid, reply, None, False)
+                if notice and self._raw_alert is not None:
+                    self.notify_alert(notice, [[("✅ Aprobar", f"u:ok:{uid}"), ("❌ Rechazar", f"u:no:{uid}")]], False)
+            return True
+        ch = u.get("channel_post") or {}
+        t = str(ch.get("text") or "").strip()
+        low = t.lower()
+        if low.startswith(("/usuarios", "/aprobar", "/quitar")) and not self.users.seen(int(u["update_id"])):
+            parts = t.split()
+            if low.startswith("/usuarios"):
+                self._raw_alert(self.users.listing(), None, False)
+            elif len(parts) > 1:
+                self._approve(parts[1], low.startswith("/aprobar"), "")
+            return True
+        return False
+
+    def _approve(self, uid: str, ok: bool, cb_id: str) -> None:
+        usr = self.users.approve(uid, ok)
+        if self.ack_callback is not None and cb_id:
+            self.ack_callback(cb_id, "Aprobado" if ok else "Rechazado", None, None, None)
+        if usr is None:
+            return
+        if ok:
+            self.send_to(uid, "✅ Te aprobaron. Escribe tu saldo real en USDT (solo el número, ej. 30).", None, False)
+            self._raw_alert(f"✅ {usr['name']} aprobado.", None, False)
+        else:
+            self.send_to(uid, "Tu acceso no fue aprobado.", None, False)
+            self._raw_alert(f"❌ {usr['name']} rechazado.", None, False)
 
     def _poll_exec(self, now_s: float) -> None:
         """Telegram button presses -> execution log (accepted / lower odds / could not), deduplicated by update id; also the
@@ -553,6 +665,8 @@ class Collector:
         for u in self.poll_updates(self._upd_offset):
             uid = int(u["update_id"])
             self._upd_offset = uid + 1
+            if self._poll_private(u, now_s):
+                continue
             cq = u.get("callback_query")
             if not cq:
                 post = u.get("message") or u.get("channel_post") or {}
