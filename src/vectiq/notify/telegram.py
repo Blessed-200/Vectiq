@@ -310,3 +310,18 @@ def ack_callback(callback_id: str, text: str, chat_id: str | None = None, messag
                 "reply_markup": {"inline_keyboard": [[{"text": label, "callback_data": "noop"}]]}})
     except Exception:  # noqa: BLE001
         pass
+
+
+def edit_message(chat_id: str, message_id: int, text: str, buttons=None, token: str | None = None) -> bool:
+    """Replace the text (and buttons) of a message we sent; a 'not modified' answer counts as success."""
+    token = token or os.environ.get("TELEGRAM_BOT_TOKEN")
+    if not token or not chat_id or not message_id:
+        return False
+    body: dict = {"chat_id": chat_id, "message_id": message_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}
+    if buttons:
+        body["reply_markup"] = {"inline_keyboard": [[{"text": t, "callback_data": d} for t, d in row] for row in buttons]}
+    try:
+        r = requests.post(f"https://api.telegram.org/bot{token}/editMessageText", timeout=10, json=body)
+        return r.ok or "not modified" in r.text
+    except Exception:  # noqa: BLE001
+        return False

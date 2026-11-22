@@ -152,6 +152,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
         st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, st0_ledger=st0_ledger, calibra=calibra, session=Session(out / "session.json"), users=Users(out / "users.json"),
+        channel_alerts=os.environ.get("VECTIQ_CHANNEL_ALERTS", "off") == "on", edit_msg=lambda ch, mid, t, b=None: telegram.edit_message(ch, mid, t, b),
         send_to=lambda cid, txt, b=None, silent=False: telegram.send_alert(txt, b, silent, chat_id=str(cid)), alerts=os.environ.get("VECTIQ_ALERTS", "st3,st5,st0"),   # st3 | pre | masters (legacy) | any mix
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
         notify_alert=lambda m, b=None, silent=False: telegram.send_alert(m, b, silent, chat_id=chat),

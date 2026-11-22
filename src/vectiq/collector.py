@@ -33,7 +33,8 @@ class Collector:
                  notify_alert: Callable[..., int | None] | None = None,
                  poll_updates: Callable[[int | None], list] | None = None,
                  ack_callback: Callable[..., None] | None = None, alert_chat: str | None = None,
-                 users=None, send_to: Callable[..., int | None] | None = None,
+                 users=None, send_to: Callable[..., int | None] | None = None, channel_alerts: bool = True,
+                 edit_msg: Callable[..., bool] | None = None,
                  trade_from_s: float | None = None,
                  trade_until_s: float | None = None, on_trade_start: Callable[["Collector"], None] | None = None,
                  on_trade_stop: Callable[["Collector"], None] | None = None,
@@ -60,7 +61,8 @@ class Collector:
         self._raw_alert = notify_alert
         self.notify_alert = self._alert_out if notify_alert is not None else None
         self.poll_updates, self.ack_callback, self.alert_chat = poll_updates, ack_callback, alert_chat
-        self.users, self.send_to = users, send_to
+        self.users, self.send_to, self.channel_alerts, self.edit_msg = users, send_to, channel_alerts, edit_msg
+        self._panel_t = 0.0
         self._vig: dict[str, bool] = {}
         self.pin = pin
         self._upd_offset: int | None = None
@@ -106,9 +108,76 @@ class Collector:
             text += self.session.footer()
         return self._raw_alert(text, buttons, silent) if self._raw_alert is not None else None
 
+
+    def _chan_alert(self, text: str, buttons=None, silent: bool = False) -> int | None:
+        """Bet alert to the channel, only while the channel still carries alerts (VECTIQ_CHANNEL_ALERTS=on)."""
+        return self.notify_alert(text, buttons, silent) if self.channel_alerts else None
+
+    # -- owner panel (channel) -----------------------------------------------------
+    def _bets(self) -> list[dict]:
+        from vectiq.notify import panel
+        return panel.load({"st3": self.st3.db if self.st3 else None, "st5": self.st5.db if self.st5 else None,
+                           "st0": self.st0.db if self.st0 else None})
+
+    def _panel_view(self, view: str, now_s: float) -> tuple[str, list]:
+        from vectiq.notify import panel
+        if view == "users" and self.users is not None:
+            return panel.view_users(self.users, lambda u: self.users.bank(u, self._dbs())), panel.BACK
+        extra = {"Usuarios activos": len(self.users.active())} if self.users is not None else {}
+        extra["Banca del bot (canal)"] = f"${self._bank():,.2f}"
+        return panel.render(view, self._bets(), now_s, extra)
+
+    def _panel_press(self, cq: dict, view: str, now_s: float) -> None:
+        """A panel button in the channel: edit the message in place (or send the chart)."""
+        from vectiq.notify import panel
+        msg = cq.get("message") or {}
+        chat = str((msg.get("chat") or {}).get("id") or self.alert_chat or "")
+        if self.ack_callback is not None:
+            self.ack_callback(cq.get("id", ""), "Listo", None, None, None)
+        if view == "chart":
+            path = "/tmp/vectiq_chart.png"
+            if self.notify_photo is not None and panel.chart_png(self._bets(), now_s, path):
+                self.notify_photo(path, "📈 Hoy y últimos 7 días")
+            return
+        view = "home" if view == "refresh" and not msg.get("text") else view
+        text, buttons = self._panel_view("home" if view == "refresh" else view, now_s)
+        if self.edit_msg is not None:
+            self.edit_msg(chat, msg.get("message_id"), text, buttons)
+
+    def _panel_refresh(self, now_s: float) -> None:
+        """Keep the pinned home view fresh (every 10 min) and post the 6 AM Cuba daily summary once."""
+        from vectiq.notify import panel
+        if self.edit_msg is None or self._raw_alert is None or not self.trading(now_s):
+            return
+        d = panel.day_of(now_s)
+        last = self.session.d.get("sum_day")
+        if last is None:
+            self.session.d["sum_day"] = d
+            self.session.save()
+        elif d > int(last):
+            self.session.d["sum_day"] = d
+            self.session.save()
+            try:
+                bets = self._bets()
+                self._raw_alert(panel.day_summary(bets, d - 1, now_s), None, False)
+                if self.notify_photo is not None and panel.chart_png(bets, now_s, "/tmp/vectiq_chart.png"):
+                    self.notify_photo("/tmp/vectiq_chart.png", "📈 Cierre del día")
+            except Exception:  # noqa: BLE001
+                log.warning("daily summary failed", exc_info=True)
+        mid = self.session.d.get("panel2_id")
+        if mid and now_s - self._panel_t >= 600:
+            self._panel_t = now_s
+            try:
+                text, buttons = self._panel_view("home", now_s)
+                self.edit_msg(str(self.alert_chat or ""), mid, text, buttons)
+            except Exception:  # noqa: BLE001
+                log.warning("panel refresh failed", exc_info=True)
+
     def _post_panel(self) -> int | None:
         """Publish the ▶/⏹ panel with sound and try to pin it so it is always at the top of the channel."""
-        mid = self._raw_alert(PANEL_TEXT, PANEL_BUTTONS, False) if self._raw_alert is not None else None
+        text, buttons = self._panel_view("home", time.time())
+        mid = self._raw_alert(text, buttons, False) if self._raw_alert is not None else None
+        self.session.d["panel2_id"] = mid
         if mid and self.pin is not None:
             self.pin(mid)
         return mid or None
@@ -408,7 +477,7 @@ class Collector:
                 note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
         frac, note = self._flat(frac, note, al.players)
         if talk and ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
+            mid = self._chan_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             self._fan("bet", al.game_id, al.ts_ms, al.players, self.stake_pct,
                       lambda b, f, n: telegram.format_st3(al, b, f, al.url, note=n))
@@ -455,7 +524,7 @@ class Collector:
         frac = st3.stake_fraction(self.st0.drawdown(), ev)
         frac, note = self._flat(frac, "", al.players, pct=st0.STAKE_PCT)
         if ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st0(al, self._bank(), frac, al.url, note=note), telegram.exec_buttons(al.game_id))
+            mid = self._chan_alert(telegram.format_st0(al, self._bank(), frac, al.url, note=note), telegram.exec_buttons(al.game_id))
             self._fan("st0", al.game_id, al.ts_ms, al.players, st0.STAKE_PCT,
                       lambda b, f, n: telegram.format_st0(al, b, f, al.url, note=n))
             st3.record_alert(self.st3.db, al, "st0", mid)
@@ -496,7 +565,7 @@ class Collector:
         frac, note = st5.stake_for(self.st5.drawdown(), other, ev)
         frac, note = self._flat(frac, note, al.players)
         if ok and frac >= 0.0025:
-            mid = self.notify_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
+            mid = self._chan_alert(telegram.format_st5(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
             self._fan("st5", al.game_id, al.ts_ms, al.players, self.stake_pct,
                       lambda b, f, n: telegram.format_st5(al, b, f, al.url, note=n))
@@ -551,7 +620,8 @@ class Collector:
     # -- multi-user private mode ---------------------------------------------------
     def _tell(self, text: str, silent: bool = False) -> None:
         """Operational notice (heads-up, pauses): the channel and every active private user."""
-        self.notify_alert(text, None, silent)
+        if self.channel_alerts:
+            self.notify_alert(text, None, silent)
         if self.users is not None and self.send_to is not None:
             for uid, _ in self.users.active():
                 try:
@@ -597,6 +667,9 @@ class Collector:
             chat = msg.get("chat") or {}
             data = str(cq.get("data", ""))
             if chat.get("type") != "private":
+                if data.startswith("d:") and self.trading(now_s):
+                    self._panel_press(cq, data[2:], now_s)
+                    return True
                 if data.startswith("u:") and len(data.split(":")) == 3:          # owner (channel) approves / rejects
                     _, act, uid = data.split(":")
                     self._approve(uid, act == "ok", cq.get("id", ""))
@@ -632,7 +705,7 @@ class Collector:
         if low.startswith(("/usuarios", "/aprobar", "/quitar")) and not self.users.seen(int(u["update_id"])):
             parts = t.split()
             if low.startswith("/usuarios"):
-                self._raw_alert(self.users.listing(), None, False)
+                self._raw_alert(self._panel_view('users', now_s)[0], None, False)
             elif len(parts) > 1:
                 self._approve(parts[1], low.startswith("/aprobar"), "")
             return True
@@ -657,7 +730,7 @@ class Collector:
         if self.poll_updates is None or self.st3 is None or not self.trading(now_s) or now_s - self._upd_t < 5:
             return
         self._upd_t = now_s
-        if self.notify_alert is not None and self.session.d.get("panel_id") is None:
+        if self.notify_alert is not None and self.session.d.get("panel2_id") is None:
             self.session.d["panel_id"] = self._post_panel()
             self.session.save()
         labels = {"ok": ("aceptada", "Registrado: aceptada"), "low": ("cuota_menor", "Registrado: cuota menor"),
@@ -1033,6 +1106,7 @@ class Collector:
         self._status(now_s)
         self._watchdog(now_s)
         self._poll_exec(now_s)
+        self._panel_refresh(now_s)
         self._st3_watchdog(now_s)
         if not resp.ok or resp.payload is None:
             log.warning("list failed: %s", resp.error)
