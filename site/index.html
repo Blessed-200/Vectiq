@@ -130,7 +130,7 @@ function render(){
   // KPIs
   const k=(v,l,s="",c="")=>`<div class="k"><div class="v ${c}">${v}</div><div class="l">${l}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
   const bk=sim(bs,+$("#b0").value||100);
-  $("#kpis").innerHTML=st.n?[k(st.n,"Alertas",st.open?st.open+" abiertas":""),k(pc(st.acc).replace("+",""),"Acierto",`${st.w}G · ${st.l}P`),k(pc(st.roi),"ROI",`IC95 ±${(st.ci*100).toFixed(1)}`,cls(st.roi)),k(fmt(st.net,1)+" u","Neto",`${st.n?fmt(st.net/Math.max(1,new Set(bs.map(b=>b.day)).size),1):0} u/día`,cls(st.net)),k(st.mxL,"Peor racha L",`mejor racha G ${st.mxW}`),k("−"+(bk.mdd*100).toFixed(1)+"%","Caída máx banca","simulada 1.75 %","neg")].join(""):'<div class="note">Sin alertas liquidadas.</div>';
+  $("#kpis").innerHTML=st.n?[k(st.n,"Alertas",st.open?st.open+" abiertas":""),k(pc(st.acc).replace("+",""),"Acierto",`${st.w}G · ${st.l}P`),k(pc(st.roi),"ROI",`IC95 ±${(st.ci*100).toFixed(1)}`,cls(st.roi)),k(fmt(st.net,1)+" u","Neto",`${st.n?fmt(st.net/Math.max(1,new Set(bs.map(b=>b.day)).size),1):0} u/día`,cls(st.net)),k(st.mxL,"Peor racha L",`mejor racha G ${st.mxW}`),k("−"+(bk.mdd*100).toFixed(1)+"%","Caída máx banca","simulada 1 % / 0.45 %","neg")].join(""):'<div class="note">Sin alertas liquidadas.</div>';
   $("#kpinote").textContent=st.n?`ROI de ${LEG==="C"?"ST3+ST5+ST0":["ST3","ST5","ST0"][+LEG]} = ganancia media por cada 1 u apostada. Caída en unidades: ${st.dd.toFixed(1)} u.`:"";
   line("#c1",curve(bs));
   const pts=bk.pts.map(p=>({t:p[0],v:p[1]}));line("#c2",{pts:pts,peak:(()=>{let m=-Infinity;return pts.map(p=>(m=Math.max(m,p.v)))})(),money:true,min0:false});

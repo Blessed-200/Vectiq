@@ -15,7 +15,7 @@ from vectiq.feed.schema import MatchState, parse_feed, parse_game, parse_item
 from vectiq.notify import bankroll, telegram
 from vectiq.notify.session import PANEL_BUTTONS, PANEL_TEXT, Session
 from vectiq.signals import calibra as calibra_mod
-from vectiq.signals import candidate, engine, masters, players, st2, st3, st4, st5
+from vectiq.signals import candidate, engine, masters, players, st0, st2, st3, st4, st5
 from vectiq.signals.paper import PaperLedger
 from vectiq.store.tape import TapeWriter
 
