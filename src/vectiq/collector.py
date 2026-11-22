@@ -131,9 +131,9 @@ class Collector:
             bank = self._bank()
             note = ""          # the evidence/drawdown "Apuesta reducida" note is stale here: this stake ignores those brakes
             stake, redo = bankroll.stake_now(self.session.d, bank, time.time(), pct or self.stake_pct)
+            base, redo_pct = stake, (pct or self.stake_pct)
             if redo:
                 self.session.save()
-                note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta ({self.stake_pct * 100:.2f} %)."
             m = self._tilt(players_)
             if abs(m - 1.0) > 1e-9:
                 stake = min(bankroll.MAX_STAKE, max(bankroll.MIN_STAKE, round(stake * m * 2) / 2))
@@ -141,6 +141,9 @@ class Collector:
                     note = (note + "\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{m:.1f}."
                 elif m <= 0.85:
                     note = (note + "\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{m:.1f}."
+            if redo:       # shown AFTER the player multiplier so it always equals the 💵 amount at the top of the alert
+                note = (f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta "
+                        f"(base ${base:,.2f} = {redo_pct * 100:.2f} %)." + ("\n" + note if note else ""))
             self._last_stake = stake
             return min(stake / bank, 0.05), note
         if self.flat_stake > 0 and frac > 0 and self._bank() > 0:
