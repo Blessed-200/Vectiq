@@ -29,13 +29,14 @@ def _result(ledger_db: sqlite3.Connection, game_id: int) -> float | None:
     return row[0] / row[1] if row and row[1] else None
 
 
-def tracked_bank(anchor: float, anchor_ts_s: float, st3_db: sqlite3.Connection, st5_db: sqlite3.Connection | None) -> tuple[float, int, int]:
+def tracked_bank(anchor: float, anchor_ts_s: float, st3_db: sqlite3.Connection, st5_db: sqlite3.Connection | None,
+                 st0_db: sqlite3.Connection | None = None) -> tuple[float, int, int]:
     """(bank, settled alerts counted, alerts excluded by 'No llegué')."""
     st3_db.execute(QUOTED)
     skipped = {r[0] for r in st3_db.execute("SELECT game_id FROM exec WHERE status='no_llego'")} if _has(st3_db, "exec") else set()
     bank, n, ex = anchor, 0, 0
     for gid, kind, stake in st3_db.execute("SELECT game_id, kind, stake FROM quoted WHERE ts_ms>?", (int(anchor_ts_s * 1000),)).fetchall():
-        led = st5_db if kind == "st5" else st3_db
+        led = st5_db if kind == "st5" else st0_db if kind == "st0" else st3_db
         u = _result(led, gid) if led is not None else None
         if u is None:
             continue

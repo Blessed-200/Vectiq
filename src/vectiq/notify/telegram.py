@@ -219,6 +219,19 @@ def format_st5(al, bankroll: float, stake_frac: float, url: str, *, note: str = 
     ], note, url)
 
 
+def format_st0(al, bankroll: float, stake_frac: float, url: str, *, note: str = "") -> str:
+    """Pre-match Under alert (ST0). Same four-line head as the live alerts."""
+    left = f"en {max(0.0, (al.start_s - al.ts_ms / 1000.0) / 60.0):.0f} min" if al.start_s else "ya"
+    return _tail([
+        f"🟣 <b>PREPARTIDO</b> · {left} · {html.escape(_liga(al.league))}",
+        _names(al.players),
+        f"<b>MENOS DE {al.line:g} @ {al.price:.2f}</b> (mín {al.min_price:.2f})",
+        f"💵 <b>${bankroll * stake_frac:,.2f}</b> · {stake_frac * 100:.1f} %",
+        _SEP,
+        f"Empieza {cuba_clock(al.start_s)} Cuba" if al.start_s else f"{cuba_clock(al.ts_ms / 1000)} Cuba",
+    ], note, url)
+
+
 def format_pre(pick, bankroll: float, stake_frac: float, start_s: float, *, note: str = "") -> str:
     """Pre-match bet alert, same four-line head."""
     sg = pick.signal
