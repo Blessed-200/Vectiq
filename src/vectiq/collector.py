@@ -41,8 +41,10 @@ class Collector:
                  dashboard_every_s: float = 6 * 3600.0, notify_photo: Callable[[str, str], bool] | None = None,
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None,
-                 st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None,
+                 st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None, st0_ledger: PaperLedger | None = None,
                  session: Session | None = None, pin=None) -> None:
+        self.st0 = st0_ledger                    # ST0 prepartido: Under on the lowest rung just before the start
+        self._st0_fired: set[int] = set()
         self.st5 = st5_ledger                    # ST5 "alta probabilidad": Markov model, Under >= 65 % (supersedes ST4 when it fires)
         self._st5_fired: set[int] = set()
         self.st4 = st4_ledger                    # ST4 "segunda oportunidad": Under after 2-0 blowouts (PRE/ST3 stay as they are)
@@ -115,19 +117,20 @@ class Collector:
         if self.stake_pct > 0 and self.st3 is not None:
             try:
                 st5db = self.st5.db if self.st5 is not None else None
-                return bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db)[0] or anchor
+                st0db = self.st0.db if self.st0 is not None else None
+                return bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db, st0db)[0] or anchor
             except Exception:  # noqa: BLE001 - never block an alert over bookkeeping
                 log.warning("tracked bank failed", exc_info=True)
         return anchor
 
-    def _flat(self, frac: float, note: str = "", players_: str = "") -> tuple[float, str]:
+    def _flat(self, frac: float, note: str = "", players_: str = "", pct: float | None = None) -> tuple[float, str]:
         """ST3/ST5 alerts use ONE fixed dollar stake (VECTIQ_FLAT_STAKE, default $2; 0 = evidence/drawdown sizing).
         Mixed stakes across strategies that bet the same outcome lengthened the drawdown and earned less (12 nov study).
         The hard stops stay: frac == 0 (evidence, 30 % drawdown) still silences the alert."""
         if self.stake_pct > 0 and frac > 0 and self._bank() > 0:
             bank = self._bank()
             note = ""          # the evidence/drawdown "Apuesta reducida" note is stale here: this stake ignores those brakes
-            stake, redo = bankroll.stake_now(self.session.d, bank, time.time(), self.stake_pct)
+            stake, redo = bankroll.stake_now(self.session.d, bank, time.time(), pct or self.stake_pct)
             if redo:
                 self.session.save()
                 note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta ({self.stake_pct * 100:.2f} %)."
@@ -226,7 +229,7 @@ class Collector:
             self._calibra_final(gid)
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:
@@ -246,14 +249,14 @@ class Collector:
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4, self.st5):
+        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -415,6 +418,47 @@ class Collector:
             if talk:
                 self.notify_alert("<b>ST3 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
 
+    def _z(self, players_: str) -> float:
+        """Player-rating z of the pair (0 when ratings are off, unseen players or too little history)."""
+        if self.ratings is None or not players_ or self.st2 is None or self.calibra is None:
+            return 0.0
+        try:
+            self.ratings.maybe_refit(self.st2.db, self.calibra.db, time.time())
+            return self.ratings.z(players_) if self.ratings.theta else 0.0
+        except Exception:  # noqa: BLE001
+            return 0.0
+
+    def _st0(self, s: MatchState, now_s: float) -> None:
+        """ST0: pre-match Under on the lowest rung (paper position + Telegram alert), one per match."""
+        if self.st0 is None:
+            return
+        al = st0.evaluate(s, self._z(f"{s.home} vs {s.away}"))
+        if al is None or self.st0.game_stake(s.game_id) > 0:
+            return
+        if not self.st0.open_bet(st0.signal_from(al, st0.STAKE_FRAC), s.fetched_ms, champ_id=s.league_id, start_ts=s.start_ts):
+            return
+        if not ("st0" in self.alerts and self.notify_alert is not None and self.st3 is not None) or s.game_id in self._st0_fired:
+            return
+        self._st0_fired.add(s.game_id)
+        al.url = masters.match_url(s)
+        ok, why = st3.guard(self.st0.db, self.st0.bankroll, self.st0.drawdown(), now_s)
+        ev = st3.evidence_frac(self.st0.db, st0.STAKE_FRAC) * self._vigilante("st0", self.st0)
+        if ok and ev <= 0:
+            ok, why = False, "evidencia reciente insuficiente"
+        frac = st3.stake_fraction(self.st0.drawdown(), ev)
+        frac, note = self._flat(frac, "", al.players, pct=st0.STAKE_PCT)
+        if ok and frac >= 0.0025:
+            mid = self.notify_alert(telegram.format_st0(al, self._bank(), frac, al.url, note=note), telegram.exec_buttons(al.game_id))
+            st3.record_alert(self.st3.db, al, "st0", mid)
+            bankroll.record_quote(self.st3.db, al.game_id, "st0", al.ts_ms, round(self._bank() * frac, 2))
+            log.info("st0 alert %s under %s @%s", al.players, al.line, al.price)
+        elif not ok and self._norm(why) != self._norm(getattr(self, "_st0_pause", "")):
+            self._st0_pause = why
+            self.notify_alert(f"<b>ST0 · EN PAUSA</b>\n{why}.\nSigue registrando en papel; no apuestes dinero real hasta revisar.", None)
+        if ok and getattr(self, "_st0_pause", ""):
+            self._st0_pause = ""
+            self.notify_alert("<b>ST0 · REANUDADO</b>\nLos controles de riesgo vuelven a estar en orden.", None)
+
     def _st5(self, s: MatchState, now_s: float) -> None:
         """ST5: paper position for k=1-3 (the measurement), Telegram alert for k=1-2; same risk stops, stake 2 %."""
         if self.st5 is None:
@@ -546,7 +590,8 @@ class Collector:
         """/estado: the bot's picture of the real bank and the stake it is quoting."""
         anchor = float(self.session.bank) if self.session.bank else self.real_bank
         st5db = self.st5.db if self.st5 is not None else None
-        bank, n, ex = bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db)
+        st0db = self.st0.db if self.st0 is not None else None
+        bank, n, ex = bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db, st0db)
         stake, _ = bankroll.stake_now(dict(self.session.d), bank, now_s, self.stake_pct or bankroll.STAKE_PCT)
         return (f"<b>VECTIQ · ESTADO</b>\nÚltimo saldo que escribiste: <b>${anchor:,.2f}</b>\n"
                 f"Desde entonces: {n} alertas liquidadas ({ex} marcadas «No llegué»)\n"
@@ -587,6 +632,10 @@ class Collector:
                 self._st4(s, now_s)
             except Exception:  # noqa: BLE001 - never stop collection because of an alert
                 log.warning("st4 failed", exc_info=True)
+            try:
+                self._st0(s, now_s)
+            except Exception:  # noqa: BLE001 - never stop collection because of an alert
+                log.warning("st0 failed", exc_info=True)
         if not masters.is_masters(s) or self.mledger is None or self.book is None:
             return
         if not s.live:  # closing-line value: the last pre-start Under price on every line we hold
@@ -700,7 +749,7 @@ class Collector:
         if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.shadow, self.ledger):
+        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.shadow, self.ledger):
             if led is None:
                 continue
             for gid, champ, start in led.stale_open_meta(now_s):

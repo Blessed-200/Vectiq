@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>VECTIQ · Panel</title>
-<meta name="description" content="Panel de ST3, ST5 y su combinación: solo las alertas que llegan a Telegram.">
+<meta name="description" content="Panel de ST3, ST5, ST0 y su combinación: solo las alertas que llegan a Telegram.">
 <style>
 :root{--bg:#f6f5f1;--card:#fff;--ink:#15181d;--mut:#6a7280;--line:#e4e2da;--pos:#1f7a4d;--neg:#b3382c;--acc:#1b3a5c;--acc2:#8a6d2f;--posbg:#e5f2ea;--negbg:#f7e4e1;--shadow:0 1px 2px rgba(20,24,29,.06)}
 @media (prefers-color-scheme:dark){:root{--bg:#101318;--card:#171b22;--ink:#e8eaee;--mut:#8f98a6;--line:#262c36;--pos:#4cc38a;--neg:#f0786b;--acc:#8fb4e3;--acc2:#d4b36a;--posbg:#16301f;--negbg:#3a1d1a;--shadow:none}}
@@ -40,8 +40,8 @@ th:first-child,td:first-child{text-align:left}
 tr.clk{cursor:pointer}tr.clk:hover td,tr.sel td{background:var(--bg)}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px;letter-spacing:.04em}
-.t3{background:#e3ebf5;color:#1b3a5c}.t5{background:#f1e9d6;color:#7a5d1f}
-@media (prefers-color-scheme:dark){.t3{background:#1c2a3d;color:#8fb4e3}.t5{background:#33291a;color:#d4b36a}}
+.t0{background:#e9e1f3;color:#47306b}.t3{background:#e3ebf5;color:#1b3a5c}.t5{background:#f1e9d6;color:#7a5d1f}
+@media (prefers-color-scheme:dark){.t0{background:#2a2038;color:#bda3e3}.t3{background:#1c2a3d;color:#8fb4e3}.t5{background:#33291a;color:#d4b36a}}
 .res{font-weight:700}.W{color:var(--pos)}.L{color:var(--neg)}.O{color:var(--mut)}
 .note{color:var(--mut);font-size:12.5px;margin-top:8px}
 input[type=number]{width:84px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 7px;font:inherit}
@@ -57,7 +57,7 @@ input[type=number]{width:84px;border:1px solid var(--line);background:var(--card
 </header>
 
 <div class="card">
-  <div class="seg" id="leg"><button data-v="C" class="on">Combinada</button><button data-v="0">ST3</button><button data-v="1">ST5</button></div>
+  <div class="seg" id="leg"><button data-v="C" class="on">Combinada</button><button data-v="0">ST3</button><button data-v="1">ST5</button><button data-v="2">ST0</button></div>
   <div class="chips" id="chips"></div>
   <div class="chips"><span class="rng" id="rng" style="margin-left:0"></span><button class="btn" id="unzoom" hidden>Quitar zoom</button></div>
 </div>
@@ -66,7 +66,7 @@ input[type=number]{width:84px;border:1px solid var(--line);background:var(--card
 
 <div class="card"><h2>Curva acumulada y caída (1 u por alerta)</h2><div class="chart" id="c1"></div><div class="note">Toca para ver cada alerta · arrastra para hacer zoom en ese tramo.</div></div>
 
-<div class="card"><h2>Banca simulada con 1.75 %</h2><div class="note" style="margin:0 0 8px">Banca inicial $<input type="number" id="b0" value="100" min="10" step="10"> · tope $3,000 por apuesta</div><div class="chart" id="c2"></div><div class="note" id="banknote"></div></div>
+<div class="card"><h2>Banca simulada (stake 1.0 % ST3 y ST5, 0.45 % ST0)</h2><div class="note" style="margin:0 0 8px">Banca inicial $<input type="number" id="b0" value="100" min="10" step="10"> · tope $3,000 por apuesta</div><div class="chart" id="c2"></div><div class="note" id="banknote"></div></div>
 
 <div class="card"><h2>ROI por día (día = 6 AM a 6 AM, hora de Cuba) · toca una barra</h2><div class="chart" id="c3"></div></div>
 
@@ -113,11 +113,11 @@ function stats(bs){const s=bs.filter(b=>b.u!=null);const n=s.length;if(!n)return
   const w=s.filter(b=>b.u>0).length,net=s.reduce((a,b)=>a+b.u,0),roi=net/n,sd=Math.sqrt(s.reduce((a,b)=>a+(b.u-roi)**2,0)/Math.max(n-1,1)),ci=1.96*sd/Math.sqrt(n);
   let cur=0,mxL=0,mxW=0,cw=0,cum=0,pk=0,dd=0;for(const b of s){if(b.u<=0){cur++;mxL=Math.max(mxL,cur);cw=0}else{cur=0;cw++;mxW=Math.max(mxW,cw)};cum+=b.u;pk=Math.max(pk,cum);dd=Math.max(dd,pk-cum)}
   return{n,w,l:n-w,net,roi,ci,mxL,mxW,dd,acc:w/n,open:bs.length-n}}
-function sim(bs,b0){ // misma regla que el bot: stake = 1.75 % de la base; base se recalcula cada hora o ±5 %
-  const f=DOC.stake_pct;let bank=b0,base=b0,lastRe=-1e15,pk=b0,mdd=0;const ev=[];
+function sim(bs,b0){ // misma regla que el bot: stake = % de la base por estrategia; base se recalcula cada hora o ±5 %
+  const FP=DOC.stake_pcts||[DOC.stake_pct,DOC.stake_pct,DOC.stake_pct];let bank=b0,base=b0,lastRe=-1e15,pk=b0,mdd=0;const ev=[];
   const s=bs.filter(b=>b.u!=null);for(const b of s){ev.push([b.t,0,b]);ev.push([b.t+10*60e3,1,b])}ev.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
   const stk=new Map(),pts=[[ev.length?ev[0][0]:0,b0]];
-  for(const[t,ty,b]of ev){if(ty===0){if(t-lastRe>=H||Math.abs(bank/base-1)>=.05){base=bank;lastRe=t}stk.set(b,Math.min(3000,Math.max(1,f*base)))}
+  for(const[t,ty,b]of ev){if(ty===0){if(t-lastRe>=H||Math.abs(bank/base-1)>=.05){base=bank;lastRe=t}stk.set(b,Math.min(3000,Math.max(1,FP[b.leg]*base)))}
     else{bank=Math.max(0,bank+stk.get(b)*b.u);pk=Math.max(pk,bank);mdd=Math.max(mdd,1-bank/pk);pts.push([t,bank])}}
   return{pts,bank,pk,mdd}}
 
@@ -131,7 +131,7 @@ function render(){
   const k=(v,l,s="",c="")=>`<div class="k"><div class="v ${c}">${v}</div><div class="l">${l}</div>${s?`<div class="s">${s}</div>`:""}</div>`;
   const bk=sim(bs,+$("#b0").value||100);
   $("#kpis").innerHTML=st.n?[k(st.n,"Alertas",st.open?st.open+" abiertas":""),k(pc(st.acc).replace("+",""),"Acierto",`${st.w}G · ${st.l}P`),k(pc(st.roi),"ROI",`IC95 ±${(st.ci*100).toFixed(1)}`,cls(st.roi)),k(fmt(st.net,1)+" u","Neto",`${st.n?fmt(st.net/Math.max(1,new Set(bs.map(b=>b.day)).size),1):0} u/día`,cls(st.net)),k(st.mxL,"Peor racha L",`mejor racha G ${st.mxW}`),k("−"+(bk.mdd*100).toFixed(1)+"%","Caída máx banca","simulada 1.75 %","neg")].join(""):'<div class="note">Sin alertas liquidadas.</div>';
-  $("#kpinote").textContent=st.n?`ROI de ${LEG==="C"?"ST3+ST5":LEG==="0"?"ST3":"ST5"} = ganancia media por cada 1 u apostada. Caída en unidades: ${st.dd.toFixed(1)} u.`:"";
+  $("#kpinote").textContent=st.n?`ROI de ${LEG==="C"?"ST3+ST5+ST0":["ST3","ST5","ST0"][+LEG]} = ganancia media por cada 1 u apostada. Caída en unidades: ${st.dd.toFixed(1)} u.`:"";
   line("#c1",curve(bs));
   const pts=bk.pts.map(p=>({t:p[0],v:p[1]}));line("#c2",{pts:pts,peak:(()=>{let m=-Infinity;return pts.map(p=>(m=Math.max(m,p.v)))})(),money:true,min0:false});
   $("#banknote").textContent=st.n?`Con $${(+$("#b0").value||100).toFixed(0)} y la regla del bot terminarías con $${bk.bank.toFixed(2)}; pico $${bk.pk.toFixed(2)}; ahora ${(100*(1-bk.bank/bk.pk)).toFixed(1)}% bajo el pico.`:"";
@@ -178,8 +178,8 @@ function bars(all){
 function dayTable(all){
   const m=perDay(all),ks=[...m.keys()].sort((a,b)=>b-a);const full=DOC.bets;
   const roi=(k,leg)=>{const s=stats(full.filter(b=>b.day===k&&(leg==null||b.leg===leg)));return s.n?pc(s.roi):"–"};
-  $("#days").innerHTML=`<tr><th>Día</th><th>Alertas</th><th>G–P</th><th>Acierto</th><th>ROI</th><th>Neto u</th><th>Racha L</th><th>ST3</th><th>ST5</th></tr>`+ks.map(k=>{const s=stats(m.get(k));
-    return`<tr class="clk" data-k="${k}"><td>${dayLabel(k)}</td><td>${s.n}</td><td>${s.w}–${s.l}</td><td>${(s.acc*100).toFixed(0)}%</td><td class="${cls(s.roi)}"><b>${pc(s.roi)}</b></td><td class="${cls(s.net)}">${fmt(s.net,1)}</td><td>${s.mxL}</td><td>${roi(k,0)}</td><td>${roi(k,1)}</td></tr>`}).join("");
+  $("#days").innerHTML=`<tr><th>Día</th><th>Alertas</th><th>G–P</th><th>Acierto</th><th>ROI</th><th>Neto u</th><th>Racha L</th><th>ST3</th><th>ST5</th><th>ST0</th></tr>`+ks.map(k=>{const s=stats(m.get(k));
+    return`<tr class="clk" data-k="${k}"><td>${dayLabel(k)}</td><td>${s.n}</td><td>${s.w}–${s.l}</td><td>${(s.acc*100).toFixed(0)}%</td><td class="${cls(s.roi)}"><b>${pc(s.roi)}</b></td><td class="${cls(s.net)}">${fmt(s.net,1)}</td><td>${s.mxL}</td><td>${roi(k,0)}</td><td>${roi(k,1)}</td><td>${roi(k,2)}</td></tr>`}).join("");
   $("#days").querySelectorAll("tr.clk").forEach(tr=>tr.onclick=()=>{const k=+tr.dataset.k;RANGE=[dayStart(k),dayStart(k+1)];SEL=null;render();scrollTo({top:0,behavior:"smooth"})});
 }
 function group(bs,keyf,order){const m=new Map();for(const b of bs){if(b.u==null)continue;const k=keyf(b);(m.get(k)||m.set(k,[]).get(k)).push(b)}return[...m.entries()].map(([k,v])=>({k,...stats(v)})).sort(order)}
@@ -192,7 +192,7 @@ function breakdown(bs){
 }
 function lastTable(bs){
   const L=bs.slice(-25).reverse();
-  $("#last").innerHTML=`<tr><th>Hora</th><th></th><th>Partido</th><th>Apuesta</th><th>Res.</th></tr>`+L.map(b=>`<tr><td>${dm(b.t)} ${hm(b.t)}</td><td><span class="tag ${b.leg?"t5":"t3"}">${b.leg?"ST5":"ST3"}</span></td><td style="text-align:left;white-space:normal;min-width:150px">${b.pl}</td><td>Menos de ${b.line} @${b.price}</td><td class="res ${b.u==null?"O":b.u>0?"W":"L"}">${b.u==null?"abierta":b.u>0?"G "+fmt(b.u,2):"P −1"}</td></tr>`).join("");
+  $("#last").innerHTML=`<tr><th>Hora</th><th></th><th>Partido</th><th>Apuesta</th><th>Res.</th></tr>`+L.map(b=>`<tr><td>${dm(b.t)} ${hm(b.t)}</td><td><span class="tag ${["t3","t5","t0"][b.leg]}">${["ST3","ST5","ST0"][b.leg]}</span></td><td style="text-align:left;white-space:normal;min-width:150px">${b.pl}</td><td>Menos de ${b.line} @${b.price}</td><td class="res ${b.u==null?"O":b.u>0?"W":"L"}">${b.u==null?"abierta":b.u>0?"G "+fmt(b.u,2):"P −1"}</td></tr>`).join("");
 }
 </script>
 </body>

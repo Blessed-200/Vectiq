@@ -59,7 +59,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "calibra.sqlite", "tg_status.json", "session.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "st0.sqlite", "calibra.sqlite", "tg_status.json", "session.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -97,7 +97,7 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json", "--pattern", "session.json",
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "st0.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json", "--pattern", "session.json",
                     "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
@@ -112,6 +112,8 @@ def _handoff_in(col: Collector, out: Path) -> None:
         col.st4.reopen()
     if col.st5 is not None:
         col.st5.reopen()
+    if col.st0 is not None:
+        col.st0.reopen()
     if col.calibra is not None:
         col.calibra.reopen()
     loaded = MastersBook.load(out / "masters_book.json")
@@ -140,6 +142,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     st3_ledger = PaperLedger(out / "st3.sqlite", start_bankroll=100.0)    # ST3: compounding 1 % of a $100 bankroll
     st4_ledger = PaperLedger(out / "st4.sqlite", start_bankroll=100.0)    # ST4: Under after a 2-0 blowout (second chance)
     st5_ledger = PaperLedger(out / "st5.sqlite", start_bankroll=100.0)    # ST5: Markov model, Under >= 65 %
+    st0_ledger = PaperLedger(out / "st0.sqlite", start_bankroll=100.0)    # ST0: pre-match Under on the lowest rung
     mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
     calibra = Calibra(out / "calibra.sqlite")                              # CALIBRA: shadow learning layer
     book = MastersBook.load(out / "masters_book.json")
@@ -147,7 +150,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
     chat = telegram.shadow_chat()
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
-        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, calibra=calibra, session=Session(out / "session.json"), alerts=os.environ.get("VECTIQ_ALERTS", "st3,st5"),   # st3 | pre | masters (legacy) | any mix
+        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, st0_ledger=st0_ledger, calibra=calibra, session=Session(out / "session.json"), alerts=os.environ.get("VECTIQ_ALERTS", "st3,st5,st0"),   # st3 | pre | masters (legacy) | any mix
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
         notify_alert=lambda m, b=None, silent=False: telegram.send_alert(m, b, silent, chat_id=chat),
         arm=os.environ.get("VECTIQ_ARM", "on"),          # on | silent | off
@@ -166,7 +169,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
         (out / "trading.flag").write_text("1")  # chained runs get the flag in _handoff_in
     col.run(args.minutes * 60, args.interval)
     col.book.save(out / "masters_book.json")
-    print(json.dumps({"st3": st3_ledger.summary(), "st4": st4_ledger.summary(), "st5": st5_ledger.summary(), "st2": st2_ledger.summary(), "masters": mledger.summary()}))
+    print(json.dumps({"st3": st3_ledger.summary(), "st4": st4_ledger.summary(), "st5": st5_ledger.summary(), "st0": st0_ledger.summary(), "st2": st2_ledger.summary(), "masters": mledger.summary()}))
     return 0
 
 

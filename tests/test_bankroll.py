@@ -33,10 +33,12 @@ def test_tracked_bank_counts_taken_alerts_and_skips_no_llego():
 
 def test_stake_recalc_hourly_or_5pct_move():
     d = {}
-    assert bankroll.stake_now(d, 1000.0, 0.0) == (17.5, True)
-    assert bankroll.stake_now(d, 1030.0, 600.0) == (17.5, False)        # +3 %, 10 min: same stake
-    assert bankroll.stake_now(d, 1060.0, 700.0) == (18.5, True)         # +6 %: recalculated
-    assert bankroll.stake_now(d, 1060.0, 700.0 + 3600) == (18.5, True)  # an hour later
+    p = 0.0175
+    assert bankroll.stake_now(d, 1000.0, 0.0, p) == (17.5, True)
+    assert bankroll.stake_now(d, 1030.0, 600.0, p) == (17.5, False)        # +3 %, 10 min: same stake
+    assert bankroll.stake_now(d, 1060.0, 700.0, p) == (18.5, True)         # +6 %: recalculated
+    assert bankroll.stake_now(d, 1060.0, 700.0 + 3600, p) == (18.5, True)  # an hour later
+    assert bankroll.stake_now({}, 1000.0, 0.0)[0] == 10.0                  # default now 1.0 %
     assert bankroll.stake_now({}, 10.0, 0.0)[0] == 1.0                  # floor $1
     assert bankroll.stake_now({}, 1e7, 0.0)[0] == 3000.0                # cap $3,000
 
