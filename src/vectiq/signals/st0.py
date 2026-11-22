@@ -32,9 +32,9 @@ MIN_PRICE = float(os.environ.get("VECTIQ_ST0_MIN_PRICE", "2.20"))
 MIN_PRICE_LOW_SCORERS = float(os.environ.get("VECTIQ_ST0_MIN_PRICE_PLAYERS", "2.10"))
 Z_LOW = float(os.environ.get("VECTIQ_ST0_Z", "-0.4"))       # rating z of the pair; theta <= -0.12 in the study (sd 0.29)
 RUNGS = 3
-STAKE_FRAC = 0.0075                                         # paper-book fraction and evidence cap; alerts use the % of the bank
+STAKE_FRAC = 0.0045                                         # paper-book fraction and evidence cap; alerts use the % of the bank
 PER_MATCH_CAP = 0.05
-STAKE_PCT = float(os.environ.get("VECTIQ_ST0_PCT", "0.0075"))   # share of the bank per alert (ST3/ST5 use 1.75 %)
+STAKE_PCT = float(os.environ.get("VECTIQ_ST0_PCT", "0.0045"))   # share of the bank per alert (ST3/ST5 use 1.0 %)
 
 
 @dataclass(slots=True)

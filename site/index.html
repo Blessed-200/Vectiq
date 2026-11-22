@@ -66,7 +66,7 @@ input[type=number]{width:84px;border:1px solid var(--line);background:var(--card
 
 <div class="card"><h2>Curva acumulada y caída (1 u por alerta)</h2><div class="chart" id="c1"></div><div class="note">Toca para ver cada alerta · arrastra para hacer zoom en ese tramo.</div></div>
 
-<div class="card"><h2>Banca simulada con 1.75 %</h2><div class="note" style="margin:0 0 8px">Banca inicial $<input type="number" id="b0" value="100" min="10" step="10"> · tope $3,000 por apuesta</div><div class="chart" id="c2"></div><div class="note" id="banknote"></div></div>
+<div class="card"><h2>Banca simulada (stake 1.0 % ST3 y ST5, 0.45 % ST0)</h2><div class="note" style="margin:0 0 8px">Banca inicial $<input type="number" id="b0" value="100" min="10" step="10"> · tope $3,000 por apuesta</div><div class="chart" id="c2"></div><div class="note" id="banknote"></div></div>
 
 <div class="card"><h2>ROI por día (día = 6 AM a 6 AM, hora de Cuba) · toca una barra</h2><div class="chart" id="c3"></div></div>
 
@@ -113,7 +113,7 @@ function stats(bs){const s=bs.filter(b=>b.u!=null);const n=s.length;if(!n)return
   const w=s.filter(b=>b.u>0).length,net=s.reduce((a,b)=>a+b.u,0),roi=net/n,sd=Math.sqrt(s.reduce((a,b)=>a+(b.u-roi)**2,0)/Math.max(n-1,1)),ci=1.96*sd/Math.sqrt(n);
   let cur=0,mxL=0,mxW=0,cw=0,cum=0,pk=0,dd=0;for(const b of s){if(b.u<=0){cur++;mxL=Math.max(mxL,cur);cw=0}else{cur=0;cw++;mxW=Math.max(mxW,cw)};cum+=b.u;pk=Math.max(pk,cum);dd=Math.max(dd,pk-cum)}
   return{n,w,l:n-w,net,roi,ci,mxL,mxW,dd,acc:w/n,open:bs.length-n}}
-function sim(bs,b0){ // misma regla que el bot: stake = 1.75 % de la base; base se recalcula cada hora o ±5 %
+function sim(bs,b0){ // misma regla que el bot: stake = % de la base por estrategia; base se recalcula cada hora o ±5 %
   const FP=DOC.stake_pcts||[DOC.stake_pct,DOC.stake_pct,DOC.stake_pct];let bank=b0,base=b0,lastRe=-1e15,pk=b0,mdd=0;const ev=[];
   const s=bs.filter(b=>b.u!=null);for(const b of s){ev.push([b.t,0,b]);ev.push([b.t+10*60e3,1,b])}ev.sort((x,y)=>x[0]-y[0]||x[1]-y[1]);
   const stk=new Map(),pts=[[ev.length?ev[0][0]:0,b0]];

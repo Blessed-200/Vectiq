@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import sqlite3
 
-STAKE_PCT = 0.0175
+STAKE_PCT = 0.01      # x0.6 of the original 1.75 %: typical 11-day dip 15 %, not 25 % (study of 22 nov)
 RECALC_S, RECALC_MOVE = 3600.0, 0.05
 MIN_STAKE, MAX_STAKE = 1.0, 3000.0
 QUOTED = "CREATE TABLE IF NOT EXISTS quoted(game_id INTEGER, kind TEXT, ts_ms INTEGER, stake REAL, PRIMARY KEY(game_id, kind))"

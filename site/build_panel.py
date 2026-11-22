@@ -45,7 +45,7 @@ def main() -> int:
                   + (rows(assets / "st0.sqlite", 2) if (assets / "st0.sqlite").exists() else []), key=lambda r: r[0])
     out.mkdir(parents=True, exist_ok=True)
     doc = {"schema_version": 1, "generated_ms": int(time.time() * 1000), "cuba_utc": float(os.environ.get("VECTIQ_CUBA_UTC", "-4")),
-           "day_start_hour": 6, "stake_pct": 0.0175, "stake_pcts": [0.0175, 0.0175, 0.0075], "legs": ["ST3", "ST5", "ST0"],
+           "day_start_hour": 6, "stake_pct": 0.01, "stake_pcts": [0.01, 0.01, 0.0045], "legs": ["ST3", "ST5", "ST0"],
            "filters": {"st3_min_price": ST3_MIN_PRICE, "st5_ev": [ST5_EV_MIN, ST5_EV_MAX]},
            "cols": ["ts_ms", "leg", "u", "price", "line", "game_id", "players", "league"], "bets": bets}
     (out / "panel.json").write_text(json.dumps(doc, separators=(",", ":"), ensure_ascii=False))
