@@ -1,0 +1,534 @@
+{
+  "alarm_definition": "one joint alarm per calendar month max",
+  "calibration_months": 6000,
+  "channels": 81,
+  "historical_holdout_read": false,
+  "limitations": "Monte Carlo intervals conditional on a specified null with known reference and full coverage. Empirical false alarms and transaction execution are unverified.",
+  "methods_per_channel": 3,
+  "monthly_upper_thresholds": {
+    "28": 5.436657313008392,
+    "29": 5.4827819059454885,
+    "30": 5.529926736227406,
+    "31": 5.595891020230191
+  },
+  "null_stress_ar_0_5_t5": {
+    "365_day_year": {
+      "expected_count": 6.127,
+      "mc_ci95": [
+        5.978206943994913,
+        6.275793056005087
+      ]
+    },
+    "leap_year": {
+      "expected_count": 6.137666666666667,
+      "mc_ci95": [
+        5.9883605483957965,
+        6.286972784937538
+      ]
+    },
+    "monthly_probability": {
+      "28": {
+        "ci95": [
+          0.475696774203341,
+          0.5009848219113738
+        ],
+        "value": 0.48833333333333334
+      },
+      "29": {
+        "ci95": [
+          0.4863532000719519,
+          0.5116480795950236
+        ],
+        "value": 0.499
+      },
+      "30": {
+        "ci95": [
+          0.49634882420246634,
+          0.5216396587947535
+        ],
+        "value": 0.509
+      },
+      "31": {
+        "ci95": [
+          0.5020152563103851,
+          0.5272993085739733
+        ],
+        "value": 0.5146666666666667
+      }
+    },
+    "simulated_months_per_length": 6000
+  },
+  "power": [
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          45.740910114647505,
+          48.9440898853525
+        ],
+        "mean_days_capped_at_90": 47.3425,
+        "median_delay_if_detected_days": 29.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.36853900185896526,
+              0.4237924565999377
+            ],
+            "value": 0.3958333333333333
+          },
+          "7": {
+            "ci95": [
+              0.0022934991777249147,
+              0.010865591418982658
+            ],
+            "value": 0.005
+          },
+          "90": {
+            "ci95": [
+              0.8138092506402783,
+              0.855714127288218
+            ],
+            "value": 0.8358333333333333
+          }
+        },
+        "uncensored_by_day_90": 1003
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          45.740910114647505,
+          48.9440898853525
+        ],
+        "mean_days_capped_at_90": 47.3425,
+        "median_delay_if_detected_days": 29.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.36853900185896526,
+              0.4237924565999377
+            ],
+            "value": 0.3958333333333333
+          },
+          "7": {
+            "ci95": [
+              0.0022934991777249147,
+              0.010865591418982658
+            ],
+            "value": 0.005
+          },
+          "90": {
+            "ci95": [
+              0.8138092506402783,
+              0.855714127288218
+            ],
+            "value": 0.8358333333333333
+          }
+        },
+        "uncensored_by_day_90": 1003
+      },
+      "delta_daily_sd": 0.25,
+      "scope": "all_streams"
+    },
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          85.81520113196093,
+          87.29813220137241
+        ],
+        "mean_days_capped_at_90": 86.55666666666667,
+        "median_delay_if_detected_days": 58.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.018951808170813895,
+              0.03740233906644183
+            ],
+            "value": 0.02666666666666667
+          },
+          "7": {
+            "ci95": [
+              0.00014711894493048142,
+              0.0047052299901332185
+            ],
+            "value": 0.0008333333333333334
+          },
+          "90": {
+            "ci95": [
+              0.08197849378868173,
+              0.11559026169651988
+            ],
+            "value": 0.0975
+          }
+        },
+        "uncensored_by_day_90": 117
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          76.4986784859468,
+          79.15132151405321
+        ],
+        "mean_days_capped_at_90": 77.825,
+        "median_delay_if_detected_days": 49.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.07661750558495797,
+              0.10932181157394219
+            ],
+            "value": 0.09166666666666666
+          },
+          "7": {
+            "ci95": [
+              0.003950744027501389,
+              0.014192391566192508
+            ],
+            "value": 0.0075
+          },
+          "90": {
+            "ci95": [
+              0.2593686330071051,
+              0.3103421489197421
+            ],
+            "value": 0.2841666666666667
+          }
+        },
+        "uncensored_by_day_90": 341
+      },
+      "delta_daily_sd": 0.25,
+      "scope": "one_league_stage_three_metrics"
+    },
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          18.671796550796042,
+          19.65153678253729
+        ],
+        "mean_days_capped_at_90": 19.161666666666665,
+        "median_delay_if_detected_days": 18.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.8933706192108694,
+              0.9256741086272168
+            ],
+            "value": 0.9108333333333334
+          },
+          "7": {
+            "ci95": [
+              0.027426059843153,
+              0.048864267382048014
+            ],
+            "value": 0.03666666666666667
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          18.671796550796042,
+          19.65153678253729
+        ],
+        "mean_days_capped_at_90": 19.161666666666665,
+        "median_delay_if_detected_days": 18.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.8933706192108694,
+              0.9256741086272168
+            ],
+            "value": 0.9108333333333334
+          },
+          "7": {
+            "ci95": [
+              0.027426059843153,
+              0.048864267382048014
+            ],
+            "value": 0.03666666666666667
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "delta_daily_sd": 0.5,
+      "scope": "all_streams"
+    },
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          61.525443401103054,
+          64.83288993223029
+        ],
+        "mean_days_capped_at_90": 63.17916666666667,
+        "median_delay_if_detected_days": 41.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.20867501689786389,
+              0.2563708200922705
+            ],
+            "value": 0.23166666666666666
+          },
+          "7": {
+            "ci95": [
+              0.00045717916470629574,
+              0.006056518102686179
+            ],
+            "value": 0.0016666666666666668
+          },
+          "90": {
+            "ci95": [
+              0.5913532082718189,
+              0.6462196032511958
+            ],
+            "value": 0.6191666666666666
+          }
+        },
+        "uncensored_by_day_90": 743
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          56.811074791696996,
+          60.192258541636335
+        ],
+        "mean_days_capped_at_90": 58.501666666666665,
+        "median_delay_if_detected_days": 31.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.253713668064755,
+              0.30436767553579075
+            ],
+            "value": 0.2783333333333333
+          },
+          "7": {
+            "ci95": [
+              0.003381911675911539,
+              0.013099875585453582
+            ],
+            "value": 0.006666666666666667
+          },
+          "90": {
+            "ci95": [
+              0.6658112053642415,
+              0.7179602594037056
+            ],
+            "value": 0.6925
+          }
+        },
+        "uncensored_by_day_90": 831
+      },
+      "delta_daily_sd": 0.5,
+      "scope": "one_league_stage_three_metrics"
+    },
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          8.859838812550548,
+          9.140161187449452
+        ],
+        "mean_days_capped_at_90": 9.0,
+        "median_delay_if_detected_days": 9.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          },
+          "7": {
+            "ci95": [
+              0.2553288344087329,
+              0.3060752058564704
+            ],
+            "value": 0.28
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          8.859838812550548,
+          9.140161187449452
+        ],
+        "mean_days_capped_at_90": 9.0,
+        "median_delay_if_detected_days": 9.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          },
+          "7": {
+            "ci95": [
+              0.2553288344087329,
+              0.3060752058564704
+            ],
+            "value": 0.28
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "delta_daily_sd": 1.0,
+      "scope": "all_streams"
+    },
+    {
+      "affected_stream_at_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          17.007146243114367,
+          17.872853756885636
+        ],
+        "mean_days_capped_at_90": 17.44,
+        "median_delay_if_detected_days": 16.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.9343171194320534,
+              0.9594882833608276
+            ],
+            "value": 0.9483333333333334
+          },
+          "7": {
+            "ci95": [
+              0.016878365804020704,
+              0.0344917364362487
+            ],
+            "value": 0.024166666666666666
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "any_alert": {
+        "mc_ci95_mean_days_capped_at_90": [
+          16.679634906164168,
+          17.462031760502498
+        ],
+        "mean_days_capped_at_90": 17.070833333333333,
+        "median_delay_if_detected_days": 16.0,
+        "paths": 1200,
+        "probability_by_day": {
+          "28": {
+            "ci95": [
+              0.9454884605315724,
+              0.968253122249254
+            ],
+            "value": 0.9583333333333334
+          },
+          "7": {
+            "ci95": [
+              0.01756709059517496,
+              0.03546435997742321
+            ],
+            "value": 0.025
+          },
+          "90": {
+            "ci95": [
+              0.9968089993972651,
+              1.0
+            ],
+            "value": 1.0
+          }
+        },
+        "uncensored_by_day_90": 1200
+      },
+      "delta_daily_sd": 1.0,
+      "scope": "one_league_stage_three_metrics"
+    }
+  ],
+  "reference_null": "t7 common daily scale; AR(1)=0.20",
+  "seed": 2026112207,
+  "target_expected_null_alarms_per_365_days": 1.0,
+  "type": "synthetic_operating_characteristics",
+  "validation": {
+    "365_day_year": {
+      "expected_count": 0.9295,
+      "mc_ci95": [
+        0.8502344641788534,
+        1.0087655358211465
+      ]
+    },
+    "leap_year": {
+      "expected_count": 0.929,
+      "mc_ci95": [
+        0.8495041728682695,
+        1.0084958271317306
+      ]
+    },
+    "monthly_probability": {
+      "28": {
+        "ci95": [
+          0.07276102820481811,
+          0.0864439517029034
+        ],
+        "value": 0.07933333333333334
+      },
+      "29": {
+        "ci95": [
+          0.0722810465646492,
+          0.0859245731765601
+        ],
+        "value": 0.07883333333333334
+      },
+      "30": {
+        "ci95": [
+          0.07100149123006334,
+          0.08453916806711335
+        ],
+        "value": 0.0775
+      },
+      "31": {
+        "ci95": [
+          0.07068169347409725,
+          0.08419272571207131
+        ],
+        "value": 0.07716666666666666
+      }
+    },
+    "simulated_months_per_length": 6000
+  }
+}

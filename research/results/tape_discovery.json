@@ -1,0 +1,1293 @@
+{
+  "all_ex_ante_window_game_cells": 343026,
+  "assets_read": 558,
+  "assets_requested": 558,
+  "bootstrap": 10000,
+  "candidates": {
+    "ST0": {
+      "PRE_rating_unknown": 4576,
+      "conflicting_raw_key_or_parser_error": 1,
+      "first_visible_paper_or_possible": 7619,
+      "no_legal_observed_terminal": 559,
+      "passed_price_and_score_before_risk_gates": 3043,
+      "start_outside_discovery": 4,
+      "usable": 2479
+    },
+    "ST3": {
+      "first_paper_below_alert_price": 1006,
+      "first_visible_paper_or_possible": 3305,
+      "no_legal_observed_terminal": 369,
+      "passed_price_and_score_before_risk_gates": 2299,
+      "start_outside_discovery": 1,
+      "usable": 1929
+    },
+    "ST5": {
+      "first_paper_outside_alert_window": 172,
+      "first_visible_paper_or_possible": 343,
+      "no_legal_observed_terminal": 17,
+      "passed_price_and_score_before_risk_gates": 171,
+      "usable": 154
+    }
+  },
+  "center_bias": {
+    "k0": {
+      "center_minus_total": {
+        "ci95": [
+          4.994580845078054,
+          6.478613692242934
+        ],
+        "value": 5.757468878617019
+      },
+      "days": 19,
+      "fraction_below_center": {
+        "ci95": [
+          0.5790350823574956,
+          0.6065251104931478
+        ],
+        "value": 0.5925991189427313
+      },
+      "fraction_equal_center": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "value": 0.0
+      },
+      "games_with_bracket": 7087,
+      "games_with_outcome": 5675,
+      "mean_center": {
+        "ci95": [
+          108.81882658462587,
+          109.03672386443951
+        ],
+        "value": 108.92716050857302
+      },
+      "mean_observed_total": {
+        "ci95": [
+          102.47523334959358,
+          103.90934978508929
+        ],
+        "value": 103.16969162995595
+      },
+      "valid_bootstrap": 10000
+    },
+    "k1": {
+      "center_minus_total": {
+        "ci95": [
+          4.893348343823255,
+          6.010430385526985
+        ],
+        "value": 5.4572791140398955
+      },
+      "days": 19,
+      "fraction_below_center": {
+        "ci95": [
+          0.5800356924634166,
+          0.602544320791891
+        ],
+        "value": 0.5911047345767575
+      },
+      "fraction_equal_center": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "value": 0.0
+      },
+      "games_with_bracket": 9744,
+      "games_with_outcome": 8364,
+      "mean_center": {
+        "ci95": [
+          108.73859292306358,
+          109.11377390706907
+        ],
+        "value": 108.92153066832014
+      },
+      "mean_observed_total": {
+        "ci95": [
+          102.89495141695738,
+          104.02819873904889
+        ],
+        "value": 103.46425155428025
+      },
+      "valid_bootstrap": 10000
+    }
+  },
+  "change_intervals": {
+    "feed_changes_game": {
+      "max_ms": 4410129,
+      "n": 646942,
+      "p50_ms": 2192,
+      "p95_ms": 7004
+    },
+    "feed_changes_item": {
+      "max_ms": 4380765,
+      "n": 281971,
+      "p50_ms": 6000,
+      "p95_ms": 6037
+    },
+    "feed_changes_line": {
+      "max_ms": 4404597,
+      "n": 7067,
+      "p50_ms": 180905,
+      "p95_ms": 225042
+    },
+    "masters_per_match_game": {
+      "max_ms": 6224194,
+      "n": 280313,
+      "p50_ms": 17689,
+      "p95_ms": 274330
+    },
+    "masters_per_match_item": {
+      "max_ms": 6215451,
+      "n": 1398679,
+      "p50_ms": 11998,
+      "p95_ms": 42015
+    },
+    "masters_per_match_line": {
+      "max_ms": 900239,
+      "n": 24933,
+      "p50_ms": 180834,
+      "p95_ms": 225042
+    }
+  },
+  "comparison": {
+    "ST0": {
+      "control_days": 19,
+      "control_distinct_games": 3142,
+      "control_game_cell_n": 3486,
+      "control_games_also_selected": 2479,
+      "control_games_contributing_on_multiple_quote_days": 1,
+      "control_rows_also_signals": 2479,
+      "exact_cells": 138,
+      "selected_days": 19,
+      "selected_distinct_games": 2479,
+      "selected_pushes": 0,
+      "shown_selected_n": 2479,
+      "signal_mean_displayed_odds": 2.2237749092375965,
+      "unit_roi": {
+        "control_n": 3486,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            -0.018314572044726682,
+            0.03048619479340832
+          ],
+          "value": 0.005459363376993848
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.12034575961572977,
+            0.19869584947542546
+          ],
+          "value": 0.15790731673595493
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.12200920062535939,
+            0.20844835868555198
+          ],
+          "value": 0.16336668011294878
+        },
+        "signal_n": 2479
+      },
+      "win_rate": {
+        "control_n": 3486,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            -0.008289856003968659,
+            0.013744747049910995
+          ],
+          "value": 0.0024600265811147715
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.5039334475471928,
+            0.5391063957875809
+          ],
+          "value": 0.5207348100465576
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.5046088584855593,
+            0.5433684187408212
+          ],
+          "value": 0.5231948366276724
+        },
+        "signal_n": 2479
+      }
+    },
+    "ST3": {
+      "control_days": 19,
+      "control_distinct_games": 4152,
+      "control_game_cell_n": 10143,
+      "control_games_also_selected": 1929,
+      "control_games_contributing_on_multiple_quote_days": 1,
+      "control_rows_also_signals": 1929,
+      "exact_cells": 482,
+      "selected_days": 19,
+      "selected_distinct_games": 1929,
+      "selected_pushes": 0,
+      "shown_selected_n": 1929,
+      "signal_mean_displayed_odds": 2.17867288750648,
+      "unit_roi": {
+        "control_n": 10143,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.03178720416246095,
+            0.10310884150814041
+          ],
+          "value": 0.06876402585406136
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.12212996036917563,
+            0.22361930120482537
+          ],
+          "value": 0.17096536761405687
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.18119285994343645,
+            0.29871467955422665
+          ],
+          "value": 0.23972939346811822
+        },
+        "signal_n": 1929
+      },
+      "win_rate": {
+        "control_n": 10143,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.01468684193415462,
+            0.04756008091033423
+          ],
+          "value": 0.03179375317728761
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.5153023771276132,
+            0.561734651061601
+          ],
+          "value": 0.5374130897465071
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.5423633760962528,
+            0.5963595974358441
+          ],
+          "value": 0.5692068429237948
+        },
+        "signal_n": 1929
+      }
+    },
+    "ST5": {
+      "control_days": 3,
+      "control_distinct_games": 512,
+      "control_game_cell_n": 790,
+      "control_games_also_selected": 154,
+      "control_games_contributing_on_multiple_quote_days": 0,
+      "control_rows_also_signals": 154,
+      "exact_cells": 139,
+      "selected_days": 3,
+      "selected_distinct_games": 154,
+      "selected_pushes": 0,
+      "shown_selected_n": 154,
+      "signal_mean_displayed_odds": 1.8150649350649353,
+      "unit_roi": {
+        "control_n": 790,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.03422546296296297,
+            0.14488487581450643
+          ],
+          "value": 0.08866780666321247
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            -0.06120694444444444,
+            0.2435280045351474
+          ],
+          "value": 0.07007245307704729
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            -0.02698148148148147,
+            0.37182142857142864
+          ],
+          "value": 0.15874025974025976
+        },
+        "signal_n": 154
+      },
+      "win_rate": {
+        "control_n": 790,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.018853305785123897,
+            0.07808129323817592
+          ],
+          "value": 0.04751194596797903
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.5179012345679012,
+            0.6809098639455782
+          ],
+          "value": 0.5888516903956573
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.5370370370370371,
+            0.75
+          ],
+          "value": 0.6363636363636364
+        },
+        "signal_n": 154
+      }
+    },
+    "ST5_after_set_1": {
+      "control_days": 3,
+      "control_distinct_games": 22,
+      "control_game_cell_n": 22,
+      "control_games_also_selected": 5,
+      "control_games_contributing_on_multiple_quote_days": 0,
+      "control_rows_also_signals": 5,
+      "exact_cells": 5,
+      "selected_days": 3,
+      "selected_distinct_games": 5,
+      "selected_pushes": 0,
+      "shown_selected_n": 5,
+      "signal_mean_displayed_odds": 1.8586000000000003,
+      "unit_roi": {
+        "control_n": 22,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.0,
+            0.24706060606060598
+          ],
+          "value": 0.2036539682539683
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.614139393939394,
+            0.8966666666666668
+          ],
+          "value": 0.6549460317460317
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.7949999999999999,
+            0.8966666666666668
+          ],
+          "value": 0.8586
+        },
+        "signal_n": 5
+      },
+      "win_rate": {
+        "control_n": 22,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.0,
+            0.13636363636363635
+          ],
+          "value": 0.11111111111111105
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.8636363636363636,
+            1.0
+          ],
+          "value": 0.888888888888889
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            1.0,
+            1.0
+          ],
+          "value": 1.0
+        },
+        "signal_n": 5
+      }
+    },
+    "ST5_after_set_2": {
+      "control_days": 3,
+      "control_distinct_games": 498,
+      "control_game_cell_n": 768,
+      "control_games_also_selected": 149,
+      "control_games_contributing_on_multiple_quote_days": 0,
+      "control_rows_also_signals": 149,
+      "exact_cells": 134,
+      "selected_days": 3,
+      "selected_distinct_games": 149,
+      "selected_pushes": 0,
+      "shown_selected_n": 149,
+      "signal_mean_displayed_odds": 1.8136040268456382,
+      "unit_roi": {
+        "control_n": 768,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.03345103032178174,
+            0.1415015734884766
+          ],
+          "value": 0.08480921063667704
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            -0.07736179245283019,
+            0.23326487734487736
+          ],
+          "value": 0.050445822920369955
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            -0.042490566037735863,
+            0.36389090909090915
+          ],
+          "value": 0.135255033557047
+        },
+        "signal_n": 149
+      },
+      "win_rate": {
+        "control_n": 768,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.018084626170835505,
+            0.07615141432673678
+          ],
+          "value": 0.04537774579539078
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.5088050314465409,
+            0.6751082251082251
+          ],
+          "value": 0.5787833280301126
+        },
+        "paired_draws": 9603,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.5283018867924528,
+            0.7454545454545455
+          ],
+          "value": 0.6241610738255033
+        },
+        "signal_n": 149
+      }
+    },
+    "combined_flat_per_leg": {
+      "control_days": 19,
+      "control_distinct_games": 5351,
+      "control_game_cell_n": 14419,
+      "control_games_also_selected": 3675,
+      "control_games_contributing_on_multiple_quote_days": 18,
+      "control_rows_also_signals": 4562,
+      "exact_cells": 759,
+      "selected_days": 19,
+      "selected_distinct_games": 3675,
+      "selected_games_by_legs": {
+        "ST0": 1641,
+        "ST0+ST3": 802,
+        "ST0+ST3+ST5": 21,
+        "ST0+ST5": 15,
+        "ST3": 1078,
+        "ST3+ST5": 28,
+        "ST5": 90
+      },
+      "selected_pushes": 0,
+      "shown_selected_n": 4562,
+      "signal_mean_displayed_odds": 2.1909070583077597,
+      "unit": "one unit per engine per match; a control may reappear in a different engine's stratum",
+      "unit_roi": {
+        "control_n": 14419,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.0132962902692227,
+            0.05606403592058444
+          ],
+          "value": 0.03503603899828739
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.12326778860916482,
+            0.2009297453915491
+          ],
+          "value": 0.16046374179960832
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.1526733172941932,
+            0.2408662527128373
+          ],
+          "value": 0.1954997807978957
+        },
+        "signal_n": 4562
+      },
+      "win_rate": {
+        "control_n": 14419,
+        "increment": {
+          "ci95_resampled_utc_days": [
+            0.006308775746048515,
+            0.025928080011493132
+          ],
+          "value": 0.01638434797295918
+        },
+        "matched_blind_under": {
+          "ci95_resampled_utc_days": [
+            0.5132019427832876,
+            0.5483222559956641
+          ],
+          "value": 0.5300864981471636
+        },
+        "paired_draws": 10000,
+        "signal": {
+          "ci95_resampled_utc_days": [
+            0.5267618061568905,
+            0.5671549585696634
+          ],
+          "value": 0.5464708461201228
+        },
+        "signal_n": 4562
+      }
+    }
+  },
+  "counts": {
+    "book_changes_in_window_k0": 125244,
+    "book_changes_in_window_k1": 85041,
+    "book_changes_in_window_k2": 88450,
+    "book_changes_in_window_k3": 87892,
+    "conflicting_same_tick_key": 2,
+    "four_wins_but_invalid_or_incomplete_score_records": 16,
+    "masters_family_records": 1725485,
+    "raw_records": 4803946,
+    "repeated_exact_key": 2,
+    "unknown_server_update_clock": 25854,
+    "window_changes_without_explicit_bo7": 38
+  },
+  "design": "Displayed, unblocked quote only. Distinct match/stage/league/exact line/nearest price cent control; first visible quote per cell. Inclusive matched control. Stage 0 requires three rungs; stages 1–2 include 0–4 additional points. W/L win rate; W/L/push stake turnover ROI. Complete-case descriptive. No inferred fills, no imputation. Unknown format excluded from decisions.",
+  "empty_hours": [],
+  "game_exclusions": {
+    "conflicting_raw_key_or_parser_error": 1,
+    "conflicting_terminal_scores": 1,
+    "no_legal_observed_terminal": 2450,
+    "start_outside_discovery": 14,
+    "unverified_best_of_7": 1
+  },
+  "games_legal_terminal_in_discovery": 8793,
+  "hi_exclusive_ms": 1794355200000,
+  "hours_in_window": 456,
+  "hours_with_records": 456,
+  "hours_without_asset": [],
+  "limits": "Current gate replay. Incomplete pre-sample history, run ownership, personal risk gates, ST0 point-in-time ratings, delivery, fills, official grading and historical rule changes are not reconstructed. As-of-time prior gate restricts ST5. Feed snapshots are changes; no heartbeat. Parsing sharp support and time cutoffs documented in the source.",
+  "lo_ms": 1792713600000,
+  "markets": [
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 1,
+      "market": "winner",
+      "scope": "match",
+      "snapshots": 8584
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1,
+      "market": "winner",
+      "scope": "match",
+      "snapshots": 234834
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 3,
+      "market": "g3",
+      "scope": "match",
+      "snapshots": 9675
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 3,
+      "market": "g3",
+      "scope": "match",
+      "snapshots": 277543
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 4,
+      "market": "set_total",
+      "scope": "match",
+      "snapshots": 11930
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4,
+      "market": "set_total",
+      "scope": "match",
+      "snapshots": 278112
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 5,
+      "market": "g5",
+      "scope": "match",
+      "snapshots": 8788
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 5,
+      "market": "g5",
+      "scope": "match",
+      "snapshots": 277433
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 6,
+      "market": "g6",
+      "scope": "match",
+      "snapshots": 8740
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 6,
+      "market": "g6",
+      "scope": "match",
+      "snapshots": 277468
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 22,
+      "market": "g22",
+      "scope": "match",
+      "snapshots": 8740
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 22,
+      "market": "g22",
+      "scope": "match",
+      "snapshots": 278029
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 26,
+      "market": "g26",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 29,
+      "market": "g29",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 33,
+      "market": "g33",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 173,
+      "market": "g173",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 617,
+      "market": "g617",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 780,
+      "market": "g780",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 1320,
+      "market": "g1320",
+      "scope": "match",
+      "snapshots": 17683
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1320,
+      "market": "g1320",
+      "scope": "match",
+      "snapshots": 255658
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 1321,
+      "market": "g1321",
+      "scope": "match",
+      "snapshots": 17457
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1321,
+      "market": "g1321",
+      "scope": "match",
+      "snapshots": 255862
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 1769,
+      "market": "g1769",
+      "scope": "match",
+      "snapshots": 4188
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1769,
+      "market": "g1769",
+      "scope": "match",
+      "snapshots": 194266
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 4370,
+      "market": "g4370",
+      "scope": "match",
+      "snapshots": 82
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4370,
+      "market": "g4370",
+      "scope": "match",
+      "snapshots": 43660
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 4392,
+      "market": "g4392",
+      "scope": "match",
+      "snapshots": 249
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4392,
+      "market": "g4392",
+      "scope": "match",
+      "snapshots": 198199
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4393,
+      "market": "g4393",
+      "scope": "match",
+      "snapshots": 4
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 1,
+      "market": "winner",
+      "scope": "set",
+      "snapshots": 27927
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1,
+      "market": "winner",
+      "scope": "set",
+      "snapshots": 245580
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 3,
+      "market": "g3",
+      "scope": "set",
+      "snapshots": 34023
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 3,
+      "market": "g3",
+      "scope": "set",
+      "snapshots": 248503
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 4,
+      "market": "set_total",
+      "scope": "set",
+      "snapshots": 50159
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4,
+      "market": "set_total",
+      "scope": "set",
+      "snapshots": 251242
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 5,
+      "market": "g5",
+      "scope": "set",
+      "snapshots": 23558
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 5,
+      "market": "g5",
+      "scope": "set",
+      "snapshots": 247157
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 6,
+      "market": "g6",
+      "scope": "set",
+      "snapshots": 23544
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 6,
+      "market": "g6",
+      "scope": "set",
+      "snapshots": 247076
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 22,
+      "market": "g22",
+      "scope": "set",
+      "snapshots": 33121
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 22,
+      "market": "g22",
+      "scope": "set",
+      "snapshots": 249408
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 26,
+      "market": "g26",
+      "scope": "set",
+      "snapshots": 247554
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 29,
+      "market": "g29",
+      "scope": "set",
+      "snapshots": 2072
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 29,
+      "market": "g29",
+      "scope": "set",
+      "snapshots": 247563
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 33,
+      "market": "g33",
+      "scope": "set",
+      "snapshots": 41855
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 33,
+      "market": "g33",
+      "scope": "set",
+      "snapshots": 250170
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 95,
+      "market": "g95",
+      "scope": "set",
+      "snapshots": 741
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 95,
+      "market": "g95",
+      "scope": "set",
+      "snapshots": 69491
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 173,
+      "market": "g173",
+      "scope": "set",
+      "snapshots": 25257
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 173,
+      "market": "g173",
+      "scope": "set",
+      "snapshots": 247586
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 442,
+      "market": "g442",
+      "scope": "set",
+      "snapshots": 751
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 442,
+      "market": "g442",
+      "scope": "set",
+      "snapshots": 71968
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 617,
+      "market": "g617",
+      "scope": "set",
+      "snapshots": 33162
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 617,
+      "market": "g617",
+      "scope": "set",
+      "snapshots": 249369
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 780,
+      "market": "g780",
+      "scope": "set",
+      "snapshots": 12341
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 780,
+      "market": "g780",
+      "scope": "set",
+      "snapshots": 244160
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1320,
+      "market": "g1320",
+      "scope": "set",
+      "snapshots": 1
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1321,
+      "market": "g1321",
+      "scope": "set",
+      "snapshots": 1
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 1769,
+      "market": "g1769",
+      "scope": "set",
+      "snapshots": 1
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4370,
+      "market": "g4370",
+      "scope": "set",
+      "snapshots": 1
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4392,
+      "market": "g4392",
+      "scope": "set",
+      "snapshots": 1
+    },
+    {
+      "availability": "blocked",
+      "feed": "game",
+      "group": 4393,
+      "market": "g4393",
+      "scope": "set",
+      "snapshots": 12342
+    },
+    {
+      "availability": "shown",
+      "feed": "game",
+      "group": 4393,
+      "market": "g4393",
+      "scope": "set",
+      "snapshots": 244155
+    },
+    {
+      "availability": "shown",
+      "feed": "item",
+      "group": 1,
+      "market": "winner",
+      "scope": "match",
+      "snapshots": 1162553
+    },
+    {
+      "availability": "blocked",
+      "feed": "item",
+      "group": 2,
+      "market": "handicap",
+      "scope": "match",
+      "snapshots": 10871
+    },
+    {
+      "availability": "shown",
+      "feed": "item",
+      "group": 2,
+      "market": "handicap",
+      "scope": "match",
+      "snapshots": 1388262
+    },
+    {
+      "availability": "shown",
+      "feed": "item",
+      "group": 15,
+      "market": "team_total_home",
+      "scope": "match",
+      "snapshots": 1370460
+    },
+    {
+      "availability": "blocked",
+      "feed": "item",
+      "group": 17,
+      "market": "total",
+      "scope": "match",
+      "snapshots": 12174
+    },
+    {
+      "availability": "shown",
+      "feed": "item",
+      "group": 17,
+      "market": "total",
+      "scope": "match",
+      "snapshots": 1393701
+    },
+    {
+      "availability": "shown",
+      "feed": "item",
+      "group": 62,
+      "market": "team_total_away",
+      "scope": "match",
+      "snapshots": 1370200
+    },
+    {
+      "availability": "blocked",
+      "feed": "line",
+      "group": 1,
+      "market": "winner",
+      "scope": "match",
+      "snapshots": 6
+    },
+    {
+      "availability": "shown",
+      "feed": "line",
+      "group": 1,
+      "market": "winner",
+      "scope": "match",
+      "snapshots": 25848
+    },
+    {
+      "availability": "blocked",
+      "feed": "line",
+      "group": 2,
+      "market": "handicap",
+      "scope": "match",
+      "snapshots": 6
+    },
+    {
+      "availability": "shown",
+      "feed": "line",
+      "group": 2,
+      "market": "handicap",
+      "scope": "match",
+      "snapshots": 25848
+    },
+    {
+      "availability": "blocked",
+      "feed": "line",
+      "group": 15,
+      "market": "team_total_home",
+      "scope": "match",
+      "snapshots": 6
+    },
+    {
+      "availability": "shown",
+      "feed": "line",
+      "group": 15,
+      "market": "team_total_home",
+      "scope": "match",
+      "snapshots": 25848
+    },
+    {
+      "availability": "blocked",
+      "feed": "line",
+      "group": 17,
+      "market": "total",
+      "scope": "match",
+      "snapshots": 6
+    },
+    {
+      "availability": "shown",
+      "feed": "line",
+      "group": 17,
+      "market": "total",
+      "scope": "match",
+      "snapshots": 25848
+    },
+    {
+      "availability": "blocked",
+      "feed": "line",
+      "group": 62,
+      "market": "team_total_away",
+      "scope": "match",
+      "snapshots": 6
+    },
+    {
+      "availability": "shown",
+      "feed": "line",
+      "group": 62,
+      "market": "team_total_away",
+      "scope": "match",
+      "snapshots": 25848
+    }
+  ],
+  "masters_family_by_declared_best_of": {
+    "7": 1725289,
+    "None": 196
+  },
+  "masters_family_leagues_snapshot_counts": {
+    "Masters. Argentina": 77645,
+    "Masters. Belarús": 398369,
+    "Masters. España": 121003,
+    "Masters. España. Mujeres": 7957,
+    "Masters. Mujeres": 922,
+    "Masters. Polonia": 391340,
+    "Masters. Polonia. Mujeres": 34352,
+    "Masters. Rusia": 629405,
+    "Masters. Rusia. Mujeres": 64492
+  },
+  "masters_games_seen": 11260,
+  "negative_receipt_minus_provider_update_n": 5595,
+  "prior_commit_ST5": "c342a99636dc3194a5790caf14ce9b72f6b15998",
+  "raw_kinds_after_dedupe": {
+    "game": 646952,
+    "item": 3803617,
+    "line": 353373
+  },
+  "receipt_minus_provider_update": {
+    "max_ms": 42745,
+    "n": 1699631,
+    "p50_ms": 1832,
+    "p95_ms": 3899
+  },
+  "receipt_records_per_utc_day": {
+    "2026-10-23": 220862,
+    "2026-10-24": 219569,
+    "2026-10-25": 217970,
+    "2026-10-26": 216802,
+    "2026-10-27": 246427,
+    "2026-10-28": 255289,
+    "2026-10-29": 255542,
+    "2026-10-30": 260715,
+    "2026-10-31": 259198,
+    "2026-11-01": 262311,
+    "2026-11-02": 258972,
+    "2026-11-03": 260767,
+    "2026-11-04": 268134,
+    "2026-11-05": 264821,
+    "2026-11-06": 273036,
+    "2026-11-07": 271596,
+    "2026-11-08": 263470,
+    "2026-11-09": 261289,
+    "2026-11-10": 267176
+  },
+  "seed": 20261122,
+  "source_commit": "b706336b3c093daf3338ec501e20c8f27657b185",
+  "split": "discovery",
+  "window_game_cell_counts": {
+    "conflicting_raw_key_or_parser_error": 30,
+    "conflicting_terminal_scores": 35,
+    "no_legal_observed_terminal": 50697,
+    "start_outside_discovery": 127,
+    "usable": 292137
+  }
+}

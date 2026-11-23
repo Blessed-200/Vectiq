@@ -1,0 +1,109 @@
+{
+  "default_alerts_first_parent_history": [
+    {
+      "commit": "5597f31cd5794a5ba79c27d19d68fc8b0a48b667",
+      "date": "2026-11-03T23:39:21-05:00",
+      "default": "st3"
+    },
+    {
+      "commit": "a632063b34e4e069bdd8cfed2e9d400faa157d50",
+      "date": "2026-11-05T16:35:46-04:00",
+      "default": "st3,pre"
+    },
+    {
+      "commit": "bbc120624b41b68c60dc0ca9ba9816778e7b84bb",
+      "date": "2026-11-07T21:52:06-04:00",
+      "default": "st3,pre,st4"
+    },
+    {
+      "commit": "e3daf5a34e08cd1a8c0f43715fbfd71bb3d82cea",
+      "date": "2026-11-07T22:02:20-04:00",
+      "default": "st3,pre,st4,st5"
+    },
+    {
+      "commit": "8e6ccfd48744e99dcbe67103f9756b4ae7f0986d",
+      "date": "2026-11-13T06:57:00-04:00",
+      "default": "st3,st5"
+    },
+    {
+      "commit": "6d56cfdf7a6432fd04cb650c71bba39b3da3ac60",
+      "date": "2026-11-22T10:24:47-04:00",
+      "default": "st3,st5,st0"
+    }
+  ],
+  "market_parser": {
+    "1": "winner",
+    "15": "team_total_home",
+    "17": "total",
+    "2": "handicap",
+    "4": "set_total",
+    "62": "team_total_away"
+  },
+  "release_metadata": {
+    "blind": {
+      "absent_hour_slots": 0,
+      "expected_hours": 144,
+      "shards": 180,
+      "total_bytes": 381717838,
+      "utc_days_in_split": 6,
+      "utc_days_with_assets": 6,
+      "utc_hour_slots": 144
+    },
+    "confirmation": {
+      "absent_hour_slots": 0,
+      "expected_hours": 144,
+      "shards": 179,
+      "total_bytes": 383886478,
+      "utc_days_in_split": 6,
+      "utc_days_with_assets": 6,
+      "utc_hour_slots": 144
+    },
+    "discovery": {
+      "absent_hour_slots": 0,
+      "expected_hours": 456,
+      "shards": 558,
+      "total_bytes": 1117530862,
+      "utc_days_in_split": 19,
+      "utc_days_with_assets": 19,
+      "utc_hour_slots": 456
+    }
+  },
+  "seed": 20261122,
+  "setting_date_commits": {
+    "04df6e2": {
+      "sha": "04df6e2ea4de816102694ff95cf98344ef3c8d00",
+      "time": "2026-11-19T17:34:16-04:00"
+    },
+    "207035d": {
+      "sha": "207035daebac6764fd9a248bd6a2e84d390c6d2b",
+      "time": "2026-11-21T13:43:25-04:00"
+    }
+  },
+  "source_commit": "b706336b3c093daf3338ec501e20c8f27657b185",
+  "source_files": {
+    "src/vectiq/signals/markov_prior.json": {
+      "commit_time": "2026-11-08T01:46:41Z",
+      "introduced": "c342a99636dc3194a5790caf14ce9b72f6b15998"
+    },
+    "src/vectiq/signals/players.py": {
+      "commit_time": "2026-11-21T16:44:11Z",
+      "introduced": "8b374c6e7d4f1956536c389c5b283beb9f05fd52"
+    },
+    "src/vectiq/signals/st0.py": {
+      "commit_time": "2026-11-22T13:08:41Z",
+      "introduced": "0e7dbc6717ecb20033789b46296ff8747cd3f0a3"
+    },
+    "src/vectiq/signals/st3.py": {
+      "commit_time": "2026-11-04T04:28:06Z",
+      "introduced": "16604ac14056f9cd9c148f5bb27175adb8cf3f8f"
+    },
+    "src/vectiq/signals/st4.py": {
+      "commit_time": "2026-11-08T01:30:02Z",
+      "introduced": "9f3a4f53db9271d9d60005966a87120f38d2c3a9"
+    },
+    "src/vectiq/signals/st5.py": {
+      "commit_time": "2026-11-08T01:46:41Z",
+      "introduced": "c342a99636dc3194a5790caf14ce9b72f6b15998"
+    }
+  }
+}

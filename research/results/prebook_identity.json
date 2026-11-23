@@ -1,0 +1,115 @@
+{
+  "assets_expected": 558,
+  "assets_verified": 558,
+  "bootstrap_draws": 10000,
+  "discovery": {
+    "days": 19,
+    "end_exclusive": "2026-11-11",
+    "end_ms": 1794355200000,
+    "start": "2026-10-23",
+    "start_ms": 1792713600000
+  },
+  "estimand": "Post-hoc identity sensitivity, not an operator-issued crosswalk. Exact ordered player names, league, scheduled UTC second and one-to-one across every observed Masters pre/live identity. Known numeric player IDs must agree, changed identities, clock revisions and ambiguous keys are excluded. Pre-board quote was strictly before announced start. Probabilities/intervals are descriptive for matched discovery games only.",
+  "estimate": {
+    "center_minus_total": {
+      "ci95": [
+        -0.9540843566470869,
+        30.78702290076336
+      ],
+      "value": 19.7363961101072
+    },
+    "days": 4,
+    "fraction_below_center": {
+      "ci95": [
+        0.0,
+        1.0
+      ],
+      "value": 0.8
+    },
+    "fraction_equal_center": {
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "value": 0.0
+    },
+    "games_with_bracket": 5,
+    "games_with_outcome": 5,
+    "mean_center": {
+      "ci95": [
+        107.99532710280374,
+        110.78702290076336
+      ],
+      "value": 109.9363961101072
+    },
+    "mean_observed_total": {
+      "ci95": [
+        80.0,
+        111.0
+      ],
+      "value": 90.2
+    },
+    "valid_bootstrap": 9884
+  },
+  "estimate_for_live_keys_first_seen_before_final": {
+    "center_minus_total": {
+      "ci95": [
+        -0.9540843566470869,
+        30.78702290076336
+      ],
+      "value": 19.7363961101072
+    },
+    "days": 4,
+    "fraction_below_center": {
+      "ci95": [
+        0.0,
+        1.0
+      ],
+      "value": 0.8
+    },
+    "fraction_equal_center": {
+      "ci95": [
+        0.0,
+        0.0
+      ],
+      "value": 0.0
+    },
+    "games_with_bracket": 5,
+    "games_with_outcome": 5,
+    "mean_center": {
+      "ci95": [
+        107.99532710280374,
+        110.78702290076336
+      ],
+      "value": 109.9363961101072
+    },
+    "mean_observed_total": {
+      "ci95": [
+        80.0,
+        111.0
+      ],
+      "value": 90.2
+    },
+    "valid_bootstrap": 9884
+  },
+  "exact_one_to_one_links": 5,
+  "excluded_before_opening_terminals": {
+    "live_key_not_seen": 282,
+    "live_missing_or_multiple_schedules": 251,
+    "scheduled_start_outside_discovery": 1
+  },
+  "identity_mapping_sha256": "f1b0ac388d373c9457afa03f73ea1a2070d5b65bf83e3196f7d39007c3207ff9",
+  "linked_live_key_seen_by_pre_quote": 0,
+  "linked_match_without_legal_terminal": 0,
+  "linked_with_live_key_first_seen_before_final": 5,
+  "links_by_number_of_numeric_player_ids_cross_checked": {
+    "2": 5
+  },
+  "livefeed_master_ids_in_inventory_even_without_terminal": 10339,
+  "pre_ids_with_no_vig_bracket": 539,
+  "pre_master_ids_in_inventory": 921,
+  "seed": 20261122,
+  "source_commit": "b706336b3c093daf3338ec501e20c8f27657b185",
+  "terminal_at_or_before_receipt": 0,
+  "terminal_csv_sha256": "d857bc52c8092ca90f848daf7973fe05acdee636d13f7360cdf35d334f524270"
+}

@@ -1,0 +1,28 @@
+{
+  "blind": {
+    "days": 6,
+    "end_exclusive": "2026-11-23",
+    "end_ms": 1795392000000,
+    "start": "2026-11-17",
+    "start_ms": 1794873600000
+  },
+  "bootstrap_draws": 10000,
+  "confirmation": {
+    "days": 6,
+    "end_exclusive": "2026-11-17",
+    "end_ms": 1794873600000,
+    "start": "2026-11-11",
+    "start_ms": 1794355200000
+  },
+  "day_start_hour": 0,
+  "discovery": {
+    "days": 19,
+    "end_exclusive": "2026-11-11",
+    "end_ms": 1794355200000,
+    "start": "2026-10-23",
+    "start_ms": 1792713600000
+  },
+  "seed": 20261122,
+  "source_commit": "b706336b3c093daf3338ec501e20c8f27657b185",
+  "timezone": "UTC"
+}

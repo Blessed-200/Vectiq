@@ -1,0 +1,71 @@
+{
+  "assets_expected": 558,
+  "assets_verified": 558,
+  "bootstrap_draws": 10000,
+  "bracket_game_ids_also_in_terminal_csv": 0,
+  "counts": {
+    "declared_bo7_not_live_zero_strictly_before_start": 25749,
+    "fewer_than_two_complete_unblocked_lines": 10378,
+    "line_raw_records": 353373,
+    "masters_line_records": 25854,
+    "receipt_at_or_after_announced_start": 105,
+    "valid_bracket_records": 15371
+  },
+  "discovery": {
+    "days": 19,
+    "end_exclusive": "2026-11-11",
+    "end_ms": 1794355200000,
+    "start": "2026-10-23",
+    "start_ms": 1792713600000
+  },
+  "estimate": {
+    "center_minus_total": {
+      "ci95": null,
+      "value": null
+    },
+    "days": 0,
+    "fraction_below_center": {
+      "ci95": null,
+      "value": null
+    },
+    "fraction_equal_center": {
+      "ci95": null,
+      "value": null
+    },
+    "games_with_bracket": 539,
+    "games_with_outcome": 0,
+    "mean_center": {
+      "ci95": null,
+      "value": null
+    },
+    "mean_observed_total": {
+      "ci95": null,
+      "value": null
+    },
+    "valid_bootstrap": 0
+  },
+  "games_with_center_and_final_by_utc_receipt_day": {},
+  "games_with_center_by_utc_receipt_day": {
+    "2026-10-27": 66,
+    "2026-10-28": 59,
+    "2026-10-30": 5,
+    "2026-10-31": 57,
+    "2026-11-01": 62,
+    "2026-11-03": 10,
+    "2026-11-04": 78,
+    "2026-11-05": 56,
+    "2026-11-07": 14,
+    "2026-11-08": 51,
+    "2026-11-09": 68,
+    "2026-11-10": 13
+  },
+  "hours_containing_preboard_records": 356,
+  "preboard_game_ids_also_in_terminal_csv": 0,
+  "scope": "Sensitivity specified after noting that the original k=0 can include live 0-0. First eligible line-feed quote only: explicit best_of 7, parser reports not live and zero points, scheduled start known on the same quote strictly later than receipt. At least two complete rungs bracket the no-vig 50% probability. Exact same frozen terminal labels and UTC day resampling. The scheduled clock is not the actual first serve. No bet, price acceptance or causal edge is inferred.",
+  "seed": 20261122,
+  "source_commit": "b706336b3c093daf3338ec501e20c8f27657b185",
+  "terminal_csv_sha256": "d857bc52c8092ca90f848daf7973fe05acdee636d13f7360cdf35d334f524270",
+  "unique_masters_games_on_preboard": 921,
+  "unique_matches_passed_prestart_clock": 921,
+  "unique_matches_with_conflicting_raw_keys_any_sport": 0
+}

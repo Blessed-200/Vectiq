@@ -1,0 +1,20 @@
+{
+  "checked_runs": [
+    {
+      "artifacts_returned": 0,
+      "id": 42890071194,
+      "updated_at": "2026-11-10T19:55:57Z"
+    },
+    {
+      "artifacts_returned": 0,
+      "id": 42814101213,
+      "updated_at": "2026-11-10T12:15:23Z"
+    },
+    {
+      "artifacts_returned": 0,
+      "id": 42751261009,
+      "updated_at": "2026-11-10T03:43:54Z"
+    }
+  ],
+  "query": "https://api.github.com/repos/Blessed-200/Vectiq/actions/workflows/pages.yml/runs?created=2026-11-10&status=success&per_page=100"
+}

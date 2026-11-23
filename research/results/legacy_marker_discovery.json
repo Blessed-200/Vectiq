@@ -1,0 +1,351 @@
+{
+  "design": "Cohorts identified after marker inventory. Descriptive attribution only. ID-only cohort uses the marker provenance for stage, line, Under and quote. The strict cohort also requires a recorded message ID, an exact dated list quote, explicit BO7, a compatible stage and consistent player pair and league at the observed terminal. Participant names and league are taken from the tick; the marker itself lacks these fields. No independent bookmaker receipts, complete historical decision replay or account stakes.",
+  "seed": 20261122,
+  "bootstrap_draws": 10000,
+  "assets_read": 132,
+  "terminal_file_sha256": "d857bc52c8092ca90f848daf7973fe05acdee636d13f7360cdf35d334f524270",
+  "marker_file_sha256": "13521f07a78ca48972bae1f49f05c5567012a766fb729c07a40d9e957a2de288",
+  "cohorts": {
+    "pre": {
+      "recorded_markers": 1292,
+      "marked_with_message_id": 1292,
+      "line_all_markers_mean": 108.72136222910217,
+      "line_strict_mean": 108.29051819184123,
+      "line_strict_median": 108.5,
+      "coverage_all_markers_mutually_exclusive": {
+        "strict_marker_quote_identity_terminal": 907,
+        "no_eligible_terminal": 382,
+        "no_exact_stage_quote_identity": 3
+      },
+      "exact_quote_status_all_markers": {
+        "exact_price_and_stage": 1248,
+        "no_exact_list_tick": 38,
+        "start_outside_discovery": 6
+      },
+      "marker_game_and_later_terminal": {
+        "n_WL": 910,
+        "n_matches_WL": 910,
+        "n_push_separate": 0,
+        "n_W": 499,
+        "n_L": 411,
+        "mean_decimal_price_WL": 1.92310989010989,
+        "wr_positive_net_per_WL": {
+          "estimate": 0.5483516483516484,
+          "ci95": [
+            0.5205183585313174,
+            0.574388141295206
+          ],
+          "n_days_contributing": 5,
+          "resamples_with_denominator": 9975
+        },
+        "roi_flat_per_WL": {
+          "estimate": 0.046943956043956056,
+          "ci95": [
+            -0.01881534818652848,
+            0.09599680000000001
+          ],
+          "n_days_contributing": 5,
+          "resamples_with_denominator": 9975
+        },
+        "roi_at_booked_paper_stakes_per_WL": {
+          "estimate": null,
+          "ci95": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "n_WL_with_paper_stake": 0,
+        "loss_streak_in_opening_order": 9,
+        "mdd_flat_units_opening_order": 21.340999999999994,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": null,
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "terminal_observation_timing": {
+          "n_WL": 910,
+          "minutes_entry_to_first_terminal_median": 33.98959166666667,
+          "n_observed_later_than_10min": 910,
+          "n_observed_earlier_than_10min": 0,
+          "n_observed_at_10min": 0,
+          "multi_entry_terminal_times": 7,
+          "mdd_paper_units_netting_simultaneous_observations": 21.564999999999998
+        },
+        "days_of_opening_with_WL": 5,
+        "positive_days_flat_units": 3,
+        "negative_days_flat_units": 2,
+        "flat_days_with_WL": 0,
+        "daily_flat_pnl_of_WL": [
+          {
+            "utc_day_of_opening": "2026-11-06",
+            "n": 180,
+            "net_units": -4.302999999999998,
+            "longest_loss_streak_within_utc_opening_day": 9
+          },
+          {
+            "utc_day_of_opening": "2026-11-07",
+            "n": 195,
+            "net_units": 16.425,
+            "longest_loss_streak_within_utc_opening_day": 5
+          },
+          {
+            "utc_day_of_opening": "2026-11-08",
+            "n": 197,
+            "net_units": 4.963000000000001,
+            "longest_loss_streak_within_utc_opening_day": 6
+          },
+          {
+            "utc_day_of_opening": "2026-11-09",
+            "n": 103,
+            "net_units": -1.5139999999999993,
+            "longest_loss_streak_within_utc_opening_day": 9
+          },
+          {
+            "utc_day_of_opening": "2026-11-10",
+            "n": 235,
+            "net_units": 27.148000000000003,
+            "longest_loss_streak_within_utc_opening_day": 7
+          }
+        ]
+      },
+      "marker_message_same_tick_and_terminal": {
+        "n_WL": 907,
+        "n_matches_WL": 907,
+        "n_push_separate": 0,
+        "n_W": 497,
+        "n_L": 410,
+        "mean_decimal_price_WL": 1.9230088202866593,
+        "wr_positive_net_per_WL": {
+          "estimate": 0.5479603087100331,
+          "ci95": [
+            0.5184381778741866,
+            0.5745577661549007
+          ],
+          "n_days_contributing": 5,
+          "resamples_with_denominator": 9975
+        },
+        "roi_flat_per_WL": {
+          "estimate": 0.046381477398015444,
+          "ci95": [
+            -0.020894194225018942,
+            0.09688498791033734
+          ],
+          "n_days_contributing": 5,
+          "resamples_with_denominator": 9975
+        },
+        "roi_at_booked_paper_stakes_per_WL": {
+          "estimate": null,
+          "ci95": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "n_WL_with_paper_stake": 0,
+        "loss_streak_in_opening_order": 9,
+        "mdd_flat_units_opening_order": 21.340999999999994,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": null,
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "terminal_observation_timing": {
+          "n_WL": 907,
+          "minutes_entry_to_first_terminal_median": 33.9906,
+          "n_observed_later_than_10min": 907,
+          "n_observed_earlier_than_10min": 0,
+          "n_observed_at_10min": 0,
+          "multi_entry_terminal_times": 7,
+          "mdd_paper_units_netting_simultaneous_observations": 21.564999999999998
+        },
+        "days_of_opening_with_WL": 5,
+        "positive_days_flat_units": 3,
+        "negative_days_flat_units": 2,
+        "flat_days_with_WL": 0,
+        "daily_flat_pnl_of_WL": [
+          {
+            "utc_day_of_opening": "2026-11-06",
+            "n": 179,
+            "net_units": -5.118999999999998,
+            "longest_loss_streak_within_utc_opening_day": 9
+          },
+          {
+            "utc_day_of_opening": "2026-11-07",
+            "n": 195,
+            "net_units": 16.425,
+            "longest_loss_streak_within_utc_opening_day": 5
+          },
+          {
+            "utc_day_of_opening": "2026-11-08",
+            "n": 197,
+            "net_units": 4.963000000000001,
+            "longest_loss_streak_within_utc_opening_day": 6
+          },
+          {
+            "utc_day_of_opening": "2026-11-09",
+            "n": 103,
+            "net_units": -1.5139999999999993,
+            "longest_loss_streak_within_utc_opening_day": 9
+          },
+          {
+            "utc_day_of_opening": "2026-11-10",
+            "n": 233,
+            "net_units": 27.313000000000002,
+            "longest_loss_streak_within_utc_opening_day": 7
+          }
+        ]
+      }
+    },
+    "st4": {
+      "recorded_markers": 281,
+      "marked_with_message_id": 281,
+      "line_all_markers_mean": 90.84875444839858,
+      "line_strict_mean": 90.88493723849372,
+      "line_strict_median": 90.5,
+      "coverage_all_markers_mutually_exclusive": {
+        "strict_marker_quote_identity_terminal": 239,
+        "no_eligible_terminal": 41,
+        "no_exact_stage_quote_identity": 1
+      },
+      "exact_quote_status_all_markers": {
+        "exact_price_and_stage": 280,
+        "no_exact_list_tick": 1
+      },
+      "marker_game_and_later_terminal": {
+        "n_WL": 240,
+        "n_matches_WL": 240,
+        "n_push_separate": 0,
+        "n_W": 120,
+        "n_L": 120,
+        "mean_decimal_price_WL": 2.1342333333333334,
+        "wr_positive_net_per_WL": {
+          "estimate": 0.5,
+          "ci95": [
+            0.4444444444444444,
+            0.5263157894736842
+          ],
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "roi_flat_per_WL": {
+          "estimate": 0.06917500000000003,
+          "ci95": [
+            -0.07274074074074073,
+            0.13190789473684214
+          ],
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "roi_at_booked_paper_stakes_per_WL": {
+          "estimate": null,
+          "ci95": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "n_WL_with_paper_stake": 0,
+        "loss_streak_in_opening_order": 12,
+        "mdd_flat_units_opening_order": 14.295000000000005,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": null,
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "terminal_observation_timing": {
+          "n_WL": 240,
+          "minutes_entry_to_first_terminal_median": 14.704966666666667,
+          "n_observed_later_than_10min": 188,
+          "n_observed_earlier_than_10min": 52,
+          "n_observed_at_10min": 0,
+          "multi_entry_terminal_times": 3,
+          "mdd_paper_units_netting_simultaneous_observations": 15.590000000000012
+        },
+        "days_of_opening_with_WL": 3,
+        "positive_days_flat_units": 2,
+        "negative_days_flat_units": 1,
+        "flat_days_with_WL": 0,
+        "daily_flat_pnl_of_WL": [
+          {
+            "utc_day_of_opening": "2026-11-08",
+            "n": 76,
+            "net_units": 10.025000000000002,
+            "longest_loss_streak_within_utc_opening_day": 5
+          },
+          {
+            "utc_day_of_opening": "2026-11-09",
+            "n": 54,
+            "net_units": -3.9279999999999995,
+            "longest_loss_streak_within_utc_opening_day": 6
+          },
+          {
+            "utc_day_of_opening": "2026-11-10",
+            "n": 110,
+            "net_units": 10.505000000000004,
+            "longest_loss_streak_within_utc_opening_day": 12
+          }
+        ]
+      },
+      "marker_message_same_tick_and_terminal": {
+        "n_WL": 239,
+        "n_matches_WL": 239,
+        "n_push_separate": 0,
+        "n_W": 119,
+        "n_L": 120,
+        "mean_decimal_price_WL": 2.134,
+        "wr_positive_net_per_WL": {
+          "estimate": 0.497907949790795,
+          "ci95": [
+            0.4444444444444444,
+            0.5263157894736842
+          ],
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "roi_flat_per_WL": {
+          "estimate": 0.0644853556485356,
+          "ci95": [
+            -0.07274074074074073,
+            0.13190789473684214
+          ],
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "roi_at_booked_paper_stakes_per_WL": {
+          "estimate": null,
+          "ci95": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "n_WL_with_paper_stake": 0,
+        "loss_streak_in_opening_order": 12,
+        "mdd_flat_units_opening_order": 15.379000000000008,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": null,
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "terminal_observation_timing": {
+          "n_WL": 239,
+          "minutes_entry_to_first_terminal_median": 14.758216666666666,
+          "n_observed_later_than_10min": 188,
+          "n_observed_earlier_than_10min": 51,
+          "n_observed_at_10min": 0,
+          "multi_entry_terminal_times": 3,
+          "mdd_paper_units_netting_simultaneous_observations": 16.780000000000012
+        },
+        "days_of_opening_with_WL": 3,
+        "positive_days_flat_units": 2,
+        "negative_days_flat_units": 1,
+        "flat_days_with_WL": 0,
+        "daily_flat_pnl_of_WL": [
+          {
+            "utc_day_of_opening": "2026-11-08",
+            "n": 76,
+            "net_units": 10.025000000000002,
+            "longest_loss_streak_within_utc_opening_day": 5
+          },
+          {
+            "utc_day_of_opening": "2026-11-09",
+            "n": 54,
+            "net_units": -3.9279999999999995,
+            "longest_loss_streak_within_utc_opening_day": 6
+          },
+          {
+            "utc_day_of_opening": "2026-11-10",
+            "n": 109,
+            "net_units": 9.315000000000005,
+            "longest_loss_streak_within_utc_opening_day": 12
+          }
+        ]
+      }
+    }
+  }
+}

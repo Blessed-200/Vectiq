@@ -1,0 +1,1069 @@
+id,ts_ms,game_id,sets,side,line,price,ev,league,stake,players,start_ts
+1,1793774893236,767881820,11-1,under,99.5,2.0,0.0,Masters. Belarús,1.0,Egor Vlasenko vs Alexander Dyatel,1793774281
+2,1793775079243,767883075,6-11,under,89.5,2.04,0.0,Masters. Polonia,1.0,Kamil Amilianowicz vs Blazej Zarczynski,1793774641
+3,1793775273582,767883627,11-4,under,95.5,2.2,0.0,Masters. Polonia,1.0,Mateusz Mleczko vs Dariusz Swiatek,1793774700
+4,1793775730136,767884966,6-11,under,104.5,2.184,0.0,Masters. Rusia,1.01,Pavel Pulnyi vs Mikhail Rozhkov,1793775241
+5,1793776594246,767887686,11-6,under,103.5,2.16,0.0,Masters. Polonia,1.01,Rafal Cieluszke vs Zdzislaw Blocho,1793775780
+6,1793776729300,767887741,2-11,under,87.5,2.02,0.0,Masters. Belarús,1.01,Nikita Tarasov vs Alexander Dyatel,1793776200
+7,1793777070329,767889342,5-11,under,102.5,2.06,0.0,Masters. Rusia. Mujeres,1.02,Olesya Molodtsova vs Olga Lososovskaya,1793776501
+8,1793777136330,767890486,11-6,under,99.5,2.01,0.0,Masters. Rusia,1.02,Alexander Chernov vs Anton Zheleznov,1793776621
+9,1793777300443,767891126,6-11,under,101.5,2.18,0.0,Masters. Rusia,1.02,Pavel Khripunenko vs Artur Sultonov,1793776981
+10,1793777536001,767890827,6-11,under,104.5,2.184,0.0,Masters. Polonia,1.02,Filip Soszynski vs Adrian Majchrzak,1793776800
+11,1793778688457,767894901,4-11,under,102.5,2.0,0.0,Masters. Belarús,1.06,Alexander Dyatel vs Egor Vlasenko,1793778301
+12,1793778889454,767896540,5-11,under,91.5,2.01,0.0,Masters. Polonia,1.05,Kamil Amilianowicz vs Norbert Wetklo,1793778541
+13,1793779427687,767897605,11-6,under,99.5,2.03,0.0,Masters. Rusia,1.05,Artem Mukhamadyarov vs Eugene Luppa,1793778600
+14,1793779463694,767897769,11-6,under,93.5,2.008,0.0,Masters. Rusia,1.05,Mikhail Gasparyan vs Maxim Latyshev,1793779200
+15,1793779547697,767898780,1-11,under,99.5,2.184,0.0,Masters. Rusia. Mujeres,1.05,Anita Nogovicyna vs Anastasiya Berezina,1793779261
+16,1793779821841,767899312,11-6,under,97.5,2.155,0.0,Masters. Belarús,1.06,Mikhail Tsyganovsky vs Kirill Shurapov,1793779501
+17,1793779969210,767898515,11-3,under,98.5,2.225,0.0,Masters. Polonia,1.06,Dariusz Swiatek vs Ryszard Korzec,1793779081
+18,1793780237610,767900819,5-11,under,103.5,2.184,0.0,Masters. Rusia,1.07,Grigory Tikhomirov vs Igor Egorov V.,1793779501
+19,1793781220010,767903331,11-5,under,102.5,2.04,0.0,Masters. Rusia. Mujeres,1.05,Olga Lososovskaya vs Zinaida Drak,1793780700
+20,1793781794514,767905895,11-3,under,92.5,2.15,0.0,Masters. Belarús,1.04,Vitaly Shaban vs Kirill Shurapov,1793781421
+21,1793781872521,767906648,4-11,under,102.5,2.02,0.0,Masters. Rusia,1.03,Andrei Yakushev vs Pavel Mukhin,1793781421
+22,1793782241927,767905815,11-6,under,93.5,2.01,0.0,Masters. Polonia,1.03,Norbert Wetklo vs Kamil Amilianowicz,1793781361
+23,1793783107387,767909646,11-6,under,94.5,2.155,0.0,Masters. Rusia,1.05,Eduard Mozhaev vs Sergey Zarubenko,1793782801
+24,1793783529712,767910463,6-11,under,104.5,2.0,0.0,Masters. Rusia. Mujeres,1.05,Zinaida Drak vs Olesya Molodtsova,1793782801
+25,1793783793716,767913819,11-6,under,101.5,2.18,0.0,Masters. España,1.04,Ignacio Perez Valles vs Julio Rodriguez Cid,1793783400
+26,1793785219954,767917410,3-11,under,103.5,2.208,0.0,Masters. Polonia,1.04,Slawomir Janikowski vs Rafal Cieluszke,1793784600
+27,1793785297958,767919672,3-11,under,103.5,2.155,0.0,Masters. Polonia,1.04,Igor Misztal vs Arkadiusz Zuk,1793785021
+28,1793785905952,767920088,6-11,under,105.5,2.075,0.0,Masters. España,1.04,Roberto Garcia Gomez vs Jesus Mayo Baeza,1793785381
+29,1793786480922,767920481,11-6,under,105.5,2.005,0.0,Masters. Rusia. Mujeres,1.04,Zinaida Drak vs Olga Lososovskaya,1793785500
+30,1793786606755,767922985,11-5,under,103.5,2.184,0.0,Masters. Polonia,1.04,Mariusz Saluda vs Jaroslaw Zoladkowski,1793786400
+31,1793786618750,767922127,11-6,under,104.5,2.184,0.0,Masters. Belarús,1.04,Alexander Gusarevich vs Vitaly Shaban,1793785920
+32,1793788376281,767930576,6-11,under,106.5,2.155,0.0,Masters. Belarús,1.06,Dmitriy Rudov vs Ruslan Romanovsky,1793788081
+33,1793788562281,767930862,6-11,under,104.5,2.184,0.0,Masters. Polonia,1.07,Norbert Zielony vs Marcin Witucki,1793788200
+34,1793789002194,767930161,6-11,under,106.5,2.04,0.0,Masters. Rusia. Mujeres,1.07,Ekaterina Ivanova vs Zinaida Drak,1793787901
+35,1793789062199,767930870,11-6,under,106.5,2.155,0.0,Masters. España,1.07,Julio Rodriguez Cid vs Heruan Jose Escalona,1793787901
+36,1793789292418,767933832,11-4,under,101.5,2.184,0.0,Masters. Rusia,1.07,Valery Morozyuk vs Evgeniy Penetov,1793789100
+37,1793789697692,767935021,11-5,under,93.5,2.04,0.0,Masters. Rusia,1.08,Artem Mukhamadyarov vs Eugene Luppa,1793789221
+38,1793790391363,767935974,11-5,under,105.5,2.032,0.0,Masters. Rusia,1.1,Maxim Latyshev vs Mikhail Gasparyan,1793789461
+39,1793790445365,767936888,5-11,under,103.5,2.184,0.0,Masters. Polonia,1.1,Jaroslaw Zoladkowski vs Norbert Zielony,1793790001
+40,1793790627845,767934884,11-6,under,95.5,2.296,0.0,Masters. Argentina,1.1,German Kern vs Rodrigo Tessitore,1793789401
+41,1793791833577,767943717,4-11,under,101.5,2.16,0.0,Masters. Polonia,1.11,Igor Misztal vs Mikolaj Szalinski,1793791260
+42,1793791971388,767944897,6-11,under,105.5,2.18,0.0,Masters. Polonia,1.11,Mariusz Saluda vs Marcin Witucki,1793791620
+43,1793792549282,767945849,5-11,under,96.5,2.155,0.0,Masters. Belarús,1.11,Anton Lazarevskii vs Ruslan Romanovsky,1793792040
+44,1793792575627,767946254,11-2,under,102.5,2.208,0.0,Masters. Rusia,1.11,Mikhail Golubtsov vs Vitaly Samoilenko,1793792041
+45,1793794071452,767952584,3-11,under,99.5,2.175,0.0,Masters. Rusia,1.14,Vitaliy Beliakov vs Valery Morozyuk,1793793841
+46,1793794299496,767951739,11-6,under,104.5,2.184,0.0,Masters. Polonia,1.14,Norbert Zielony vs Mariusz Saluda,1793793601
+47,1793794767312,767954852,6-11,under,104.5,2.184,0.0,Masters. Belarús,1.14,Artem Tarobesh vs Yurii Omelianovitch,1793794201
+48,1793794893592,767954631,6-11,under,103.5,2.0,0.0,Masters. Polonia,1.14,Igor Misztal vs Rafal Suszycki,1793794080
+49,1793795003973,767955320,11-6,under,106.5,2.155,0.0,Masters. Rusia,1.14,Vitaly Samoilenko vs Oleg Dobrovolsky,1793794320
+50,1793795063984,767956425,3-11,under,88.5,2.0,0.0,Masters. Rusia,1.14,Evgeny Kolbin vs Sergey Yakupov,1793794801
+51,1793795159980,767956691,6-11,under,104.5,2.184,0.0,Masters. Belarús,1.14,Alexander Vanagel vs Aliaksei Rabushko,1793794200
+52,1793795172006,767955642,6-11,under,106.5,2.155,0.0,Masters. Argentina,1.14,German Kern vs Agustin Achcar,1793794261
+53,1793796465112,767961472,4-11,under,103.5,2.18,0.0,Masters. Rusia,1.17,Vladislav Bushkov vs Mikhail Leonov,1793796120
+54,1793796477529,767961704,2-11,under,95.5,2.025,0.0,Masters. Belarús,1.17,Artyom Chernushin vs Alexander Blinets,1793796301
+55,1793797502435,767964346,11-6,under,105.5,2.005,0.0,Masters. Belarús,1.18,Vladimir Bielokon vs Alexander Vanagel,1793797080
+56,1793797659797,767965209,6-11,under,103.5,2.0,0.0,Masters. Polonia,1.2,Piotr Stepinski vs Jakub Warpas,1793796628
+57,1793797767310,767963461,11-5,under,102.5,2.16,0.0,Masters. España,1.2,Heruan Jose Escalona vs Ignacio Perez Valles,1793796600
+58,1793798012690,767967886,11-5,under,100.5,2.115,0.0,Masters. Rusia. Mujeres,1.2,Olga Sycheva vs Anastasia Burova,1793797621
+59,1793798180686,767965643,6-11,under,106.5,2.04,0.0,Masters. Polonia,1.2,Pawel Stopinski vs Pawel Galecki,1793796732
+60,1793798739267,767970651,11-6,under,107.5,2.136,0.0,Masters. Rusia,1.21,Evgeniy Penetov vs Berik Urkunbaev,1793798400
+61,1793799685271,767974412,11-6,under,106.5,2.208,0.0,Masters. Rusia,1.15,Pavel Malakhov vs Daniil Sokolov,1793799420
+62,1793799985328,767974501,11-6,under,95.5,2.05,0.0,Masters. Rusia. Mujeres,1.16,Anastasia Zorina vs Anna Danilova,1793799541
+63,1793800057329,767973897,11-4,under,101.5,2.0,0.0,Masters. Polonia,1.16,Arkadiusz Zuk vs Igor Misztal,1793798862
+64,1793800208025,767974204,11-5,under,102.5,2.06,0.0,Masters. Polonia,1.16,Marcin Witucki vs Mariusz Saluda,1793799660
+65,1793800274227,767974716,4-11,under,99.5,2.075,0.0,Masters. Belarús,1.16,Yurii Omelianovitch vs Artem Tarobesh,1793799901
+66,1793800750609,767975437,6-11,under,101.5,2.035,0.0,Masters. Rusia,1.15,Denis Vakalov vs Artem Trebin,1793799600
+67,1793802231425,767982899,4-11,under,99.5,2.075,0.0,Masters. Rusia,1.12,Bogdan Tikhonov vs Pavel Malakhov,1793801700
+68,1793802626287,767984619,11-4,under,102.5,2.035,0.0,Masters. Rusia,1.1,Yaroslav Chuev vs Daniil Bukreev,1793801400
+69,1793803517735,767988285,11-2,under,99.5,2.02,0.0,Masters. Rusia,1.1,Aleksandr Gorochny vs Alexander Nekrasov,1793803380
+70,1793804147565,767988535,5-11,under,100.5,2.035,0.0,Masters. Rusia,1.12,Aisen Stepanov vs Dmitriy Kolesnikov An,1793803260
+71,1793804420463,767989803,4-11,under,103.5,2.18,0.0,Masters. Rusia,1.1,Mikhail Leonov vs Timofey Metalnikov,1793803861
+72,1793804614759,767990290,11-5,under,102.5,2.16,0.0,Masters. Rusia,1.1,Muhridin Abdunazarov vs Sergey Cherednichenko,1793803800
+73,1793804994993,767992174,6-11,under,104.5,2.035,0.0,Masters. Rusia,1.1,Anton Vitun vs Daniil Bukreev,1793804340
+74,1793805862066,767996235,11-3,under,102.5,2.016,0.0,Masters. Polonia,1.11,Michal Dziekan vs Mateusz Ponikowski,1793805000
+75,1793806832226,767998827,5-11,under,103.5,2.184,0.0,Masters. Rusia. Mujeres,1.07,Anna Danilova vs Olga Sycheva,1793806501
+76,1793806924997,767999957,4-11,under,101.5,2.02,0.0,Masters. Rusia,1.07,Bogdan Isupov vs Yaroslav Chuev,1793806741
+77,1793807838316,768001553,6-11,under,103.5,2.0,0.0,Masters. Polonia,1.06,Marian Balak vs Mateusz Ponikowski,1793806838
+78,1793808035675,768002518,5-11,under,106.5,2.04,0.0,Masters. Rusia,1.07,Daniil Sokolov vs Pavel Malakhov,1793807461
+79,1793808191702,768002980,11-4,under,93.5,2.035,0.0,Masters. Rusia,1.07,Vyacheslav Gagal vs Vladislav Kunitsyn,1793807941
+80,1793808290217,768003107,6-11,under,106.5,2.056,0.0,Masters. Polonia,1.08,Robert Baran vs Wojciech Zielinski,1793808001
+81,1793808464193,768002452,5-11,under,100.5,2.032,0.0,Masters. Rusia,1.08,Oleg Kobzev vs Nabijon Gafurov,1793807400
+82,1793808664829,768006261,6-11,under,97.5,2.056,0.0,Masters. Rusia. Mujeres,1.1,Olga Sycheva vs Anastasia Zorina,1793808421
+83,1793809024791,768003859,11-4,under,91.5,2.17,0.0,Masters. Argentina,1.11,Martin Atamian vs Juan Alcocer,1793808001
+84,1793809237229,768006738,11-4,under,102.5,2.184,0.0,Masters. España,1.12,Eduardo Perez Moya vs Manuel Almeida Juarez,1793808421
+85,1793809417241,768009683,11-4,under,102.5,2.184,0.0,Masters. Rusia,1.12,Sergey Cherednichenko vs Malek Al-Ezzi,1793809021
+86,1793809547545,768009606,5-11,under,102.5,2.375,0.0,Masters. Rusia,1.12,Sergey Tultsev vs Pavel Meleshko,1793808600
+87,1793809655528,768010086,4-11,under,99.5,2.075,0.0,Masters. Rusia,1.12,Nikita Kochetov vs Dmitriy Kolesnikov An,1793809261
+88,1793809854839,768010352,6-11,under,103.5,2.02,0.0,Masters. Rusia,1.13,Alexander Nekrasov vs Vitaly Krivonogov,1793809380
+89,1793810330176,768012568,11-6,under,101.5,2.032,0.0,Masters. Rusia,1.14,Daniil Bukreev vs Anton Vitun,1793809860
+90,1793811087967,768015473,3-11,under,98.5,2.016,0.0,Masters. Polonia,1.12,Mateusz Ponikowski vs Tomasz Pawlowski,1793810104
+91,1793811693757,768017007,6-11,under,104.5,2.184,0.0,Masters. Argentina,1.1,Gabriel Guzman vs Andres Isola,1793811061
+92,1793811837728,768018802,2-11,under,95.5,2.025,0.0,Masters. Rusia,1.09,Lev Tsvetkov vs Vitaly Krivonogov,1793811541
+93,1793812809272,768023286,5-11,under,103.5,2.184,0.0,Masters. España. Mujeres,1.06,Jennifer Medina Diaz vs Mercedes Fernandez Gainza,1793812107
+94,1793814011134,768028430,4-11,under,102.5,2.035,0.0,Masters. Rusia,1.06,Daniil Bukreev vs Yaroslav Chuev,1793813460
+95,1793814571110,768029772,5-11,under,96.5,2.016,0.0,Masters. Polonia,1.05,Wojciech Zielinski vs Michal Tokarski,1793814060
+96,1793814829242,768029045,5-11,under,103.5,2.184,0.0,Masters. Rusia,1.06,Valery Khen vs Muhridin Abdunazarov,1793813760
+97,1793815667403,768032847,6-11,under,100.5,2.185,0.0,Masters. España,1.06,Eduardo Perez Moya vs Serhio Duarte Batista,1793814901
+98,1793816120399,768036680,6-11,under,95.5,2.15,0.0,Masters. Rusia,1.07,Alexander Gavyshev vs Alexandr Shirshov,1793815243
+99,1793816284821,768036958,5-11,under,90.5,2.0,0.0,Masters. Belarús,1.07,Nikolay Zademlenyuk vs Andrey Borodich,1793815801
+100,1793816591508,768037356,11-5,under,98.5,2.065,0.0,Masters. Belarús,1.07,Herbert Pyantkovsky vs Pavel Skrobot,1793815861
+101,1793816745678,768039484,6-11,under,97.5,2.155,0.0,Masters. Rusia,1.06,Pavel Kononuchenko vs Daniil Pavlov,1793815320
+102,1793816823682,768038149,5-11,under,98.5,2.17,0.0,Masters. Argentina,1.06,Martin Atamian vs Andres Isola,1793816101
+103,1793816871689,768038268,6-11,under,107.5,2.0,0.0,Masters. Polonia,1.06,Michal Tokarski vs Milosz Zareba,1793816100
+104,1793817378305,768041061,11-6,under,104.5,2.184,0.0,Masters. Rusia,1.07,Sergey Cherednichenko vs Muhridin Abdunazarov,1793816760
+105,1793818052055,768043089,11-5,under,103.5,2.02,0.0,Masters. Belarús,1.1,Andrey Nikonchuk vs Dmitry Mikhalchuk,1793817601
+106,1793818148059,768043937,11-6,under,105.5,2.18,0.0,Masters. España. Mujeres,1.1,Natalia Vargas Postigo vs Jennifer Medina Diaz,1793817721
+107,1793818816905,768046999,11-5,under,100.5,2.18,0.0,Masters. Rusia,1.08,Dmitry Khafizov vs Mikhail Ivanov Yu.,1793818292
+108,1793818864895,768041241,4-11,under,86.5,2.088,0.0,Masters. Rusia,1.08,Timofey Ufimtsev vs Daniil Ovsyannikov,1793816941
+109,1793818900897,768046993,11-4,under,102.5,2.184,0.0,Masters. Rusia,1.08,Nikita Poteryakhin vs Alexander Kulagin,1793818321
+110,1793818954923,768044742,5-11,under,90.5,2.22,0.0,Masters. Argentina,1.08,Gabriel Guzman vs Martin Atamian,1793818021
+111,1793819564095,768049544,5-11,under,92.5,2.07,0.0,Masters. Belarús,1.08,Alexander Belkin vs Pavel Skrobot,1793818800
+112,1793819823068,768051384,11-4,under,104.5,2.016,0.0,Masters. Rusia,1.08,Oleg Kobzev vs Nabijon Gafurov,1793819460
+113,1793820681933,768055760,6-11,under,99.5,2.065,0.0,Masters. Rusia,1.08,Semyon Yashchenin vs Daniil Ovsyannikov,1793820421
+114,1793820705965,768053440,11-6,under,105.5,2.18,0.0,Masters. Rusia,1.08,Vyacheslav Gagal vs Sergey Tultsev,1793819641
+115,1793820795941,768054468,11-5,under,105.5,2.208,0.0,Masters. España,1.09,Manuel Almeida Juarez vs Serhio Duarte Batista,1793820121
+116,1793822766877,768062354,6-11,under,99.5,2.17,0.0,Masters. Rusia,1.13,Pavel Meleshko vs Vyacheslav Gagal,1793821500
+117,1793823503424,768066748,11-6,under,97.5,2.096,0.0,Masters. Rusia,1.15,Daniil Ovsyannikov vs Timofey Ufimtsev,1793823301
+118,1793824360858,768070130,11-4,under,93.5,2.15,0.0,Masters. Rusia,1.15,Mikhail Ivanov Yu. vs Daniil Pavlov,1793823411
+119,1793825523789,768073168,5-11,under,96.5,2.155,0.0,Masters. Polonia,1.16,Cezary Domagalski vs Lukasz Nadolny,1793825400
+120,1793825601805,768072910,11-6,under,105.5,2.18,0.0,Masters. Rusia,1.16,Alexander Kulagin vs Nikita Poteryakhin,1793824981
+121,1793826286274,768074941,11-2,under,91.5,2.336,0.0,Masters. Rusia,1.15,Mikhail Ivanov vs Daniil Tolyzin,1793825400
+122,1793827321778,768078207,4-11,under,95.5,2.155,0.0,Masters. Rusia,1.17,Alexander Kulagin vs Artyom Surin,1793826901
+123,1793828197855,768080957,11-3,under,96.5,2.17,0.0,Masters. Rusia,1.16,Ilya Vladimirov vs Daniil Ovsyannikov,1793828100
+124,1793828245855,768080838,11-4,under,102.5,2.184,0.0,Masters. Rusia,1.16,Alexey Frolov V. vs Alexander Brook,1793828041
+125,1793828733735,768080527,2-11,under,102.5,2.1,0.0,Masters. Belarús,1.18,Danil Lopatkin vs Sergei Khramets,1793827980
+126,1793829280224,768083188,2-11,under,97.5,2.18,0.0,Masters. Belarús,1.2,Andrey Nikonchuk vs Vasily Vasin,1793828941
+127,1793829322252,768083236,5-11,under,105.5,2.208,0.0,Masters. Rusia,1.2,Nikita Moskovkin vs Alexander Kulagin,1793828821
+128,1793829847765,768084934,6-11,under,104.5,2.184,0.0,Masters. Polonia,1.2,Piotr Nastalek vs Gabriel Arcangel Viloria,1793829301
+129,1793830767115,768087275,6-11,under,101.5,2.37,0.0,Masters. Rusia,1.24,Daniil Tolyzin vs Mikhail Butylev,1793830260
+130,1793831591851,768091102,11-4,under,104.5,2.155,0.0,Masters. Rusia,1.26,Victor Tovpyshko vs Alexey Frolov V.,1793831461
+131,1793832031664,768092083,11-6,under,103.5,2.16,0.0,Masters. Belarús,1.28,Evgeniy Moroz vs Ivan Smyslin,1793831821
+132,1793832242930,768092397,11-4,under,99.5,2.37,0.0,Masters. Rusia,1.28,Mikhail Ivanov vs Artyom Sharshikov,1793831940
+133,1793833374398,768095448,3-11,under,98.5,2.18,0.0,Masters. Polonia,1.28,Maciej Wisniewski vs Lukasz Tkaczyk,1793832600
+134,1793833539993,768096036,5-11,under,104.5,2.18,0.0,Masters. Belarús,1.28,Roman Kharitonenko vs Ivan Smyslin,1793833381
+135,1793833582066,768095984,11-2,under,95.5,2.17,0.0,Masters. Rusia,1.28,Alexey Burov vs Alexey Pavlov,1793832600
+136,1793833606060,768095424,5-11,under,100.5,2.18,0.0,Masters. Belarús,1.28,Maxim Lyashevych vs Sergei Dovgalev,1793833200
+137,1793833636061,768095851,6-11,under,99.5,2.36,0.0,Masters. Polonia,1.28,Piotr Wisniewski vs Michal Gabryelczyk,1793833260
+138,1793833726049,768096108,2-11,under,95.5,2.36,0.0,Masters. Rusia,1.28,Artyom Sharshikov vs Mikhail Butylev,1793833501
+139,1793833780058,768095252,6-11,under,104.5,2.184,0.0,Masters. España,1.28,Diego Arcos Canete vs Ivan Perez Martin,1793832901
+140,1793834990177,768099557,5-11,under,105.5,2.155,0.0,Masters. Rusia,1.31,Ivan Sokolov vs Dmitry Stepanov,1793833800
+141,1793835255914,768100526,6-11,under,101.5,2.37,0.0,Masters. Polonia,1.3,Jakub Pietrzak vs Patryk Gatner,1793835240
+142,1793835377618,768100644,11-5,under,100.5,2.18,0.0,Masters. Polonia,1.29,Kamil Okonek vs Krzysztof Szulc,1793835060
+143,1793835605637,768100749,4-11,under,99.5,2.37,0.0,Masters. Rusia,1.29,Daniil Tolyzin vs Artyom Sharshikov,1793835361
+144,1793835811673,768101505,11-6,under,107.5,2.136,0.0,Masters. Belarús,1.29,Nikita Anishchenko vs Oleg Mikhalenok,1793835421
+145,1793836218029,768102401,5-11,under,103.5,2.184,0.0,Masters. Polonia,1.27,Piotr Nastalek vs Gabriel Palonka,1793835721
+146,1793836984778,768104239,11-1,under,98.5,2.06,0.0,Masters. Polonia,1.28,Marcin Wozniak vs Lukasz Ogorzelec,1793836200
+147,1793837812352,768107410,11-4,under,104.5,2.155,0.0,Masters. Rusia,1.25,Alexey Pavlov vs Dmitry Stepanov,1793837701
+148,1793838041869,768107703,11-5,under,105.5,2.208,0.0,Masters. Polonia,1.25,Gabriel Palonka vs Gabriel Arcangel Viloria,1793837581
+149,1793838143874,768108084,11-6,under,103.5,2.16,0.0,Masters. Belarús,1.25,Sergei Khramets vs Konstantin Gramovich,1793837941
+150,1793839918724,768112718,5-11,under,103.5,2.184,0.0,Masters. España,1.29,Diego Arcos Canete vs Antonio Espejo Padilla,1793839200
+151,1793840238445,768114854,11-5,under,98.5,2.17,0.0,Masters. Belarús,1.28,Sergei Dovgalev vs Oleg Mikhalenok,1793839861
+152,1793840274464,768114445,11-5,under,103.5,2.375,0.0,Masters. Polonia,1.28,Michal Gabryelczyk vs Piotr Wisniewski,1793839860
+153,1793841189245,768117978,6-11,under,101.5,2.18,0.0,Masters. Rusia,1.29,Alexey Frolov V. vs Alexey Uzhevsky,1793841120
+154,1793842119271,768120053,6-11,under,107.5,2.04,0.0,Masters. Polonia,1.33,Marcin Wozniak vs Tomasz Niemiec,1793841841
+155,1793842295609,768120304,6-11,under,106.5,2.4,0.0,Masters. Polonia,1.34,Jakub Pietrzak vs Michal Gabryelczyk,1793841960
+156,1793844153496,768125268,11-5,under,104.5,2.18,0.0,Masters. Polonia,1.34,Lukasz Ogorzelec vs Marcin Kleszcz,1793843940
+157,1793844617711,768125774,11-4,under,103.5,2.22,0.0,Masters. Belarús,1.34,Nikita Anishchenko vs Maxim Lyashevych,1793843940
+158,1793845865681,768129777,11-3,under,98.5,2.18,0.0,Masters. Polonia,1.36,Lukasz Tkaczyk vs Maciej Wisniewski,1793845500
+159,1793846389058,768129464,11-6,under,107.5,2.136,0.0,Masters. Argentina,1.34,Alejandro Docampo vs Francisco Fiasche,1793845501
+160,1793847172566,768132373,6-11,under,95.5,2.15,0.0,Masters. Belarús,1.36,Nikita Anishchenko vs Oleg Mikhalenok,1793846520
+161,1793847298574,768133567,4-11,under,105.5,2.15,0.0,Masters. Rusia,1.36,Alexey Burov vs Ivan Sokolov,1793847121
+162,1793847576754,768133726,6-11,under,101.5,2.18,0.0,Masters. Polonia,1.36,Kamil Okonek vs Lukasz Tkaczyk,1793847000
+163,1793847761785,768134632,11-0,under,91.5,2.056,0.0,Masters. Belarús,1.36,Egor Ivanovsky vs Aleksey Radionov,1793847601
+164,1793849286614,768138857,11-5,under,105.5,2.175,0.0,Masters. Rusia,1.38,Shamil Yusupov vs Adilzhan Amanyazov,1793849040
+165,1793849503989,768138965,5-11,under,70.5,2.216,0.0,Masters. Belarús,1.38,Oleg Mikhalenok vs Sergei Dovgalev,1793849041
+166,1793849804770,768138394,5-11,under,98.5,2.17,0.0,Masters. Belarús,1.38,Denis Yanchuk vs Yuriy Starodubtsev,1793849041
+167,1793850044797,768140494,5-11,under,103.5,2.184,0.0,Masters. Polonia,1.38,Marcin Olszewski vs Krystian Marek,1793849821
+168,1793851019190,768141941,6-11,under,96.5,2.1,0.0,Masters. Belarús,1.35,Aleksey Radionov vs Igor Trifonov,1793850661
+169,1793851361197,768143069,11-3,under,96.5,2.17,0.0,Masters. Belarús,1.38,Vadim Kazachenko vs Maksim Busov,1793851200
+170,1793851559218,768143657,6-11,under,107.5,2.136,0.0,Masters. Rusia,1.38,Murat Shungalov vs Shamil Yusupov,1793851201
+171,1793853193023,768147323,6-11,under,107.5,2.136,0.0,Masters. Belarús,1.38,Fedor Zhogal vs Dmitriy Leshkevich,1793853001
+172,1793853475689,768147994,11-2,under,100.5,2.375,0.0,Masters. Polonia,1.38,Marek Borowski vs Robert Niewiadomski,1793853301
+173,1793855032334,768150937,0-11,under,95.5,2.18,0.0,Masters. Belarús,1.39,Aleksandr Dementev vs Yuri Vasilian,1793854321
+174,1793855152551,768151358,5-11,under,102.5,2.16,0.0,Masters. Belarús,1.39,Artem Poduporin vs Yurii Omelianovitch,1793854200
+175,1793855182553,768151010,11-6,under,103.5,2.16,0.0,Masters. Rusia. Mujeres,1.39,Olesya Molodtsova vs Maria Averyanova,1793854292
+176,1793855620713,768152213,11-6,under,101.5,2.18,0.0,Masters. Belarús,1.39,Maksim Busov vs Dmitriy Leshkevich,1793854920
+177,1793857235237,768156813,4-11,under,102.5,2.184,0.0,Masters. Polonia,1.39,Mateusz Strzelczak vs Marek Borowski,1793856900
+178,1793857757251,768157843,11-6,under,99.5,2.17,0.0,Masters. Belarús,1.39,Kirill Goncharov vs Denis Khvesenya,1793857321
+179,1793859551507,768161276,5-11,under,94.5,2.168,0.0,Masters. Belarús,1.41,Egor Ivanovsky vs Aleksey Radionov,1793858701
+180,1793860019534,768162610,4-11,under,104.5,2.208,0.0,Masters. Belarús,1.41,Artem Poduporin vs Denis Khvesenya,1793859301
+181,1793860722108,768165017,6-11,under,106.5,2.064,0.0,Masters. Rusia,1.41,Rauf Huseynov vs Valeriy Gorelov,1793860201
+182,1793862386416,768168423,11-6,under,106.5,2.155,0.0,Masters. Belarús,1.4,Vitaly Mager vs Egor Ivanovsky,1793861581
+183,1793862596428,768169371,6-11,under,93.5,2.01,0.0,Masters. Polonia,1.4,Robert Niewiadomski vs Marcin Kacperczyk,1793862000
+184,1793863670966,768172804,6-11,under,99.5,2.03,0.0,Masters. Rusia,1.42,Anton Zheleznov vs Alexander Chernov,1793863080
+185,1793863694966,768172725,4-11,under,97.5,2.17,0.0,Masters. Belarús,1.42,Denis Khvesenya vs Yurii Omelianovitch,1793863021
+186,1793864716686,768175377,11-5,under,104.5,2.22,0.0,Masters. Polonia,1.45,Marcin Kacperczyk vs Mateusz Strzelczak,1793863920
+187,1793864758698,768176183,11-6,under,106.5,2.155,0.0,Masters. España,1.45,Daniel Lopera Santa vs Jorge Lucena Nunez,1793864401
+188,1793866814675,768181693,5-11,under,96.5,2.02,0.0,Masters. Rusia,1.42,Rauf Huseynov vs Nikita Konovalov,1793866201
+189,1793868603126,768186557,3-11,under,102.5,2.18,0.0,Masters. Polonia,1.39,Rafal Walaszczyk vs Krzysztof Ruszczynski,1793867880
+190,1793868831988,768186963,6-11,under,104.5,2.184,0.0,Masters. Polonia,1.39,Mateusz Rogowski vs Marcin Ozieblo,1793868001
+191,1793869493512,768190315,11-6,under,106.5,2.0,0.0,Masters. Polonia,1.39,Kshishtof Staporek vs Rafal Zajkowski,1793869080
+192,1793870857321,768196467,2-11,under,100.5,2.02,0.0,Masters. Polonia,1.44,Jakub Warpas vs Wiktor Szczygiel,1793869800
+193,1793870947891,768196024,6-11,under,101.5,2.18,0.0,Masters. Belarús,1.44,Sergei Demidovich vs Maxim Sikorski,1793870580
+194,1793871123997,768194324,6-11,under,105.5,2.18,0.0,Masters. España,1.44,Jorge Lucena Nunez vs Antonio Gonzalez Gutierrez,1793870101
+195,1793871184006,768195720,6-11,under,91.5,2.01,0.0,Masters. Polonia,1.44,Mateusz Rogowski vs Mateusz Mleczko,1793870521
+196,1793871352099,768195520,6-11,under,107.5,2.016,0.0,Masters. Rusia,1.44,Nikita Konovalov vs Rauf Huseynov,1793870341
+197,1793873005690,768202960,11-5,under,94.5,2.15,0.0,Masters. Rusia,1.43,Mikhail Rozhkov vs Pavel Khripunenko,1793872800
+198,1793873428564,768204102,5-11,under,103.5,2.184,0.0,Masters. España,1.41,Daniel Lopera Santa vs Jose Miguel Galindo Doblas,1793872801
+199,1793873821608,768205606,11-2,under,93.5,2.016,0.0,Masters. Rusia. Mujeres,1.41,Olga Lososovskaya vs Maria Stroganova,1793873521
+200,1793873863610,768205766,11-3,under,103.5,2.0,0.0,Masters. Rusia,1.41,Valeriy Gorelov vs Nikita Konovalov,1793873340
+201,1793875287806,768210840,3-11,under,102.5,2.18,0.0,Masters. Polonia,1.43,Mateusz Repke vs Pawel Piszczatowski,1793874901
+202,1793875498945,768212033,3-11,under,101.5,2.184,0.0,Masters. Argentina,1.43,Mariano Tchintchinian vs Franco Hurtado,1793874601
+203,1793875668247,768212625,11-3,under,96.5,2.17,0.0,Masters. Rusia,1.41,Artem Trebin vs Denis Vakalov,1793874734
+204,1793876098982,768213597,11-6,under,105.5,2.016,0.0,Masters. Polonia,1.41,Kshishtof Staporek vs Wiktor Szczygiel,1793875681
+205,1793876439565,768215687,11-4,under,97.5,2.065,0.0,Masters. Rusia,1.41,Mikhail Rozhkov vs Daniil Sokolov,1793876280
+206,1793876771235,768215575,11-0,under,85.5,2.0,0.0,Masters. Polonia,1.4,Pawel Jaskolski vs Damian Szajewski,1793875800
+207,1793876916940,768215827,5-11,under,98.5,2.01,0.0,Masters. Rusia,1.42,Denis Zhurenko vs Vladislav Milinka,1793876401
+208,1793878244415,768220996,11-6,under,103.5,2.16,0.0,Masters. Rusia,1.44,Vladislav Bushkov vs Dmitriy Kolesnikov An,1793877000
+209,1793878959569,768222701,11-4,under,101.5,2.16,0.0,Masters. Belarús,1.45,Alexander Prokopenko vs Maxim Sikorski,1793878321
+210,1793879097567,768224097,11-3,under,100.5,2.16,0.0,Masters. Polonia,1.46,Marcin Witucki vs Norbert Zielony,1793878860
+211,1793880494402,768227457,11-6,under,104.5,2.02,0.0,Masters. Rusia,1.48,Danil Kizimenko vs Vladislav Milinka,1793880001
+212,1793880856616,768228465,11-6,under,101.5,2.18,0.0,Masters. Rusia,1.48,Dmitry Savinov vs Viktor Skvortsov,1793880301
+213,1793881796733,768232173,6-11,under,95.5,2.05,0.0,Masters. Rusia,1.48,Daniil Sokolov vs Pavel Khripunenko,1793881200
+214,1793882237360,768232647,11-6,under,102.5,2.07,0.0,Masters. España,1.5,Miguel Rodriguez Moreno vs Eduardo Perez Moya,1793881501
+215,1793882321360,768234413,11-5,under,101.5,2.016,0.0,Masters. Rusia,1.5,Andrei Yakushev vs Dmitry Volin,1793881921
+216,1793883270806,768236529,11-5,under,103.5,2.23,0.0,Masters. Argentina,1.51,Franco Hurtado vs Mariano Tchintchinian,1793882821
+217,1793883378814,768238815,5-11,under,105.5,2.155,0.0,Masters. Rusia,1.51,Mikhail Rozhkov vs Pavel Khripunenko,1793883300
+218,1793883458762,768236987,5-11,under,100.5,2.016,0.0,Masters. Belarús,1.51,Kirill Abrazovsky vs Aleksandr Trusov,1793882881
+219,1793883755006,768239547,6-11,under,106.5,2.1,0.0,Masters. Belarús,1.5,Pawel Breiko vs Sergei Demidovich,1793883600
+220,1793883857007,768239232,2-11,under,97.5,2.18,0.0,Masters. Rusia,1.5,Tagir Batandaev vs Alexander Pitimirov,1793883600
+221,1793884279850,768241189,3-11,under,94.5,2.112,0.0,Masters. Rusia,1.48,Sergey Lebedev vs Andrei Yakushev,1793883900
+222,1793885333294,768245089,6-11,under,105.5,2.18,0.0,Masters. Rusia,1.51,Gleb Radionov vs Grigory Tikhomirov,1793884200
+223,1793885363287,768244205,5-11,under,105.5,2.208,0.0,Masters. Rusia,1.51,Dmitriy Kolesnikov An vs Nikita Kochetov,1793884801
+224,1793886161222,768245891,11-4,under,101.5,2.208,0.0,Masters. Argentina,1.51,Mariano Tchintchinian vs Nahuel Krowicki,1793885461
+225,1793886197228,768247565,5-11,under,90.5,2.02,0.0,Masters. Belarús,1.51,Ivan Lyashok vs Aleksandr Trusov,1793885821
+226,1793887430477,768252191,6-11,under,107.5,2.15,0.0,Masters. Rusia,1.51,Vitaly Krivonogov vs Lev Tsvetkov,1793886600
+227,1793888497664,768256156,11-5,under,105.5,2.056,0.0,Masters. Rusia,1.5,Andrei Yakushev vs Arsentiy Turubanov,1793888221
+228,1793889256653,768258779,11-5,under,102.5,2.0,0.0,Masters. Polonia,1.5,Adam Kukkuk vs Marcin Wieczorkiewicz,1793889001
+229,1793889636819,768258730,5-11,under,105.5,2.0,0.0,Masters. Rusia,1.5,Vladimir Mikhalin vs Denis Medvedev,1793888820
+230,1793890510939,768262839,6-11,under,105.5,2.18,0.0,Masters. Rusia,1.51,Vladislav Bushkov vs Alexander Savelyev,1793890141
+231,1793890819417,768263689,5-11,under,104.5,2.016,0.0,Masters. Polonia,1.51,Damian Kowalczyk vs Marcin Kociuba,1793890245
+232,1793891120715,768263825,11-3,under,88.5,2.0,0.0,Masters. Belarús,1.51,Vladimir Bielokon vs Vladislav Moroz,1793890200
+233,1793891833623,768267854,11-6,under,94.5,2.192,0.0,Masters. Rusia,1.51,Alexander Pitimirov vs Tagir Batandaev,1793891400
+234,1793892375317,768270270,4-11,under,103.5,2.18,0.0,Masters. Rusia,1.53,Daniil Bukreev vs Alexandr Shirshov,1793891400
+235,1793894085946,768276974,5-11,under,102.5,2.16,0.0,Masters. Rusia,1.56,Dmitriy Makarov vs Daniil Bukreev,1793893741
+236,1793894421606,768277549,11-4,under,103.5,2.005,0.0,Masters. Rusia,1.56,Denis Medvedev vs Vladimir Mikhalin,1793893800
+237,1793895338851,768282000,5-11,under,105.5,2.155,0.0,Masters. Rusia,1.58,Vadim Dorofeev vs Evgeniy Ivanyuta,1793894821
+238,1793896080493,768285859,11-3,under,98.5,2.18,0.0,Masters. Rusia,1.56,Bogdan Isupov vs Alexandr Shirshov,1793895841
+239,1793896164496,768284486,4-11,under,104.5,2.0,0.0,Masters. Rusia,1.56,Oleg Kobzev vs Denis Medvedev,1793895421
+240,1793896395545,768285032,11-3,under,101.5,2.184,0.0,Masters. España,1.56,Mario Hidalgo Gutierrez vs Mario Hernandez Doblas,1793895600
+241,1793897378084,768290634,11-6,under,106.5,2.016,0.0,Masters. Belarús,1.55,Andrey Grits vs Alexander Durovich,1793897101
+242,1793897405090,768290412,11-6,under,101.5,2.016,0.0,Masters. Rusia,1.55,Aleksandr Gorochny vs Lev Tsvetkov,1793896921
+243,1793897447091,768291181,6-11,under,105.5,2.18,0.0,Masters. Rusia,1.55,Nikolay Lysenkov vs Maxim Kutsurenko,1793897341
+244,1793897823277,768291691,11-6,under,104.5,2.184,0.0,Masters. Rusia,1.57,Alexandr Shirshov vs Daniil Bukreev,1793897341
+245,1793898167698,768293723,11-4,under,103.5,2.016,0.0,Masters. Polonia,1.57,Pawel Jankowski vs Mateusz Sroczynski,1793897400
+246,1793899036114,768297577,1-11,under,85.5,2.07,0.0,Masters. Belarús,1.62,Artem Tarobesh vs Andrey Krasnov,1793899021
+247,1793899163568,768296146,6-11,under,101.5,2.18,0.0,Masters. España,1.62,Orlando Espinoza vs Antonio Garrido Ropero,1793898600
+248,1793899893161,768299975,2-11,under,101.5,2.016,0.0,Masters. Polonia,1.6,Jakub Wojdat vs Milosz Zareba,1793899681
+249,1793901937113,768308685,5-11,under,98.5,2.065,0.0,Masters. Rusia,1.59,Andrey Dergunov vs Nabijon Gafurov,1793901000
+250,1793901991121,768309690,11-6,under,106.5,2.208,0.0,Masters. Rusia,1.59,Alexandr Shirshov vs Dmitriy Makarov,1793901541
+251,1793902602722,768311272,11-2,under,102.5,2.015,0.0,Masters. Belarús,1.59,Ma Lei vs Egor Vlasenko,1793902200
+252,1793903168651,768314176,11-6,under,106.5,2.208,0.0,Masters. Rusia,1.61,Dmitry Orel vs Daniil Ovsyannikov,1793902801
+253,1793903520581,768316357,5-11,under,103.5,2.08,0.0,Masters. Rusia,1.62,Bogdan Tikhonov vs Ilya Semerkin,1793903521
+254,1793903696620,768315615,2-11,under,100.5,2.184,0.0,Masters. Rusia,1.62,Muhridin Abdunazarov vs Valery Khen,1793903221
+255,1793903702627,768316525,11-3,under,89.5,2.0,0.0,Masters. Rusia,1.62,Matvey Tkachev vs Aleksandr Emelyanov S.,1793903401
+256,1793904839446,768317723,11-5,under,105.5,2.0,0.0,Masters. Polonia. Mujeres,1.68,Malgorzata Zdunek vs Marharyta Kulnis,1793903701
+257,1793904869445,768321130,11-5,under,105.5,2.184,0.0,Masters. Rusia,1.68,Arsen Platonov vs Aleksandr Emelyanov S.,1793904660
+258,1793905135815,768320434,4-11,under,101.5,2.184,0.0,Masters. España,1.68,Daniel Toledo Gutierrez vs Ivan Campana Gomez,1793904601
+259,1793905725748,768322443,11-6,under,101.5,2.075,0.0,Masters. Belarús,1.68,Andrey Krasnov vs Andrey Grits,1793905200
+260,1793906733331,768325499,11-4,under,104.5,2.0,0.0,Masters. Belarús,1.72,Timofey Radchenko vs Vladimir Bielokon,1793906100
+261,1793906895361,768326950,3-11,under,98.5,2.18,0.0,Masters. Rusia,1.72,Timofey Ufimtsev vs Daniil Ovsyannikov,1793906521
+262,1793907329608,768328141,11-3,under,102.5,2.18,0.0,Masters. Rusia,1.68,Sergey Cherednichenko vs Valery Khen,1793906820
+263,1793907342099,768329117,11-1,under,99.5,2.184,0.0,Masters. Rusia,1.68,Nabijon Gafurov vs Bogdan Tikhonov,1793907301
+264,1793907473648,768326406,11-4,under,101.5,2.16,0.0,Masters. España,1.68,Antonio Garrido Ropero vs Mario Hidalgo Gutierrez,1793906461
+265,1793907917225,768328776,6-11,under,101.5,2.195,0.0,Masters. España,1.68,Daniel Toledo Gutierrez vs Ye Zijie,1793907120
+266,1793909233782,768335754,11-4,under,101.5,2.0,0.0,Masters. Belarús,1.71,Dmitry Kiselev vs Nazar Sergey,1793908190
+267,1793909613456,768338154,11-5,under,103.5,2.005,0.0,Masters. Polonia,1.71,Milosz Zareba vs Jakub Wojdat,1793909220
+268,1793910163199,768339725,4-11,under,103.5,2.035,0.0,Masters. Rusia,1.69,Valery Kataev vs Valery Khen,1793909461
+269,1793911683911,768346114,11-6,under,103.5,2.16,0.0,Masters. Rusia,1.69,Aleksandr Emelyanov S. vs Arsen Platonov,1793911381
+270,1793912463215,768347768,6-11,under,104.5,2.08,0.0,Masters. Polonia,1.69,Jakub Wojdat vs Mateusz Sroczynski,1793911920
+271,1793912614079,768348275,5-11,under,106.5,2.145,0.0,Masters. Rusia,1.69,Yuri Polyakov vs Alexander Brook,1793912460
+272,1793913475729,768350120,3-11,under,103.5,2.155,0.0,Masters. España,1.68,Daniel Toledo Gutierrez vs Francisco Javier Vargas Postigo,1793912941
+273,1793913899278,768351919,11-6,under,104.5,2.375,0.0,Masters. Rusia,1.7,Aleksandr Emelyanov S. vs Matvey Tkachev,1793913001
+274,1793914117823,768353057,11-4,under,103.5,2.18,0.0,Masters. Polonia,1.68,Grzegorz Skalowski vs Jakub Pietrzak,1793914021
+275,1793914651008,768353425,11-4,under,99.5,2.18,0.0,Masters. Rusia,1.68,Alexey Uzhevsky vs Alexey Frolov V.,1793914200
+276,1793914712429,768353325,11-4,under,102.5,2.375,0.0,Masters. Polonia,1.68,Michal Dziekan vs Krzysztof Lesiewicz,1793914140
+277,1793915128103,768356459,4-11,under,103.5,2.075,0.0,Masters. España. Mujeres,1.7,Natalia Vargas Postigo vs Mercedes Fernandez Gainza,1793914801
+278,1793916150980,768358844,11-2,under,93.5,2.144,0.0,Masters. Rusia,1.71,Aleksandr Lebedenko vs Salavat Abulaev,1793915400
+279,1793916469229,768358123,5-11,under,103.5,2.08,0.0,Masters. España,1.71,Francisco Javier Vargas Postigo vs Ivan Campana Gomez,1793915701
+280,1793917886078,768363409,11-4,under,99.5,2.075,0.0,Masters. Argentina,1.75,Leonel Campari vs Juan Busso,1793917621
+281,1793918240089,768363428,11-5,under,102.5,2.16,0.0,Masters. Belarús,1.75,Dmitry Kiselev vs Anton Drozdovsky,1793917561
+282,1793918402094,768365414,11-6,under,101.5,2.21,0.0,Masters. Rusia,1.75,Yuri Polyakov vs Alexey Uzhevsky,1793918400
+283,1793919645360,768368229,11-6,under,105.5,2.005,0.0,Masters. Rusia,1.78,Mikhail Ivanov vs Artyom Sharshikov,1793919481
+284,1793919705353,768367503,5-11,under,104.5,2.075,0.0,Masters. España. Mujeres,1.78,Natalia Vargas Postigo vs Sonia Medina Diaz,1793919120
+285,1793919777355,768368821,11-3,under,96.5,2.065,0.0,Masters. Polonia,1.78,Piotr Morawski vs Filip Wojtyna,1793919600
+286,1793919909372,768368417,11-6,under,100.5,2.19,0.0,Masters. Belarús,1.81,Yuri Vasilian vs Oleg Mikhalenok,1793919601
+287,1793919915363,768368451,11-4,under,102.5,2.184,0.0,Masters. Belarús,1.81,Pavel Shchurko vs Roman Kharitonenko,1793919601
+288,1793920515395,768370901,11-3,under,103.5,2.155,0.0,Masters. Belarús,1.81,Vitaly Mager vs Egor Ivanovsky,1793920321
+289,1793920785393,768370311,11-5,under,98.5,2.17,0.0,Masters. Rusia,1.82,Alexander Brook vs Alexey Uzhevsky,1793920201
+290,1793921651668,768373125,6-11,under,108.5,2.005,0.0,Masters. Rusia,1.89,Artyom Sharshikov vs Mikhail Butylev,1793921220
+291,1793921885690,768374947,4-11,under,105.5,2.136,0.0,Masters. Rusia,1.89,Nikita Ostroumov vs Alexey Bychkov,1793921700
+292,1793922395709,768375436,11-6,under,106.5,2.155,0.0,Masters. Polonia,1.89,Jakub Pietrzak vs Rafal Strzelczak,1793922120
+293,1793922647706,768375498,11-6,under,101.5,2.18,0.0,Masters. Argentina,1.91,Juan Busso vs Marcelo Gerez,1793922001
+294,1793923500243,768378007,5-11,under,102.5,2.16,0.0,Masters. Rusia,1.87,Sergei Shmelyov vs Daniil Rozhkov,1793922600
+295,1793923500243,768378823,11-6,under,104.5,2.405,0.0,Masters. Polonia,1.87,Maciej Wisniewski vs Mikolaj Jurek,1793923200
+296,1793923974511,768380504,4-11,under,95.5,2.155,0.0,Masters. Rusia,1.87,Dmitry Stepanov vs Nikita Ostroumov,1793923801
+297,1793924250508,768381430,11-5,under,98.5,2.065,0.0,Masters. Polonia,1.83,Filip Wojtyna vs Mateusz Mleczko,1793924040
+298,1793924628517,768383174,5-11,under,86.5,2.392,0.0,Masters. Rusia,1.83,Salavat Abulaev vs Alexander Kulagin,1793924401
+299,1793924886566,768383817,11-5,under,103.5,2.184,0.0,Masters. Polonia,1.85,Jacek Skrzeczkowski vs Jakub Pietrzak,1793924641
+300,1793926135258,768387822,11-3,under,92.5,2.15,0.0,Masters. Polonia,1.8,Piotr Morawski vs Rafal Bryl,1793926020
+301,1793927143290,768389628,6-11,under,106.5,2.208,0.0,Masters. Polonia,1.8,Grzegorz Skalowski vs Jacek Skrzeczkowski,1793926801
+302,1793927323323,768390020,6-11,under,106.5,2.365,0.0,Masters. Polonia,1.82,Mikolaj Jurek vs Krystian Marek,1793926920
+303,1793928235960,768393445,4-11,under,103.5,2.18,0.0,Masters. Rusia,1.82,Nikita Ostroumov vs Ivan Sokolov,1793928000
+304,1793933274762,768404519,11-6,under,103.5,2.16,0.0,Masters. Belarús,1.85,Alexander Slivkin vs Alexey Makarenko,1793932921
+305,1793933347274,768404812,11-4,under,103.5,2.175,0.0,Masters. Rusia,1.85,Ivan Sokolov vs Nikita Ostroumov,1793932921
+306,1793934261483,768408152,6-11,under,103.5,2.16,0.0,Masters. Polonia,1.85,Lukasz Kalinowski vs Mateusz Repke,1793934120
+307,1793934598345,768407290,6-11,under,103.5,2.16,0.0,Masters. Rusia,1.85,Nikita Poteryakhin vs Sergei Shmelyov,1793934120
+308,1793935812420,768409981,11-6,under,104.5,2.184,0.0,Masters. Belarús,1.82,Yuri Vasilian vs Alexander Slivkin,1793935321
+309,1793937860526,768415589,11-6,under,101.5,2.18,0.0,Masters. Belarús,1.84,Matvey Zhdanyuk vs Nikita Busov,1793937600
+310,1793939276799,768418316,11-5,under,104.5,2.18,0.0,Masters. Belarús,1.84,Sergei Demidovich vs Maksim Busov,1793938740
+311,1793940964130,768422987,11-6,under,90.5,2.0,0.0,Masters. Rusia,1.84,Adilzhan Amanyazov vs Mikhail Savin,1793940961
+312,1793941408148,768424324,11-4,under,97.5,2.065,0.0,Masters. Rusia,1.84,Nikita Konovalov vs Rauf Huseynov,1793940600
+313,1793941816339,768424274,4-11,under,104.5,2.155,0.0,Masters. Belarús,1.86,Nikita Busov vs Nikita Tarasov,1793941380
+314,1793942374347,768425520,11-5,under,102.5,2.16,0.0,Masters. Rusia,1.86,Shamil Yusupov vs Mikhail Savin,1793941801
+315,1793943145671,768426432,6-11,under,101.5,2.18,0.0,Masters. Rusia,1.9,Pavel Mukhin vs Maxim Latyshev,1793941800
+316,1793943169670,768427980,6-11,under,104.5,2.184,0.0,Masters. Polonia,1.9,Krzysztof Szulc vs Filip Pawelec,1793942761
+317,1793943397681,768427619,6-11,under,103.5,2.16,0.0,Masters. Belarús,1.9,Sergei Demidovich vs Roman Pchelentsov,1793942701
+318,1793943649808,768428813,6-11,under,106.5,2.208,0.0,Masters. Belarús,1.92,Matvey Zhdanyuk vs Igor Zharkevich,1793943301
+319,1793944237826,768429908,6-11,under,99.5,2.15,0.0,Masters. Rusia,1.95,Alexey Mezentsev vs Mikhail Savin,1793943720
+320,1793944538346,768431236,3-11,under,102.5,2.18,0.0,Masters. Polonia,1.93,Marcin Borucki vs Marek Kaminski,1793944261
+321,1793944778385,768431326,5-11,under,96.5,2.056,0.0,Masters. Rusia,1.95,Nikita Butvina vs Oleg Shilo,1793944200
+322,1793944970766,768431853,11-3,under,101.5,2.15,0.0,Masters. Polonia,1.95,Adam Kukkuk vs Jakub Makutynowicz,1793944801
+323,1793944982767,768432704,2-11,under,87.5,2.17,0.0,Masters. Polonia,1.95,Damian Prostak vs Ryszard Korzec,1793944800
+324,1793945060770,768432552,11-5,under,96.5,2.155,0.0,Masters. Belarús,1.95,Vitaly Shaban vs Denis Shpadaruk,1793944800
+325,1793945138770,768431737,6-11,under,107.5,2.0,0.0,Masters. Rusia,1.95,Svyatoslav Urazov vs Pavel Khripunenko,1793944801
+326,1793946344958,768436519,1-11,under,86.5,2.17,0.0,Masters. Polonia,1.97,Marcin Ozieblo vs Dariusz Swiatek,1793946001
+327,1793946524963,768437182,6-11,under,104.5,2.02,0.0,Masters. Rusia,1.96,Daniil Sokolov vs Oleg Kobzev,1793946300
+328,1793947196903,768438349,2-11,under,97.5,2.18,0.0,Masters. Polonia,1.96,Mateusz Strzelczak vs Marcin Borucki,1793946600
+329,1793947301910,768438585,5-11,under,102.5,2.045,0.0,Masters. Rusia,1.96,Alexander Chernov vs Nikita Butvina,1793946600
+330,1793947506117,768439345,11-4,under,102.5,2.184,0.0,Masters. Polonia,1.98,Mateusz Majszyk vs Lukasz Kalinowski,1793946901
+331,1793948371531,768442574,5-11,under,103.5,2.184,0.0,Masters. Polonia,2.02,Jakub Makutynowicz vs Mateusz Witkowski,1793948101
+332,1793948599982,768442610,5-11,under,105.5,2.155,0.0,Masters. Rusia,2.02,Adilzhan Amanyazov vs Shamil Yusupov,1793948100
+333,1793949695642,768446342,4-11,under,99.5,2.06,0.0,Masters. Rusia,2.05,Alexander Chernov vs Anton Oleksyuk,1793949301
+334,1793949755644,768446749,11-4,under,102.5,2.184,0.0,Masters. Polonia,2.05,Adam Kukkuk vs Marcin Kociuba,1793949421
+335,1793950554140,768447156,11-6,under,101.5,2.18,0.0,Masters. Belarús,2.03,Matvey Zhdanyuk vs Nikita Tarasov,1793949541
+336,1793950668136,768447760,11-5,under,105.5,2.032,0.0,Masters. Rusia,2.05,Yuriy Lobovikov vs Mikhail Gasparyan,1793949780
+337,1793951185963,768449802,6-11,under,105.5,2.375,0.0,Masters. España,2.08,Antonio Espejo Padilla vs Manuel Almeida Juarez,1793950800
+338,1793951461974,768450867,6-11,under,105.5,2.18,0.0,Masters. Polonia,2.08,Marcin Borucki vs Mateusz Swiderski,1793950801
+339,1793951918570,768452748,6-11,under,99.5,2.025,0.0,Masters. Rusia,2.1,Pavel Khripunenko vs Svyatoslav Urazov,1793951521
+340,1793952021083,768452265,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.1,Pavel Mukhin vs Rauf Huseynov,1793951101
+341,1793952225227,768452936,6-11,under,106.5,2.075,0.0,Masters. Rusia,2.1,Artem Mukhamadyarov vs Eugene Luppa,1793951400
+342,1793952334573,768453528,11-6,under,104.5,2.02,0.0,Masters. Rusia,2.1,Gennadiy Kokov vs Mikhail Gasparyan,1793951640
+343,1793954051064,768460180,11-1,under,89.5,2.04,0.0,Masters. Rusia,2.08,Nikita Kochetov vs Yuriy Lobovikov,1793953621
+344,1793954431639,768460206,4-11,under,101.5,2.16,0.0,Masters. Polonia,2.08,Konrad Gryk vs Krzysztof Szulc,1793953800
+345,1793954805412,768460329,11-6,under,101.5,2.18,0.0,Masters. Rusia,2.08,Nikita Konovalov vs Pavel Mukhin,1793953500
+346,1793954829420,768463229,11-4,under,102.5,2.064,0.0,Masters. Rusia. Mujeres,2.08,Zinaida Drak vs Olga Lososovskaya,1793954401
+347,1793954841420,768462988,6-11,under,105.5,2.18,0.0,Masters. Rusia. Mujeres,2.08,Yekaterina Golubeva vs Valeriya Suhorukova,1793954341
+348,1793955166584,768464788,3-11,under,104.5,2.015,0.0,Masters. Rusia,2.06,Svyatoslav Urazov vs Daniil Sokolov,1793954761
+349,1793955827594,768465104,5-11,under,102.5,2.16,0.0,Masters. Belarús,2.08,Ilya Danko vs Aleksandr Trusov,1793955000
+350,1793955863599,768466272,11-6,under,104.5,2.184,0.0,Masters. Belarús,2.08,Aleksandr Shchadko vs Pavel Ivanov,1793955601
+351,1793955895601,768466624,11-6,under,104.5,2.184,0.0,Masters. Polonia,2.08,Kayque Valois vs Kacper Pyra,1793955000
+352,1793957172233,768471549,4-11,under,91.5,2.144,0.0,Masters. Rusia. Mujeres,2.14,Maria Stroganova vs Valeriya Suhorukova,1793956740
+353,1793957479488,768473170,11-6,under,105.5,2.18,0.0,Masters. Polonia,2.14,Wiktor Szczygiel vs Filip Kostecki,1793957401
+354,1793957846896,768474412,11-4,under,104.5,2.208,0.0,Masters. Rusia,2.14,Konstantin Grishin vs Sanzhar Zhumagaliev,1793957401
+355,1793958013025,768474514,11-6,under,104.5,2.005,0.0,Masters. Rusia,2.14,Alexander Lyashenko vs Aleksey Alekhin,1793957700
+356,1793958494895,768476108,11-3,under,96.5,2.17,0.0,Masters. Belarús,2.09,Vladimir Yakovuk vs Sergey Sapega,1793958300
+357,1793958924023,768476255,11-6,under,106.5,2.04,0.0,Masters. Rusia. Mujeres,2.12,Olesya Molodtsova vs Zinaida Drak,1793958301
+358,1793959134028,768476501,11-5,under,94.5,2.15,0.0,Masters. Polonia,2.14,Ryszard Korzec vs Marcin Ozieblo,1793958360
+359,1793959364508,768478613,11-5,under,105.5,2.208,0.0,Masters. Belarús,2.12,Vladislav Sizonenko vs Ilya Shut,1793959200
+360,1793959412517,768478099,11-3,under,96.5,2.17,0.0,Masters. Argentina,2.12,Francisco Fiasche vs Ramiro Baez,1793959201
+361,1793961175602,768486132,11-6,under,105.5,2.18,0.0,Masters. Belarús,2.06,Andrey Shevko vs Alexander Kavrigo,1793961001
+362,1793961492664,768486953,11-4,under,102.5,2.02,0.0,Masters. Rusia,2.06,Aleksey Alekhin vs Alexander Lyashenko,1793961300
+363,1793961730747,768486565,4-11,under,104.5,2.155,0.0,Masters. Polonia,2.06,Mariusz Saluda vs Damian Szajewski,1793961000
+364,1793961784747,768487739,6-11,under,105.5,2.18,0.0,Masters. Rusia,2.06,Sergey Makarov vs Sanzhar Zhumagaliev,1793961060
+365,1793961918045,768486486,11-6,under,93.5,2.01,0.0,Masters. Polonia,2.06,Dariusz Swiatek vs Ryszard Korzec,1793961060
+366,1793962655258,768491337,3-11,under,90.5,2.008,0.0,Masters. Rusia,2.08,Vadim Dorofeev vs Evgeny Medvedev,1793962440
+367,1793962956045,768491129,11-4,under,105.5,2.15,0.0,Masters. Belarús,2.15,Anton Gumarov vs Denis Yanchuk,1793962801
+368,1793962986052,768491591,5-11,under,106.5,2.144,0.0,Masters. Rusia,2.15,Arsen Platonov vs Igor Egorov V.,1793962200
+369,1793963067045,768492089,4-11,under,103.5,2.18,0.0,Masters. Belarús,2.15,Vladislav Sizonenko vs Andrey Shevko,1793962680
+370,1793963387620,768493732,6-11,under,106.5,2.155,0.0,Masters. Rusia. Mujeres,2.13,Valeriya Suhorukova vs Maria Stroganova,1793962981
+371,1793963558221,768494075,11-5,under,104.5,2.085,0.0,Masters. España,2.15,Sergio Vega Silva vs Eduardo Perez Moya,1793963040
+372,1793964049292,768494375,4-11,under,106.5,2.13,0.0,Masters. Argentina,2.18,Francisco Fiasche vs Joaquin Ruiz,1793963340
+373,1793964339700,768498176,6-11,under,106.5,2.208,0.0,Masters. Rusia,2.23,Valeriy Gorelov vs Grigory Tikhomirov,1793963400
+374,1793965734625,768504286,4-11,under,104.5,2.155,0.0,Masters. Rusia,2.28,Arsen Platonov vs Valeriy Gorelov,1793965380
+375,1793966078901,768502840,5-11,under,105.5,2.208,0.0,Masters. Rusia. Mujeres,2.28,Yekaterina Golubeva vs Valeriya Suhorukova,1793965261
+376,1793966085191,768503025,5-11,under,103.5,2.085,0.0,Masters. España,2.28,Sergio Vega Silva vs Serhio Duarte Batista,1793965261
+377,1793966449882,768505791,5-11,under,98.5,2.29,0.0,Masters. Rusia,2.28,Andrey Bedenko vs Igor Skvorcha,1793966101
+378,1793966902792,768506677,6-11,under,99.5,2.025,0.0,Masters. Rusia,2.31,Vadim Dorofeev vs Kirill Samarin,1793966220
+379,1793967169109,768508038,4-11,under,103.5,2.18,0.0,Masters. Polonia,2.31,Filip Kostecki vs Kacper Pyra,1793966401
+380,1793968603063,768512572,5-11,under,96.5,2.155,0.0,Masters. Rusia. Mujeres,2.29,Maria Averyanova vs Valeriya Suhorukova,1793967720
+381,1793968863679,768515359,11-5,under,105.5,2.208,0.0,Masters. Belarús,2.29,Alexander Blinets vs Andrey Krasnov,1793968501
+382,1793970987736,768522662,11-5,under,95.5,2.01,0.0,Masters. Belarús,2.27,Sergey Sapega vs Aleksandr Shchadko,1793970241
+383,1793971714126,768524425,11-2,under,97.5,2.18,0.0,Masters. Argentina,2.27,Francisco Fiasche vs Erik Flores,1793970480
+384,1793972984419,768532796,11-6,under,105.5,2.035,0.0,Masters. Rusia,2.29,Gleb Radionov vs Ivan Minin,1793972701
+385,1793973554745,768534930,5-11,under,104.5,2.18,0.0,Masters. Rusia. Mujeres,2.29,Marina Dobryanskaya vs Veronika Kan,1793973361
+386,1793973922846,768535464,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.27,Igor Skvorcha vs Viktor Savenko,1793973421
+387,1793975068081,768539232,5-11,under,104.5,2.18,0.0,Masters. Rusia,2.3,Igor Egorov V. vs Valeriy Gorelov,1793974201
+388,1793975115672,768541059,3-11,under,103.5,2.0,0.0,Masters. Belarús,2.3,Artem Poduporin vs Artyom Chernushin,1793974681
+389,1793975713072,768542868,11-4,under,99.5,2.01,0.0,Masters. Belarús,2.3,Daniil Makhtaduy vs Anton Gumarov,1793975400
+390,1793975725074,768543193,1-11,under,101.5,2.208,0.0,Masters. Rusia,2.3,Andrey Bedenko vs Viktor Savenko,1793975220
+391,1793976304379,768544509,5-11,under,102.5,2.184,0.0,Masters. España,2.3,Francisco Torres Bueno vs Roberto Garcia Gomez,1793975400
+392,1793977677563,768548509,3-11,under,100.5,2.19,0.0,Masters. Argentina,2.31,Ramiro Baez vs Francisco Fiasche,1793976901
+393,1793978581460,768554894,3-11,under,104.5,2.15,0.0,Masters. Rusia,2.31,Artem Muravyev vs Alexandr Shirshov,1793978101
+394,1793978581460,768553700,11-3,under,101.5,2.01,0.0,Masters. Belarús,2.31,Denis Yanchuk vs Daniil Makhtaduy,1793978100
+395,1793978801084,768555924,11-6,under,106.5,2.005,0.0,Masters. Belarús,2.31,Valery Bykh vs Andrey Nikonchuk,1793978400
+396,1793979590807,768558714,4-11,under,102.5,2.184,0.0,Masters. Rusia,2.36,Ivan Minin vs Gleb Radionov,1793979300
+397,1793979934079,768559933,11-5,under,100.5,2.075,0.0,Masters. Polonia,2.36,Krzysztof Ruszczynski vs Marcin Olszewski,1793979660
+398,1793981089530,768564982,3-11,under,101.5,2.184,0.0,Masters. Rusia,2.31,Alexander Gavyshev vs Daniil Bukreev,1793980980
+399,1793981149531,768563254,11-4,under,104.5,2.0,0.0,Masters. Belarús,2.31,Herbert Pyantkovsky vs Sergei Akulich,1793980200
+400,1793981189564,768564073,11-5,under,94.5,2.15,0.0,Masters. Rusia,2.29,Pavel Malakhov vs Nabijon Gafurov,1793980200
+401,1793981249559,768562761,11-4,under,103.5,2.18,0.0,Masters. Rusia. Mujeres,2.29,Veronika Kan vs Marina Dobryanskaya,1793980501
+402,1793981933285,768567722,4-11,under,104.5,2.056,0.0,Masters. Rusia,2.29,Ivan Minin vs Evgeniy Serov,1793981461
+403,1793982425993,768569214,5-11,under,105.5,2.0,0.0,Masters. Belarús,2.34,Yaroslav Starichenok vs Valery Bykh,1793982000
+404,1793982969642,768572857,5-11,under,104.5,2.035,0.0,Masters. Rusia,2.32,Vladislav Milinka vs Vyacheslav Gagal,1793982660
+405,1793983368776,768573423,6-11,under,97.5,2.056,0.0,Masters. Polonia. Mujeres,2.35,Marta Holak vs Anna Kubiak,1793983020
+406,1793983482936,768573268,11-6,under,101.5,2.18,0.0,Masters. España,2.35,Andres Quintana Gutierrez vs Gennadiy Cheptsov,1793983200
+407,1793983991722,768575136,11-4,under,99.5,2.18,0.0,Masters. Argentina,2.35,Juan Alcocer vs Tomas Tapia,1793983801
+408,1793984739165,768577674,5-11,under,102.5,2.16,0.0,Masters. Rusia,2.37,Daniil Fedorov vs Aleksandr Gorochny,1793984400
+409,1793985542979,768582859,5-11,under,100.5,2.18,0.0,Masters. Rusia,2.4,Mikhail Leonov vs Kirill Klepikov,1793984570
+410,1793986636151,768585119,6-11,under,103.5,2.0,0.0,Masters. Polonia,2.43,Bogdan Wilczynski vs Jacek But,1793985901
+411,1793986690160,768588239,11-6,under,103.5,2.16,0.0,Masters. Rusia,2.43,Vitaly Krivonogov vs Alexander Nekrasov,1793986321
+412,1793987052446,768587743,11-4,under,103.5,2.005,0.0,Masters. Belarús,2.43,Yaroslav Starichenok vs Andrey Nikonchuk,1793986320
+413,1793988224563,768594440,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.46,Arseniy Popkov vs Kirill Klepikov,1793987698
+414,1793988410607,768593947,5-11,under,105.5,2.005,0.0,Masters. Belarús,2.43,Vladimir Korshkov vs Dmitriy Rudov,1793987400
+415,1793988788516,768598393,11-4,under,102.5,2.184,0.0,Masters. Rusia,2.41,Pavel Petrovskiy vs Pavel Antonov,1793988601
+416,1793988830511,768596446,11-4,under,94.5,2.015,0.0,Masters. Belarús,2.41,Andrey Borodich vs Yuri Moroz,1793988601
+417,1793989590383,768600050,4-11,under,93.5,2.15,0.0,Masters. Rusia,2.44,Nabijon Gafurov vs Pavel Malakhov,1793988565
+418,1793990135943,768603181,6-11,under,101.5,2.075,0.0,Masters. Polonia,2.44,Bartosz Jaworski vs Adrian Kubel,1793989801
+419,1793990354532,768604897,5-11,under,105.5,2.016,0.0,Masters. Rusia,2.44,Dmitriy Karabut vs Sergei Shmelyov,1793990101
+420,1793990651337,768604815,5-11,under,105.5,2.056,0.0,Masters. España,2.41,Andres Quintana Gutierrez vs Diego Arcos Canete,1793990100
+421,1793990983647,768606025,5-11,under,102.5,2.16,0.0,Masters. Rusia,2.36,Daniil Bukreev vs Alexandr Shirshov,1793990401
+422,1793991038792,768606824,11-6,under,104.5,2.035,0.0,Masters. Rusia,2.36,Berik Urkunbaev vs Pavel Antonov,1793990701
+423,1793991448865,768607891,4-11,under,97.5,2.17,0.0,Masters. Rusia,2.36,Bogdan Tikhonov vs Nabijon Gafurov,1793990756
+424,1793992015555,768611783,5-11,under,89.5,2.07,0.0,Masters. Rusia,2.39,Semyon Yashchenin vs Daniil Ovsyannikov,1793991720
+425,1793993143471,768616836,4-11,under,102.5,2.0,0.0,Masters. Belarús,2.39,Yuri Moroz vs Nikolay Zademlenyuk,1793993101
+426,1793993846454,768619469,4-11,under,103.5,2.18,0.0,Masters. Rusia,2.39,Artem Makarychev vs Sergei Shmelyov,1793993581
+427,1793994938309,768625105,11-6,under,90.5,2.175,0.0,Masters. Rusia,2.37,Daniil Ovsyannikov vs Timofey Ufimtsev,1793994721
+428,1793995055121,768624122,0-11,under,93.5,2.025,0.0,Masters. Polonia. Mujeres,2.37,Dominika Niedzwiecka vs Magdalena Krupa,1793994600
+429,1793995109921,768626167,6-11,under,99.5,2.17,0.0,Masters. Rusia,2.37,Alexander Nekrasov vs Daniil Fedorov,1793994901
+430,1793995801020,768626607,11-5,under,100.5,2.016,0.0,Masters. Belarús,2.43,Yuri Moroz vs Andrey Borodich,1793995500
+431,1793997069266,768631744,4-11,under,101.5,2.16,0.0,Masters. España,2.5,Ignacio Perez Valles vs Diego Arcos Canete,1793996280
+432,1793999071351,768639801,6-11,under,107.5,2.136,0.0,Masters. Belarús,2.51,Kirill Motuz vs Oleg Tsyganov,1793998801
+433,1793999493333,768641067,11-6,under,104.5,2.08,0.0,Masters. Rusia,2.51,Alexander Rubtsov vs Roman Rybkin,1793998800
+434,1794000699672,768644427,11-4,under,102.5,2.184,0.0,Masters. Polonia,2.51,Adrian Kubel vs Tomasz Pawlowski,1794000121
+435,1794001591747,768647273,6-11,under,104.5,2.304,0.0,Masters. España,2.49,Adrian Caballo vs Heruan Jose Escalona,1794001201
+436,1794001683343,768647789,2-11,under,101.5,2.18,0.0,Masters. Belarús,2.49,Grigoriy Pitirinov vs Ruslan Tyunis,1794001441
+437,1794002128666,768649132,5-11,under,105.5,2.056,0.0,Masters. Rusia,2.49,Ivan Sokolov vs Alexey Bychkov,1794002041
+438,1794004397581,768656103,11-5,under,103.5,2.184,0.0,Masters. Rusia,2.41,Nikita Poteryakhin vs Alexey Demidov,1794004321
+439,1794004493584,768656031,6-11,under,105.5,2.21,0.0,Masters. Polonia,2.41,Lukasz Tkaczyk vs Lukasz Mikucki,1794004321
+440,1794004625595,768655549,6-11,under,104.5,2.304,0.0,Masters. España,2.41,David Ruiz Biasi vs Jose Luis Diaz Recio,1794004321
+441,1794006240230,768659404,6-11,under,104.5,2.184,0.0,Masters. Belarús,2.42,Dmitriy Rudov vs Vladimir Korshkov,1794005761
+442,1794006252235,768659566,11-5,under,98.5,2.17,0.0,Masters. Argentina,2.42,Maximo Villegas vs Gabriel Frasson,1794006001
+443,1794006330234,768660098,11-5,under,105.5,2.056,0.0,Masters. Belarús,2.42,Roman Kharitonenko vs Kirill Kazanin,1794006001
+444,1794007794990,768664576,11-2,under,98.5,2.21,0.0,Masters. Polonia,2.42,Piotr Strojwas vs Lukasz Mikucki,1794007621
+445,1794009115812,768667884,11-6,under,99.5,2.065,0.0,Masters. Belarús,2.37,Ivan Smyslin vs Anton Mezhevich,1794008941
+446,1794009958971,768669823,3-11,under,103.5,2.155,0.0,Masters. Polonia,2.37,Marcin Trochim vs Mateusz Burakowski,1794009601
+447,1794010625130,768672982,11-4,under,103.5,2.075,0.0,Masters. Rusia,2.4,Alexey Uzhevsky vs Alexander Kulagin S.,1794010320
+448,1794011267152,768674761,11-6,under,103.5,2.16,0.0,Masters. Rusia,2.4,Boris Popov vs Daniil Tolyzin,1794010801
+449,1794012104574,768678123,4-11,under,99.5,2.075,0.0,Masters. Rusia,2.45,Roman Rybkin vs Ivan Sokolov,1794011940
+450,1794012182594,768677098,11-6,under,106.5,2.216,0.0,Masters. Polonia,2.45,Lukasz Tkaczyk vs Piotr Strojwas,1794010981
+451,1794012446600,768678394,11-5,under,96.5,2.155,0.0,Masters. Polonia,2.48,Mateusz Mleczko vs Dariusz Swiatek,1794011940
+452,1794012500595,768678891,5-11,under,105.5,2.1,0.0,Masters. Rusia,2.48,Yuri Polyakov vs Mikhail Agafonov,1794012301
+453,1794013154630,768680054,6-11,under,110.5,2.16,0.0,Masters. Rusia,2.51,Mikhail Butylev vs Boris Popov,1794012721
+454,1794013854086,768683292,2-11,under,102.5,2.155,0.0,Masters. Polonia,2.51,Robert Wojnarski vs Marcin Trochim,1794013500
+455,1794013971081,768682943,6-11,under,106.5,2.056,0.0,Masters. Rusia,2.48,Ivan Sokolov vs Alexey Bychkov,1794013440
+456,1794015195455,768687282,11-5,under,109.5,2.225,0.0,Masters. Rusia,2.49,Boris Popov vs Artyom Sharshikov,1794014881
+457,1794015273460,768687854,2-11,under,101.5,2.18,0.0,Masters. Belarús,2.49,Danil Lopatkin vs Vitaly Mager,1794015120
+458,1794015531461,768688405,11-4,under,99.5,2.055,0.0,Masters. Belarús,2.49,Ivan Smyslin vs Roman Kharitonenko,1794015240
+459,1794015843475,768688909,6-11,under,103.5,2.184,0.0,Masters. Polonia,2.49,Lukasz Mikucki vs Krzysztof Majewski,1794015480
+460,1794016293628,768689933,11-2,under,93.5,2.155,0.0,Masters. Rusia,2.47,Nikita Poteryakhin vs Salavat Abulaev,1794015721
+461,1794016659632,768691860,5-11,under,100.5,2.075,0.0,Masters. Rusia,2.47,Alexander Rubtsov vs Ivan Sokolov,1794016500
+462,1794016959655,768691112,2-11,under,100.5,2.184,0.0,Masters. Belarús,2.47,Ruslan Tyunis vs Kirill Motuz,1794016201
+463,1794017877687,768693547,6-11,under,95.5,2.15,0.0,Masters. Belarús,2.42,Nikolay Chizhonok vs Oleg Mikhalenok,1794017401
+464,1794018477705,768695255,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.4,Amir Ziyangareyev vs Nikita Poteryakhin,1794017760
+465,1794018912734,768697113,6-11,under,104.5,2.184,0.0,Masters. Polonia,2.4,Piotr Morawski vs Mateusz Mleczko,1794017220
+466,1794020550810,768701621,2-11,under,100.5,2.184,0.0,Masters. Belarús,2.38,Igor Shkrobot vs Vyacheslav Borovko,1794020161
+467,1794021787051,768703953,6-11,under,104.5,2.184,0.0,Masters. Polonia,2.38,Dariusz Swiatek vs Piotr Morawski,1794021061
+468,1794021964060,768704414,6-11,under,86.5,2.216,0.0,Masters. Belarús,2.38,Danil Lopatkin vs Egor Ivanovsky,1794021480
+469,1794022780111,768706669,11-6,under,104.5,2.184,0.0,Masters. Belarús,2.38,Yuri Vasilian vs Nikolay Chizhonok,1794022201
+470,1794023908168,768710401,11-4,under,99.5,2.075,0.0,Masters. Rusia,2.39,Anton Oleksyuk vs Anton Zheleznov,1794023700
+471,1794023914167,768710144,3-11,under,101.5,2.184,0.0,Masters. Belarús,2.39,Vitaly Mager vs Egor Ivanovsky,1794023641
+472,1794024220548,768709635,4-11,under,97.5,2.065,0.0,Masters. Belarús,2.39,Maxim Sugonyako vs Samvel Gyurjyan,1794024000
+473,1794024436188,768712134,11-6,under,103.5,2.16,0.0,Masters. Rusia,2.39,Evgeniy Buryanov vs Evgeny Kolbin,1794024240
+474,1794024616195,768712279,6-11,under,104.5,2.21,0.0,Masters. Polonia,2.41,Szymon Wisniewski vs Maciej Wisniewski,1794024181
+475,1794025510221,768716029,11-6,under,105.5,2.075,0.0,Masters. Rusia,2.47,Alexander Chernov vs Oleg Shilo,1794025440
+476,1794026734292,768719519,3-11,under,101.5,2.184,0.0,Masters. Belarús,2.47,Vyacheslav Borovko vs Alexander Dyatel,1794026461
+477,1794027802347,768721875,11-3,under,103.5,2.155,0.0,Masters. Polonia,2.47,Leszek Maduzia vs Marek Nowicki,1794027600
+478,1794028826796,768724969,4-11,under,101.5,2.16,0.0,Masters. Rusia,2.47,Andrey Bedenko vs Andrey Kutsopatriy,1794028200
+479,1794029301509,768727102,5-11,under,102.5,2.16,0.0,Masters. Belarús,2.45,Samvel Gyurjyan vs Vadim Kazachenko,1794028981
+480,1794030788865,768730123,5-11,under,98.5,2.17,0.0,Masters. Polonia,2.51,Jakub Okurowski vs Maciej Morawski,1794030241
+481,1794031449118,768732511,6-11,under,106.5,2.155,0.0,Masters. Polonia,2.51,Marcin Kleszcz vs Pawel Szymanski,1794031201
+482,1794032298552,768735391,6-11,under,99.5,2.17,0.0,Masters. Polonia,2.48,Leszek Maduzia vs Artur Stoszko,1794031981
+483,1794032424556,768735094,11-5,under,98.5,2.16,0.0,Masters. Rusia,2.48,Andrey Kutsopatriy vs Viktor Savenko,1794031801
+484,1794032550566,768735776,3-11,under,100.5,2.16,0.0,Masters. Belarús,2.48,Alexander Vasiliev vs Maxim Sugonyako,1794031981
+485,1794032805579,768736674,11-5,under,103.5,2.184,0.0,Masters. Polonia,2.51,Arkadiusz Zieminski vs Maciej Morawski,1794032280
+486,1794032991733,768737362,5-11,under,103.5,2.125,0.0,Masters. Rusia,2.51,Alexander Pitimirov vs Rauf Huseynov,1794032400
+487,1794034250025,768742057,11-6,under,106.5,2.208,0.0,Masters. Belarús,2.52,Kirill Goncharov vs Andrey Grits,1794033721
+488,1794034286035,768743723,11-3,under,101.5,2.184,0.0,Masters. Polonia,2.52,Marek Nowicki vs Michal Kucharski,1794034201
+489,1794034454043,768742951,4-11,under,98.5,2.2,0.0,Masters. Rusia,2.49,Andrey Bedenko vs Viktor Savenko,1794033960
+490,1794035150893,768745373,11-2,under,97.5,2.18,0.0,Masters. Rusia,2.47,Eduard Mozhaev vs Sergey Kolesnikov,1794034234
+491,1794035162896,768744652,6-11,under,103.5,2.16,0.0,Masters. Polonia,2.47,Marcin Witucki vs Arkadiusz Zieminski,1794034501
+492,1794035390901,768745982,11-5,under,90.5,2.105,0.0,Masters. Rusia,2.5,Andrei Yakushev vs Valeriy Gorelov,1794034801
+493,1794035570904,768745928,11-4,under,105.5,2.136,0.0,Masters. Polonia,2.5,Marcin Kleszcz vs Mateusz Dabrowski,1794034801
+494,1794035654908,768748170,11-2,under,102.5,2.0,0.0,Masters. Polonia,2.47,Daniel Zubrzycki vs Marcin Jurkiewicz,1794035520
+495,1794037723627,768753152,11-5,under,95.5,2.015,0.0,Masters. Belarús,2.42,Valery Bykh vs Yaroslav Starichenok,1794037200
+496,1794038247763,768756092,6-11,under,106.5,2.155,0.0,Masters. Polonia,2.42,Artur Stoszko vs Leszek Maduzia,1794037560
+497,1794038615884,768758953,11-5,under,98.5,2.17,0.0,Masters. Rusia. Mujeres,2.42,Ekaterina Bandukova vs Anna Danilova,1794038425
+498,1794039849173,768761535,3-11,under,98.5,2.18,0.0,Masters. Rusia,2.48,Valeriy Gorelov vs Rauf Huseynov,1794039001
+499,1794040191836,768765025,5-11,under,98.5,2.17,0.0,Masters. Rusia,2.48,Maksim Trubin vs Eduard Tolstuhin,1794039961
+500,1794040305840,768766090,2-11,under,101.5,2.18,0.0,Masters. Rusia. Mujeres,2.48,Daria Yuzhakova vs Olga Sycheva,1794039600
+501,1794040414414,768764961,3-11,under,102.5,2.005,0.0,Masters. España,2.48,Juan Francisko Castillo vs Manuel Almeida Juarez,1794039840
+502,1794041372032,768768104,11-6,under,99.5,2.17,0.0,Masters. Polonia,2.45,Michal Kucharski vs Artur Stoszko,1794040860
+503,1794042227618,768771197,11-5,under,105.5,2.155,0.0,Masters. Rusia,2.43,Valery Morozyuk vs Eduard Tolstuhin,1794041821
+504,1794042251604,768770694,11-5,under,102.5,2.16,0.0,Masters. Belarús,2.43,Aliaksei Rabushko vs Vladimir Bielokon,1794041400
+505,1794042263617,768770935,11-6,under,103.5,2.16,0.0,Masters. Polonia,2.43,Wiktor Szczygiel vs Jakub Warpas,1794041400
+506,1794042733518,768771747,6-11,under,99.5,2.17,0.0,Masters. Belarús,2.43,Sergei Daineko vs Alexander Rakovich,1794041941
+507,1794042745555,768772221,11-6,under,104.5,2.184,0.0,Masters. Rusia. Mujeres,2.43,Anna Danilova vs Olga Sycheva,1794041953
+508,1794043547033,768774383,11-4,under,105.5,2.136,0.0,Masters. Rusia,2.46,Valeriy Gorelov vs Alexander Pitimirov,1794042601
+509,1794043583034,768775717,11-5,under,98.5,2.17,0.0,Masters. Polonia,2.46,Marek Nowicki vs Artur Stoszko,1794042900
+510,1794043679754,768777482,11-5,under,98.5,2.17,0.0,Masters. Rusia,2.46,Konstantin Grishin vs Maksim Trubin,1794043440
+511,1794045385868,768782569,11-2,under,97.5,2.18,0.0,Masters. Rusia,2.55,Eduard Tolstuhin vs Maksim Trubin,1794045000
+512,1794045889937,768783409,6-11,under,98.5,2.01,0.0,Masters. España,2.55,Eduardo Perez Moya vs Manuel Almeida Juarez,1794045301
+513,1794045895921,768783241,11-6,under,105.5,2.18,0.0,Masters. Polonia,2.55,Pawel Szymanski vs Mateusz Dabrowski,1794045300
+514,1794045955922,768783687,11-2,under,100.5,2.01,0.0,Masters. Argentina,2.55,Luciano Paz vs Alejandro Fantozzi,1794045600
+515,1794046494582,768786984,11-6,under,93.5,2.17,0.0,Masters. Belarús,2.55,Aliaksei Rabushko vs Mikhail Pratskevich,1794045900
+516,1794047204442,768789263,11-6,under,103.5,2.16,0.0,Masters. Rusia. Mujeres,2.56,Olga Lososovskaya vs Zinaida Drak,1794046441
+517,1794048647633,768795807,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.62,Malek Al-Ezzi vs Muhridin Abdunazarov,1794048000
+518,1794048766169,768796733,11-4,under,103.5,2.016,0.0,Masters. Rusia,2.62,Arseniy Popkov vs Karen Movsisyan,1794048241
+519,1794049100255,768797915,11-6,under,104.5,2.184,0.0,Masters. Polonia,2.62,Wiktor Szczygiel vs Lukasz Kalinowski,1794048601
+520,1794049286252,768798492,11-6,under,87.5,2.165,0.0,Masters. Belarús,2.62,Alexander Blinets vs Artem Poduporin,1794048780
+521,1794050709650,768806099,6-11,under,104.5,2.184,0.0,Masters. Rusia,2.59,Vasily Tulchinsky vs Muhridin Abdunazarov,1794050400
+522,1794050898067,768805790,11-6,under,93.5,2.17,0.0,Masters. Belarús,2.57,Aliaksei Rabushko vs Gleb Krestopchuk,1794050281
+523,1794051290643,768807756,2-11,under,100.5,2.184,0.0,Masters. Rusia. Mujeres,2.57,Daria Yuzhakova vs Ekaterina Bandukova,1794051001
+524,1794051404638,768808132,11-5,under,105.5,2.025,0.0,Masters. Rusia. Mujeres,2.6,Maya Burova vs Veronika Kan,1794051001
+525,1794051877683,768810708,5-11,under,104.5,2.18,0.0,Masters. Rusia,2.63,Valery Khen vs Malek Al-Ezzi,1794051600
+526,1794051949691,768805297,11-1,under,86.5,2.0,0.0,Masters. Belarús,2.63,Aleksandr Shchadko vs Vladimir Yakovuk,1794049800
+527,1794052048087,768810734,11-6,under,89.5,2.136,0.0,Masters. Belarús,2.63,Artem Los vs Alexander Blinets,1794051480
+528,1794052494596,768811775,11-6,under,93.5,2.17,0.0,Masters. Belarús,2.68,Gleb Krestopchuk vs Mikhail Pratskevich,1794051901
+529,1794052920283,768812884,11-6,under,91.5,2.02,0.0,Masters. Argentina,2.71,Luciano Paz vs Ezequiel Arakaki,1794052501
+530,1794054966269,768822308,11-4,under,101.5,2.0,0.0,Masters. Polonia,2.72,Mateusz Sroczynski vs Oliwier Panasiuk,1794054360
+531,1794055513378,768823237,5-11,under,100.5,2.016,0.0,Masters. Argentina,2.72,Ezequiel Arakaki vs Rodrigo Lopez,1794054601
+532,1794055531361,768826754,1-11,under,99.5,2.18,0.0,Masters. Belarús,2.72,Egor Pashkovsky vs Aleksandr Shchadko,1794055201
+533,1794055629299,768825881,11-6,under,107.5,2.136,0.0,Masters. Rusia,2.72,Sergey Tultsev vs Danil Kizimenko,1794054773
+534,1794056870037,768832567,4-11,under,102.5,2.184,0.0,Masters. Polonia,2.72,Michal Sawecki vs Oliwier Panasiuk,1794056400
+535,1794057158403,768839189,6-11,under,103.5,2.16,0.0,Masters. Rusia,2.72,Nikita Kochetov vs Kirill Klepikov,1794057061
+536,1794057337329,768839688,11-3,under,96.5,2.17,0.0,Masters. Rusia. Mujeres,2.72,Veronika Kan vs Maya Burova,1794057121
+537,1794057656323,768840681,4-11,under,102.5,2.184,0.0,Masters. Rusia,2.72,Ilya Semerkin vs Andrey Dergunov,1794057480
+538,1794058582805,768842918,4-11,under,99.5,2.18,0.0,Masters. Polonia,2.82,Mariusz Saluda vs Michal Sawecki,1794058200
+539,1794060229119,768851156,5-11,under,106.5,2.13,0.0,Masters. Rusia,2.82,Bogdan Isupov vs Andrey Galochkin,1794060000
+540,1794061161906,768857491,4-11,under,103.5,2.096,0.0,Masters. España,2.82,Marco Salis vs Francisco Javier Vargas Postigo,1794060481
+541,1794061545093,768858645,11-4,under,97.5,2.17,0.0,Masters. Rusia,2.82,Vladimir Mikhalin vs Oleg Kobzev,1794060642
+542,1794061641097,768859676,4-11,under,99.5,2.075,0.0,Masters. Rusia,2.85,Malek Al-Ezzi vs Vasily Tulchinsky,1794061020
+543,1794063176591,768867989,11-5,under,100.5,2.155,0.0,Masters. Rusia,2.83,Kirill Klepikov vs Nikita Kochetov,1794063001
+544,1794063613053,768867773,6-11,under,101.5,2.18,0.0,Masters. Rusia. Mujeres,2.83,Polina Osnovyna vs Anita Nogovicyna,1794062929
+545,1794063816485,768868246,11-3,under,96.5,2.17,0.0,Masters. Belarús,2.83,Sergei Rodachinskii vs Ruslan Romanovsky,1794063000
+546,1794063860072,768868739,5-11,under,103.5,2.23,0.0,Masters. Polonia,2.83,Rafal Suszycki vs Rafal Zajkowski,1794063600
+547,1794065489745,768882710,6-11,under,106.5,2.208,0.0,Masters. Rusia,2.93,Evgeniy Serov vs Dmitry Volin,1794065101
+548,1794065781418,768885595,11-4,under,102.5,2.184,0.0,Masters. Polonia,2.93,Jakub Makutynowicz vs Adrian Rowinski,1794065400
+549,1794065925442,768886004,5-11,under,104.5,2.18,0.0,Masters. Rusia,2.93,Alexander Gavyshev vs Damir Yaikov,1794065641
+550,1794066582677,768888586,11-6,under,103.5,2.16,0.0,Masters. Belarús,2.9,Oleg Astashevich vs Anton Lazarevskii,1794066121
+551,1794067687649,768892735,6-11,under,104.5,2.184,0.0,Masters. Belarús,2.87,Igor Shkurin vs Yuri Tokarevskiy,1794067201
+552,1794067758807,768892825,6-11,under,101.5,2.18,0.0,Masters. Rusia,2.9,Nikolay Lysenkov vs Alexandr Bugaev,1794067200
+553,1794068043838,768892800,4-11,under,102.5,2.184,0.0,Masters. España,2.9,Jose Luis Diaz Recio vs Heruan Jose Escalona,1794067201
+554,1794069159625,768902064,11-5,under,102.5,2.16,0.0,Masters. Polonia,2.94,Jakub Makutynowicz vs Norbert Wetklo,1794069001
+555,1794070262220,768906105,4-11,under,104.5,2.155,0.0,Masters. Belarús,2.88,Rustam Matusevich vs Yuriy Starodubtsev,1794069781
+556,1794070523754,768906652,6-11,under,104.5,2.184,0.0,Masters. España,2.85,Antonio Reina vs Juan Montanez Andrade,1794070020
+557,1794070886964,768909823,3-11,under,101.5,2.184,0.0,Masters. Polonia,2.85,Adrian Rowinski vs Norbert Wetklo,1794070801
+558,1794071012935,768909687,11-6,under,104.5,2.23,0.0,Masters. Polonia,2.85,Miroslaw Podstawka vs Adam Polech,1794070200
+559,1794071469862,768911117,4-11,under,97.5,2.17,0.0,Masters. Rusia,2.85,Denis Medvedev vs Pavel Khripunenko,1794070860
+560,1794072672375,768921782,11-6,under,103.5,2.1,0.0,Masters. Rusia,2.86,Artem Muravyev vs Andrey Galochkin,1794072421
+561,1794072678377,768920832,5-11,under,103.5,2.184,0.0,Masters. Belarús,2.86,Nikita Busov vs Igor Ogievich,1794072301
+562,1794072842401,768922093,11-4,under,103.5,2.18,0.0,Masters. Rusia,2.8,Arsen Platonov vs Artem Lobovikov,1794072601
+563,1794072968422,768919056,11-5,under,104.5,2.18,0.0,Masters. Argentina,2.8,Alvaro Munno vs Erik Flores,1794072000
+564,1794073478162,768923488,11-6,under,99.5,2.17,0.0,Masters. Belarús,2.84,Igor Shkurin vs Rustam Matusevich,1794072721
+565,1794073556187,768925223,3-11,under,103.5,2.155,0.0,Masters. Rusia,2.84,Alexander Gavyshev vs Stanislav Valov,1794073201
+566,1794074353097,768929137,3-11,under,101.5,2.184,0.0,Masters. Rusia,2.87,Bogdan Tikhonov vs Pavel Khripunenko,1794073676
+567,1794074543100,768931644,11-2,under,95.5,2.025,0.0,Masters. Rusia,2.85,Alexandr Shirshov vs Andrey Galochkin,1794074220
+568,1794074975543,768931793,4-11,under,84.5,2.17,0.0,Masters. Belarús,2.85,Ruslan Romanovsky vs Oleg Astashevich,1794074280
+569,1794075165393,768935328,6-11,under,93.5,2.15,0.0,Masters. Belarús,2.85,Konstantin Gramovich vs Arseny Shilo,1794074881
+570,1794075239165,768933951,11-4,under,99.5,2.18,0.0,Masters. Belarús,2.85,Egor Vlasenko vs Nikita Busov,1794074401
+571,1794075827818,768937457,11-6,under,103.5,2.16,0.0,Masters. Polonia,2.89,Pawel Galecki vs Kamil Mankowski,1794075301
+572,1794076388043,768940577,6-11,under,93.5,2.2,0.0,Masters. Belarús,2.89,Yuri Tokarevskiy vs Yuriy Starodubtsev,1794076020
+573,1794076553944,768941423,6-11,under,99.5,2.0,0.0,Masters. Rusia,2.89,Alexandr Shirshov vs Bogdan Isupov,1794076021
+574,1794077021361,768941294,11-6,under,99.5,2.17,0.0,Masters. Belarús,2.83,Oleg Astashevich vs Anton Lazarevskii,1794076020
+575,1794077124612,768944555,11-6,under,104.5,2.184,0.0,Masters. Belarús,2.83,Andrey Braganets vs Andrey Shevko,1794076620
+576,1794078262657,768948226,3-11,under,101.5,2.23,0.0,Masters. Polonia,2.8,Miroslaw Podstawka vs Rafal Strzelczak,1794077820
+577,1794078748059,768950456,11-6,under,104.5,2.184,0.0,Masters. Rusia,2.78,Sergei Shmelyov vs Artem Makarychev,1794077877
+578,1794078934463,768949158,4-11,under,99.5,2.18,0.0,Masters. Argentina,2.78,Alvaro Munno vs Santiago Gerez,1794077881
+579,1794080028485,768956464,5-11,under,103.5,2.08,0.0,Masters. Belarús,2.75,Arseny Shilo vs Andrey Shevko,1794079441
+580,1794080430256,768958750,6-11,under,97.5,2.155,0.0,Masters. Rusia,2.75,Artem Lobovikov vs Arsen Platonov,1794079801
+581,1794080652258,768959971,11-6,under,102.5,2.05,0.0,Masters. España,2.72,Francisco Javier Amador vs Eduardo Villegas Sanchez,1794080040
+582,1794081049798,768959837,11-6,under,107.5,2.136,0.0,Masters. Argentina,2.72,Erik Flores vs Alvaro Munno,1794079921
+583,1794082118356,768967228,3-11,under,101.5,2.184,0.0,Masters. Polonia,2.78,Arkadiusz Switala vs Kamil Mankowski,1794081600
+584,1794082453329,768968502,11-4,under,104.5,2.175,0.0,Masters. Belarús,2.78,Nikita Busov vs Egor Vlasenko,1794081901
+585,1794083034477,768970104,5-11,under,98.5,2.065,0.0,Masters. Polonia,2.73,Marian Balak vs Mateusz Cichorski,1794082201
+586,1794083288384,768972395,11-5,under,105.5,2.155,0.0,Masters. Rusia,2.73,Arsen Platonov vs Gennadiy Kokov,1794082801
+587,1794083932244,768975021,5-11,under,100.5,2.075,0.0,Masters. Belarús,2.7,Andrey Shevko vs Andrey Braganets,1794083401
+588,1794085093420,768978999,5-11,under,105.5,2.1,0.0,Masters. Belarús,2.74,Igor Ogievich vs Nikita Busov,1794084540
+589,1794085506660,768980223,11-5,under,105.5,2.0,0.0,Masters. Polonia,2.74,Patryk Gatner vs Piotr Kosciuk,1794085201
+590,1794087690442,768988730,5-11,under,103.5,2.21,0.0,Masters. Polonia,2.71,Rafal Strzelczak vs Jacek Skrzeczkowski,1794087601
+591,1794087919170,768988585,5-11,under,103.5,2.48,0.0,Masters. España,2.71,Daniel Lopera Santa vs Daniel Toledo Gutierrez,1794087000
+592,1794088598128,768990848,3-11,under,103.5,2.0,0.0,Masters. Rusia,2.71,Matvey Tkachev vs Arsentiy Turubanov,1794088440
+593,1794089024700,768990971,4-11,under,103.5,2.175,0.0,Masters. Rusia,2.74,Amir Ziyangareyev vs Salavat Abulaev,1794088501
+594,1794089084989,768990658,6-11,under,104.5,2.48,0.0,Masters. España,2.74,Ivan Perez Martin vs Francisco Javier Amador,1794088501
+595,1794089625019,768994149,2-11,under,102.5,2.075,0.0,Masters. Rusia,2.74,Kirill Taran vs Artem Makarychev,1794089460
+596,1794090374211,768994973,4-11,under,102.5,2.184,0.0,Masters. Rusia,2.77,Mikhail Butylev vs Boris Popov,1794089640
+597,1794091168504,768998747,11-6,under,104.5,2.08,0.0,Masters. Polonia,2.82,Patryk Gatner vs Wlodzimierz Matusiak,1794090961
+598,1794092975354,769002831,5-11,under,94.5,2.15,0.0,Masters. Rusia,2.82,Amir Ziyangareyev vs Nikita Poteryakhin,1794092401
+599,1794093431880,769002925,4-11,under,103.5,2.485,0.0,Masters. España,2.85,Daniel Toledo Gutierrez vs Alejandro Merino Pena,1794092701
+600,1794095466065,769009653,11-6,under,105.5,2.465,0.0,Masters. España,2.86,Daniel Lopera Santa vs Diego Baro Losilla,1794095041
+601,1794096005228,769011431,11-4,under,99.5,2.18,0.0,Masters. Polonia,2.86,Tymoteusz Milas vs Grzegorz Skalowski,1794095640
+602,1794096607426,769012545,1-11,under,90.5,2.15,0.0,Masters. Rusia,2.86,Daniil Tolyzin vs Mikhail Butylev,1794096001
+603,1794097701528,769017573,11-5,under,105.5,2.155,0.0,Masters. Belarús,2.84,Andrey Sukharevsky vs Denis Yanchuk,1794097440
+604,1794098581001,769019910,6-11,under,106.5,2.155,0.0,Masters. Polonia,2.78,Krzysztof Marek Zalewski vs Grzegorz Skalowski,1794098041
+605,1794098599008,769020022,11-6,under,105.5,2.18,0.0,Masters. Belarús,2.78,Grigoriy Pitirinov vs Kirill Motuz,1794097800
+606,1794099515179,769022455,3-11,under,101.5,2.184,0.0,Masters. Belarús,2.81,Iaroslav Borkovskii vs Alexey Makarenko,1794099180
+607,1794100094298,769023789,6-11,under,81.5,2.064,0.0,Masters. Belarús,2.81,Artem Rusak vs Denis Yanchuk,1794099721
+608,1794101080792,769026864,11-6,under,104.5,2.184,0.0,Masters. Rusia,2.79,Artyom Sharshikov vs Boris Popov,1794100621
+609,1794101748924,769028511,11-6,under,98.5,2.175,0.0,Masters. Rusia,2.82,Nikita Poteryakhin vs Amir Ziyangareyev,1794101400
+610,1794102086601,769029030,11-4,under,98.5,2.175,0.0,Masters. Belarús,2.85,Denis Yanchuk vs Andrey Sukharevsky,1794101641
+611,1794103643426,769033896,5-11,under,94.5,2.15,0.0,Masters. Polonia,2.88,Jacek Skwarczynski vs Krzysztof Marek Zalewski,1794103141
+612,1794103697434,769034283,5-11,under,98.5,2.17,0.0,Masters. Rusia,2.88,Salavat Abulaev vs Nikita Poteryakhin,1794103500
+613,1794104402868,769036722,4-11,under,103.5,2.45,0.0,Masters. España,2.86,Diego Baro Losilla vs Alejandro Merino Pena,1794104041
+614,1794105170469,769038818,11-3,under,69.5,2.136,0.0,Masters. Belarús,2.92,Sergei Dovgalev vs Alexey Makarenko,1794104820
+615,1794105206467,769038165,5-11,under,103.5,2.184,0.0,Masters. Belarús,2.92,Daniil Makhtaduy vs Denis Yanchuk,1794104761
+616,1794106123790,769039978,5-11,under,100.5,2.19,0.0,Masters. Argentina,2.96,Joaquin Ruiz vs Francisco Fiasche,1794105480
+617,1794107062908,769043729,11-2,under,93.5,2.155,0.0,Masters. Rusia,2.96,Eduard Mozhaev vs Sergey Zarubenko,1794106800
+618,1794107134916,769043288,4-11,under,104.5,2.0,0.0,Masters. Rusia,2.96,Daniil Tretyakov vs Pavel Meleshko,1794106801
+619,1794107154502,769043788,6-11,under,106.5,2.155,0.0,Masters. Belarús,2.96,Andrey Nikonchuk vs Igor Shkrobot,1794106200
+620,1794107232505,769043625,3-11,under,85.5,2.225,0.0,Masters. Belarús,2.96,Kirill Kazanin vs Alexey Makarenko,1794106621
+621,1794110384529,769052878,5-11,under,103.5,2.184,0.0,Masters. Rusia,3.13,Sergey Zarubenko vs Evgeniy Buryanov,1794110101
+622,1794110852527,769055244,5-11,under,103.5,2.184,0.0,Masters. Polonia,3.13,Krzysztof Majewski vs Filip Kostecki,1794109861
+623,1794112532605,769058921,11-6,under,104.5,2.184,0.0,Masters. Belarús,3.1,Andrey Grits vs Vladimir Yakovuk,1794112381
+624,1794113072786,769060412,6-11,under,104.5,2.184,0.0,Masters. Polonia,3.08,Mateusz Majszyk vs Krzysztof Szulc,1794112800
+625,1794113622994,769061544,11-6,under,99.5,2.17,0.0,Masters. Belarús,3.11,Igor Shkrobot vs Alexander Dyatel,1794113400
+626,1794114236905,769062866,11-2,under,94.5,2.18,0.0,Masters. Rusia,3.15,Ivan Sokolov vs Vyacheslav Ivanov,1794114001
+627,1794114260906,769062862,11-6,under,99.5,2.01,0.0,Masters. Polonia,3.15,Damian Dabrowski vs Slawomir Janikowski,1794113400
+628,1794114296914,769062941,5-11,under,105.5,2.155,0.0,Masters. Belarús,3.15,Pavel Ivanov vs Maxim Sugonyako,1794113400
+629,1794114507911,769063956,4-11,under,97.5,2.17,0.0,Masters. Rusia,3.15,Sergey Zarubenko vs Eduard Mozhaev,1794113880
+630,1794115159239,769066382,5-11,under,102.5,2.0,0.0,Masters. Polonia,3.19,Adam Reucki vs Szymon Rybarczyk,1794114034
+631,1794116128991,769069719,6-11,under,101.5,2.18,0.0,Masters. Rusia,3.26,Evgeniy Buryanov vs Sergey Zarubenko,1794115620
+632,1794116184247,769070025,6-11,under,97.5,2.155,0.0,Masters. Belarús,3.26,Alexander Vasiliev vs Vadim Kazachenko,1794115800
+633,1794116539706,769071596,11-2,under,92.5,2.18,0.0,Masters. Rusia,3.26,Yuriy Shashelev vs Aleksandr Mamaev,1794115921
+634,1794116797080,769071147,6-11,under,105.5,2.18,0.0,Masters. Polonia,3.27,Filip Kostecki vs Krzysztof Szulc,1794116220
+635,1794116917096,769072204,11-1,under,94.5,2.11,0.0,Masters. Rusia,3.27,Dmitry Tatarenko vs Viktor Savenko,1794116700
+636,1794117802346,769074733,11-5,under,96.5,2.155,0.0,Masters. Polonia,3.3,Marcin Kociuba vs Mateusz Witkowski,1794117600
+637,1794119072518,769078486,11-2,under,101.5,2.18,0.0,Masters. Polonia,3.32,Pawel Kociuba vs Marcin Jurkiewicz,1794118741
+638,1794119865497,769080522,6-11,under,101.5,2.18,0.0,Masters. Rusia,3.32,Sergey Antonov vs Eduard Mozhaev,1794119401
+639,1794119961495,769079276,5-11,under,94.5,2.15,0.0,Masters. Belarús,3.32,Alexander Dyatel vs Andrey Nikonchuk,1794119101
+640,1794120045504,769080549,11-6,under,101.5,2.18,0.0,Masters. Belarús,3.32,Maxim Sugonyako vs Vadim Kazachenko,1794119461
+641,1794120100832,769080794,4-11,under,101.5,2.0,0.0,Masters. Polonia,3.32,Szymon Rybarczyk vs Marcin Chwojko,1794118932
+642,1794121107345,769082808,5-11,under,98.5,2.17,0.0,Masters. Belarús,3.36,Vladimir Yakovuk vs Egor Pashkovsky,1794120360
+643,1794121511486,769085777,6-11,under,106.5,2.208,0.0,Masters. Rusia,3.4,Ivan Sokolov vs Yuriy Shashelev,1794121200
+644,1794121517486,769084682,5-11,under,95.5,2.27,0.0,Masters. Rusia,3.4,Andrey Bedenko vs Mikhail Golubtsov,1794120901
+645,1794121602724,769085459,5-11,under,103.5,2.184,0.0,Masters. Belarús,3.4,Igor Shkrobot vs Andrey Nikonchuk,1794121141
+646,1794123132827,769090283,11-6,under,101.5,2.18,0.0,Masters. Belarús,3.34,Matvey Zhdanyuk vs Igor Zharkevich,1794122581
+647,1794123760377,769092891,4-11,under,103.5,2.18,0.0,Masters. Polonia,3.31,Marcin Kociuba vs Pawel Kociuba,1794123301
+648,1794125284101,769095197,11-2,under,95.5,2.17,0.0,Masters. Belarús,3.31,Vadim Kazachenko vs Pavel Ivanov,1794123961
+649,1794125675394,769099312,6-11,under,103.5,2.16,0.0,Masters. Polonia,3.31,Marcin Jurkiewicz vs Marcin Kociuba,1794125101
+650,1794127337721,769105044,6-11,under,106.5,2.208,0.0,Masters. Rusia. Mujeres,3.28,Ekaterina Bandukova vs Maya Burova,1794126960
+651,1794127451737,769106161,11-6,under,100.5,2.296,0.0,Masters. Rusia,3.28,Sergey Varfolomeev S. vs Damir Yaikov,1794127201
+652,1794127699247,769106108,4-11,under,91.5,2.17,0.0,Masters. Rusia,3.28,Nikita Kochetov vs Kirill Klepikov,1794127162
+653,1794127795254,769106030,5-11,under,103.5,2.184,0.0,Masters. Rusia,3.28,Ivan Sokolov vs Vyacheslav Ivanov,1794127321
+654,1794127807260,769105568,11-2,under,99.5,2.0,0.0,Masters. Polonia,3.28,Grzegorz Michalec vs Slawomir Janikowski,1794126565
+655,1794128652227,769108842,6-11,under,107.5,2.15,0.0,Masters. Belarús,3.28,Artyom Strelchenok vs Ruslan Romanovsky,1794127800
+656,1794129320496,769111296,11-4,under,101.5,2.344,0.0,Masters. España,3.21,Juan Francisko Castillo vs Eduardo Villegas Sanchez,1794128400
+657,1794129802739,769114177,11-2,under,97.5,2.18,0.0,Masters. Rusia,3.19,Dmitriy Kolesnikov An vs Nikita Kochetov,1794127149
+658,1794129820749,769111079,6-11,under,106.5,2.0,0.0,Masters. España,3.19,Ivan Campana Gomez vs Ye Zijie,1794128701
+659,1794130120769,769114289,11-4,under,105.5,2.144,0.0,Masters. Polonia,3.19,Mateusz Witkowski vs Marcin Kociuba,1794129841
+660,1794130126762,769114392,1-11,under,101.5,2.33,0.0,Masters. Rusia,3.19,Stanislav Valov vs Damir Yaikov,1794129901
+661,1794130217496,769114094,5-11,under,96.5,2.15,0.0,Masters. Rusia,3.19,Yuriy Shashelev vs Ivan Sokolov,1794129720
+662,1794130512312,769114522,11-6,under,106.5,2.032,0.0,Masters. Polonia,3.23,Slawomir Janikowski vs Damian Dabrowski,1794129428
+663,1794130714968,769115334,6-11,under,99.5,2.17,0.0,Masters. Belarús,3.27,Igor Zharkevich vs Matvey Zhdanyuk,1794130201
+664,1794131383574,769117840,11-5,under,100.5,2.18,0.0,Masters. Belarús,3.28,Oleg Astashevich vs Anton Lazarevskii,1794131041
+665,1794132177763,769120037,6-11,under,105.5,2.18,0.0,Masters. Polonia,3.18,Jakub Warpas vs Kacper Weikum,1794131400
+666,1794132285770,769120413,11-6,under,99.5,2.17,0.0,Masters. Belarús,3.22,Vitaly Shaban vs Alexander Gusarevich,1794131400
+667,1794132835469,769125773,11-6,under,106.5,2.155,0.0,Masters. Rusia,3.23,Kirill Klepikov vs Vladislav Bushkov,1794132654
+668,1794132871472,769123842,6-11,under,105.5,2.18,0.0,Masters. Belarús,3.23,Matvey Zhdanyuk vs Artyom Chernushin,1794132420
+669,1794133453008,769127654,11-4,under,101.5,2.06,0.0,Masters. Rusia,3.23,Damir Yaikov vs Emil Nasyrov,1794133201
+670,1794134378627,769130471,11-6,under,100.5,2.208,0.0,Masters. Rusia,3.27,Evgeniy Penetov vs Konstantin Melnikov,1794133980
+671,1794134432628,769131085,4-11,under,104.5,2.275,0.0,Masters. Rusia,3.27,Anton Zheleznov vs Alexander Habovec,1794134101
+672,1794134692587,769131196,11-6,under,104.5,2.184,0.0,Masters. Rusia. Mujeres,3.27,Marina Dobryanskaya vs Ekaterina Bandukova,1794134100
+673,1794135808911,769136321,11-6,under,105.5,2.12,0.0,Masters. Rusia,3.17,Emil Nasyrov vs Stanislav Valov,1794135601
+674,1794135904890,769137316,5-11,under,106.5,2.136,0.0,Masters. Rusia,3.17,Andrei Yakushev vs Sergey Lebedev,1794135000
+675,1794136775365,769141092,6-11,under,106.5,2.208,0.0,Masters. Rusia,3.07,Vitaliy Beliakov vs Konstantin Melnikov,1794136140
+676,1794136787358,769141601,5-11,under,103.5,2.184,0.0,Masters. Rusia. Mujeres,3.07,Maya Burova vs Marina Dobryanskaya,1794136260
+677,1794137336979,769143148,11-5,under,100.5,2.18,0.0,Masters. Rusia,3.15,Konstantin Sergeev vs Ivan Minin,1794136500
+678,1794139485548,769150145,11-6,under,105.5,2.18,0.0,Masters. Rusia,3.12,Nikolay Lysenkov vs Malek Al-Ezzi,1794138146
+679,1794139728435,769154547,5-11,under,103.5,2.184,0.0,Masters. Rusia,3.12,Oleg Kobzev vs Nabijon Gafurov,1794139200
+680,1794140181179,769156461,11-4,under,99.5,2.18,0.0,Masters. Belarús,3.12,Alexander Gusarevich vs Kirill Shurapov,1794139861
+681,1794140205136,769156296,6-11,under,100.5,2.27,0.0,Masters. Rusia,3.12,Damir Yaikov vs Sergey Varfolomeev S.,1794139800
+682,1794140235139,769154683,11-3,under,102.5,2.016,0.0,Masters. Polonia,3.12,Michal Gabryelczyk vs Patryk Gatner,1794138946
+683,1794140969590,769160796,6-11,under,93.5,2.17,0.0,Masters. Rusia,3.2,Pavel Khripunenko vs Andrey Dergunov,1794140238
+684,1794142137712,769164740,2-11,under,103.5,2.0,0.0,Masters. Belarús,3.24,Samvel Gyurjyan vs Dmitry Kiselev,1794141900
+685,1794142869442,769166207,3-11,under,98.5,2.016,0.0,Masters. Argentina,3.21,Martin Berlese vs Rodrigo Lopez,1794141781
+686,1794143029333,769167203,11-5,under,102.5,2.02,0.0,Masters. Rusia,3.21,Vladimir Stecenko vs Valery Galperin,1794142861
+687,1794143258030,769170045,5-11,under,102.5,2.16,0.0,Masters. Rusia,3.24,Alexander Habovec vs Alexander Chernov,1794142921
+688,1794143375875,769169033,5-11,under,109.5,2.04,0.0,Masters. España,3.24,Ricardo Avila Gonzalez vs Ye Zijie,1794142681
+689,1794143950387,769175016,5-11,under,98.5,2.025,0.0,Masters. Belarús,3.27,Evgeniy Yakimets vs Samvel Gyurjyan,1794143521
+690,1794144976680,769176986,6-11,under,97.5,2.155,0.0,Masters. Belarús,3.28,Dmitriy Rudov vs Sergei Rodachinskii,1794144120
+691,1794145054683,769177359,6-11,under,107.5,2.02,0.0,Masters. Belarús,3.28,Vitaly Shaban vs Kirill Shurapov,1794144301
+692,1794145145807,769176824,11-5,under,103.5,2.08,0.0,Masters. Argentina,3.28,Martin Berlese vs Ezequiel Arakaki,1794144120
+693,1794145199922,769181991,5-11,under,104.5,2.035,0.0,Masters. Rusia,3.28,Nabijon Gafurov vs Pavel Khripunenko,1794145141
+694,1794145942843,769182353,11-4,under,104.5,2.056,0.0,Masters. España,3.28,Juan Francisko Castillo vs Eduardo Villegas Sanchez,1794145201
+695,1794146624060,769186224,11-6,under,105.5,2.18,0.0,Masters. Rusia,3.24,Artem Muravyev vs Alexander Gavyshev,1794145800
+696,1794147828001,769194987,5-11,under,101.5,2.175,0.0,Masters. Rusia,3.18,Rauf Huseynov vs Artem Lobovikov,1794147481
+697,1794148113410,769195558,5-11,under,102.5,2.16,0.0,Masters. España,3.18,Sergio Vega Silva vs Eduardo Villegas Sanchez,1794147660
+698,1794148434899,769195010,11-4,under,97.5,2.065,0.0,Masters. Argentina,3.18,Rodrigo Lopez vs Ezequiel Arakaki,1794147481
+699,1794148536908,769195050,5-11,under,102.5,2.0,0.0,Masters. Polonia,3.18,Patryk Gatner vs Michal Gabryelczyk,1794147781
+700,1794148991528,769199161,6-11,under,106.5,2.056,0.0,Masters. Rusia,3.18,Andrey Dergunov vs Oleg Kobzev,1794148741
+701,1794149884534,769200338,11-3,under,100.5,2.06,0.0,Masters. Belarús,3.25,Sergei Rodachinskii vs Mikhail Pratskevich,1794149101
+702,1794150211375,769202812,11-3,under,100.5,2.06,0.0,Masters. Belarús,3.29,Pavel Skrobot vs Herbert Pyantkovsky,1794149400
+703,1794150477454,769205274,11-6,under,105.5,2.18,0.0,Masters. Rusia,3.29,Alexander Gavyshev vs Dmitriy Makarov,1794150121
+704,1794152183155,769217864,11-0,under,96.5,2.344,0.0,Masters. Rusia,3.29,Ivan Iordanov vs Eugene Luppa,1794151860
+705,1794152225160,769217215,4-11,under,99.5,2.18,0.0,Masters. Rusia,3.26,Artem Muravyev vs Alexandr Shirshov,1794151920
+706,1794152261247,769216174,11-5,under,96.5,2.056,0.0,Masters. Belarús,3.26,Samvel Gyurjyan vs Evgeniy Yakimets,1794151800
+707,1794152363164,769217756,11-6,under,86.5,2.155,0.0,Masters. Rusia,3.3,Vitaly Krivonogov vs Lev Tsvetkov,1794151720
+708,1794152680090,769219537,6-11,under,103.5,2.02,0.0,Masters. Rusia,3.3,Pavel Khripunenko vs Nabijon Gafurov,1794152341
+709,1794153817983,769220881,6-11,under,106.5,2.155,0.0,Masters. Rusia,3.31,Viktor Lyashenko vs Dmitry Granichny,1794153600
+710,1794154143667,769223764,4-11,under,104.5,2.1,0.0,Masters. Belarús,3.27,Pavel Skrobot vs Alexander Rakovich,1794153601
+711,1794154874021,769228607,11-5,under,104.5,2.0,0.0,Masters. Polonia,3.27,Jakub Makutynowicz vs Daniel Zubrzycki,1794154681
+712,1794155320899,769231490,4-11,under,97.5,2.056,0.0,Masters. Rusia,3.28,Viktor Mansurov vs Eugene Luppa,1794154741
+713,1794155776987,769233534,1-11,under,92.5,2.056,0.0,Masters. Belarús,3.28,Herbert Pyantkovsky vs Alexander Blinets,1794155460
+714,1794156242740,769234554,4-11,under,104.5,2.005,0.0,Masters. Rusia,3.28,Arseniy Popkov vs Lev Tsvetkov,1794155700
+715,1794156266891,769235416,6-11,under,103.5,2.16,0.0,Masters. Rusia,3.28,Dmitriy Makarov vs Alexander Gavyshev,1794156001
+716,1794156308893,769234534,11-4,under,97.5,2.17,0.0,Masters. España,3.28,Diego Arcos Canete vs David Ruiz Biasi,1794156001
+717,1794156357593,769236176,5-11,under,104.5,2.056,0.0,Masters. Polonia,3.28,Jakub Okurowski vs Radoslaw Jastrzebowski,1794156181
+718,1794157476561,769239999,6-11,under,106.5,2.155,0.0,Masters. Belarús,3.31,Danil Lopatkin vs Konstantin Gramovich,1794156600
+719,1794158496709,769244327,11-5,under,102.5,2.16,0.0,Masters. España,3.25,Gennadiy Cheptsov vs Miguel Tortosa Murciano,1794157828
+720,1794159138647,769246486,11-6,under,105.5,2.23,0.0,Masters. Polonia,3.25,Rafal Hresiukiewicz vs Radoslaw Jastrzebowski,1794158221
+721,1794159916607,769251533,5-11,under,96.5,2.155,0.0,Masters. Belarús,3.22,Maxim Shchadko vs Svatoslav Vasilenya,1794159420
+722,1794160012593,769250713,11-6,under,106.5,2.1,0.0,Masters. Belarús,3.26,Alexander Rakovich vs Herbert Pyantkovsky,1794159601
+723,1794160128541,769251970,6-11,under,105.5,2.23,0.0,Masters. Polonia,3.26,Adrian Rowinski vs Daniel Zubrzycki,1794159541
+724,1794160176538,769250263,6-11,under,105.5,2.055,0.0,Masters. España,3.26,Roberto Garcia Gomez vs Francisco Torres Bueno,1794159240
+725,1794160456042,769253530,6-11,under,104.5,2.23,0.0,Masters. Polonia,3.26,Mateusz Cichorski vs Jakub Okurowski,1794159960
+726,1794160600047,769253730,2-11,under,95.5,2.025,0.0,Masters. Belarús,3.26,Dmitry Kiselev vs Alexander Prokopenko,1794160261
+727,1794161020053,769255028,11-4,under,97.5,2.025,0.0,Masters. Rusia,3.3,Kirill Taran vs Nikita Poteryakhin,1794160860
+728,1794161510527,769256536,11-6,under,106.5,2.005,0.0,Masters. Polonia. Mujeres,3.3,Patrycja Borowska vs Agata Wycichowska,1794160801
+729,1794162268997,769259762,5-11,under,106.5,2.0,0.0,Masters. Rusia,3.37,Danil Kizimenko vs Denis Zhurenko,1794161820
+730,1794162592253,769260495,11-5,under,98.5,2.065,0.0,Masters. Belarús,3.28,Pavel Skrobot vs Herbert Pyantkovsky,1794161700
+731,1794162873588,769264849,11-4,under,93.5,2.01,0.0,Masters. Rusia,3.28,Artyom Surin vs Daniil Rozhkov,1794162661
+732,1794162975594,769264839,3-11,under,99.5,2.416,0.0,Masters. Rusia,3.28,Eugene Luppa vs Ivan Iordanov,1794162421
+733,1794163668520,769265145,6-11,under,104.5,2.184,0.0,Masters. Rusia,3.28,Dmitry Granichny vs Viktor Lyashenko,1794162900
+734,1794164289044,769268442,4-11,under,102.5,2.035,0.0,Masters. Rusia,3.36,Vladislav Milinka vs Danil Kizimenko,1794163860
+735,1794164470741,769266619,11-3,under,98.5,2.035,0.0,Masters. Argentina,3.36,Alan Gerez vs Santiago Gerez,1794163320
+736,1794164731224,769270164,11-6,under,104.5,2.035,0.0,Masters. Rusia,3.36,Nikita Poteryakhin vs Daniil Rozhkov,1794164221
+737,1794166460734,769276676,11-5,under,87.5,2.1,0.0,Masters. Rusia,4.89,Vadim Budanov vs Alex Kuznetsov K.,1794165720
+738,1794166472734,769277171,11-4,under,101.5,2.16,0.0,Masters. Rusia,4.89,Timofey Metalnikov vs Evgeniy Manakov,1794166140
+739,1794167217675,769279706,5-11,under,103.5,2.08,0.0,Masters. Belarús,4.89,Egor Vlasenko vs Alexander Durovich,1794166801
+740,1794167361932,769279584,5-11,under,104.5,2.056,0.0,Masters. Polonia,4.97,Jakub Okurowski vs Rafal Hresiukiewicz,1794166741
+741,1794167966329,769282139,5-11,under,103.5,2.184,0.0,Masters. Rusia,4.9,Arsentiy Turubanov vs Evgeniy Manakov,1794167521
+742,1794170844511,769290782,11-5,under,92.5,2.14,0.0,Masters. Rusia,4.68,Vladimir Solovev vs Vadim Budanov,1794169860
+743,1794171292846,769290664,11-5,under,102.5,2.16,0.0,Masters. España,4.68,Miguel Tortosa Murciano vs Gennadiy Cheptsov,1794170101
+744,1794172305739,769294826,11-4,under,99.5,2.37,0.0,Masters. Rusia,4.61,Dmitry Stepanov vs Victor Tovpyshko,1794171601
+745,1794172401735,769296618,11-4,under,104.5,2.175,0.0,Masters. Belarús,4.61,Maxim Shchadko vs Danil Lopatkin,1794172141
+746,1794173967461,769301397,6-11,under,104.5,2.184,0.0,Masters. Polonia,4.71,Krzysztof Marek Zalewski vs Mariusz Nalecz,1794173880
+747,1794174093475,769301431,11-4,under,99.5,2.175,0.0,Masters. Belarús,4.71,Daniil Makhtaduy vs Nikolay Rusetsky,1794173940
+748,1794174299094,769301375,11-4,under,102.5,2.08,0.0,Masters. España,4.71,Adrian Caballo vs Heruan Jose Escalona,1794174001
+749,1794176067760,769306989,11-6,under,91.5,2.14,0.0,Masters. Belarús,4.73,Aleksandr Trusov vs Nikolay Rusetsky,1794175800
+750,1794177351342,769309616,4-11,under,103.5,2.005,0.0,Masters. España,4.58,Jose David Lopez vs Ignacio Perez Valles,1794177000
+751,1794177688303,769310384,5-11,under,98.5,2.17,0.0,Masters. Belarús,4.58,Sergei Akulich vs Egor Vlasenko,1794177301
+752,1794177778311,769311577,5-11,under,89.5,2.136,0.0,Masters. Belarús,4.58,Nikita Borodin vs Daniil Makhtaduy,1794177660
+753,1794177910770,769310787,3-11,under,98.5,2.18,0.0,Masters. España,4.58,David Ruiz Biasi vs Diego Arcos Canete,1794177420
+754,1794179071899,769314521,11-3,under,98.5,2.075,0.0,Masters. Belarús,4.73,Sergei Khramets vs Alexey Evtyushin,1794178801
+755,1794179149899,769314795,6-11,under,104.5,2.0,0.0,Masters. Polonia. Mujeres,4.73,Mariola Pietrzak vs Sylwia Karlinska,1794178800
+756,1794179500892,769315050,11-6,under,103.5,2.06,0.0,Masters. España,4.73,Heruan Jose Escalona vs Jose David Lopez,1794178921
+757,1794180336923,769318404,5-11,under,105.5,2.16,0.0,Masters. Belarús,4.6,Aleksandr Trusov vs Daniil Makhtaduy,1794180061
+758,1794180540937,769319531,6-11,under,103.5,2.165,0.0,Masters. Rusia,4.6,Alexey Demidov vs Alexander Kulagin,1794180540
+759,1794181170961,769320716,4-11,under,102.5,2.08,0.0,Masters. Polonia. Mujeres,4.61,Elena Bondareva A. vs Katarzyna Purgal,1794181021
+760,1794181650987,769321598,11-4,under,102.5,2.375,0.0,Masters. Belarús,4.61,Rustam Matusevich vs Nikita Anishchenko,1794181441
+761,1794181872998,769322410,6-11,under,105.5,2.18,0.0,Masters. Belarús,4.54,Vitaly Mager vs Aleksey Radionov,1794181801
+762,1794182116045,769322715,11-4,under,103.5,2.18,0.0,Masters. Rusia,4.54,Alexey Demidov vs Dmitriy Karabut,1794181921
+763,1794184132132,769328226,11-4,under,93.5,2.05,0.0,Masters. Belarús,4.58,Alexey Evtyushin vs Vitaly Mager,1794183780
+764,1794184246138,769328837,2-11,under,84.5,2.165,0.0,Masters. Rusia,4.58,Amir Ziyangareyev vs Dmitriy Karabut,1794184081
+765,1794185497975,769330925,5-11,under,98.5,2.17,0.0,Masters. Polonia,4.65,Mariusz Nalecz vs Tymoteusz Milas,1794185041
+766,1794191061065,769344636,4-11,under,99.5,2.18,0.0,Masters. Belarús,4.66,Alexander Slivkin vs Yuri Vasilian,1794190861
+767,1794192988519,769348253,3-11,under,100.5,2.06,0.0,Masters. España,4.59,Ignacio Perez Valles vs Adrian Caballo,1794192481
+768,1794193800233,769350927,3-11,under,103.5,2.0,0.0,Masters. Mujeres,4.59,Katarzyna Purgal vs Sylwia Karlinska,1794193681
+769,1794195329561,769354019,4-11,under,101.5,2.16,0.0,Masters. Polonia,4.59,Kacper Pyra vs Krystian Marek,1794195241
+770,1794195341561,769354251,6-11,under,106.5,2.192,0.0,Masters. Rusia,4.59,Oleg Bolomozhnov vs Pavel Petrovskiy,1794195301
+771,1794197046113,769357264,11-5,under,103.5,2.184,0.0,Masters. Polonia,4.67,Dariusz Gocalinski vs Robert Pedziak,1794196800
+772,1794197202457,769357617,4-11,under,102.5,2.21,0.0,Masters. Polonia,4.6,Maciej Wisniewski vs Mateusz Majszyk,1794196801
+773,1794197635028,769358861,5-11,under,103.5,2.07,0.0,Masters. Rusia,4.6,Berik Urkunbaev vs Oleg Bolomozhnov,1794197520
+774,1794199390449,769361873,6-11,under,99.5,2.168,0.0,Masters. Belarús,4.62,Sergei Dovgalev vs Andrey Braganets,1794199141
+775,1794200730173,769365213,11-3,under,92.5,2.05,0.0,Masters. Belarús,4.55,Andrey Nikonchuk vs Alexander Dyatel,1794201000
+776,1794201662482,769366694,11-3,under,98.5,2.016,0.0,Masters. Belarús,4.55,Sergei Dovgalev vs Maxim Evitch,1794200747
+777,1794201818487,769367098,5-11,under,105.5,2.056,0.0,Masters. Belarús,4.55,Nikita Tarasov vs Artyom Chernushin,1794201600
+778,1794202288483,769368195,11-4,under,98.5,2.175,0.0,Masters. Rusia,4.55,Pavel Petrovskiy vs Oleg Bolomozhnov,1794201644
+779,1794202354480,769368250,11-3,under,103.5,2.0,0.0,Masters. Belarús,4.55,Vasily Vasin vs Anton Lazarevskii,1794201961
+780,1794202601275,769369138,6-11,under,105.5,2.18,0.0,Masters. Polonia,4.55,Marcin Ozieblo vs Mateusz Rogowski,1794202261
+781,1794203465006,769370798,11-5,under,98.5,2.065,0.0,Masters. Rusia,4.48,Evgeniy Buryanov vs Alexander Kasnitsky,1794202980
+782,1794204874939,769373374,5-11,under,104.5,2.016,0.0,Masters. Polonia,4.49,Dariusz Swiatek vs Marcin Ozieblo,1794204181
+783,1794205503265,769374861,2-11,under,99.5,2.0,0.0,Masters. Polonia,4.49,Robert Pedziak vs Dariusz Gocalinski,1794204960
+784,1794206351310,769377200,3-11,under,101.5,2.184,0.0,Masters. Rusia,4.5,Gleb Radionov vs Dmitry Volin,1794205739
+785,1794206512082,769377499,5-11,under,102.5,2.0,0.0,Masters. Belarús,4.5,Alexander Prokopenko vs Sergei Demidovich,1794205481
+786,1794206773412,769378341,11-6,under,92.5,2.184,0.0,Masters. Polonia,4.5,Ryszard Korzec vs Mateusz Rogowski,1794206401
+787,1794207167231,769379189,5-11,under,103.5,2.184,0.0,Masters. Rusia,4.43,Semyon Yashchenin vs Stepan Murygin,1794207001
+788,1794208338036,769381940,11-6,under,103.5,2.0,0.0,Masters. Belarús,4.51,Vladislav Stolyarov vs Andrey Braganets,1794207403
+789,1794208588014,769382273,2-11,under,88.5,2.175,0.0,Masters. Polonia,4.51,Mateusz Rogowski vs Marcin Ozieblo,1794208020
+790,1794208618016,769382450,11-4,under,102.5,2.035,0.0,Masters. Belarús,4.51,Nikita Tarasov vs Kirill Goncharov,1794208500
+791,1794208924096,769382541,6-11,under,103.5,2.0,0.0,Masters. Belarús,4.51,Pawel Breiko vs Alexander Prokopenko,1794207617
+792,1794209402919,769384537,11-6,under,106.5,2.205,0.0,Masters. Polonia,4.44,Jakub Makutynowicz vs Marcin Kociuba,1794209400
+793,1794210339873,769387566,6-11,under,105.5,2.375,0.0,Masters. España,4.52,Daniel Lopera Santa vs Daniel Toledo Gutierrez,1794209400
+794,1794210936443,769389140,11-4,under,103.5,2.12,0.0,Masters. Polonia,4.53,Mateusz Witkowski vs Marcin Kociuba,1794210901
+795,1794211669742,769389656,5-11,under,100.5,2.075,0.0,Masters. Rusia,4.53,Tagir Batandaev vs Rauf Huseynov,1794211081
+796,1794212362603,769392640,5-11,under,98.5,2.17,0.0,Masters. Rusia,4.7,Igor Tyukhlov vs Ilya Melikhov,1794211801
+797,1794212829818,769393394,11-3,under,100.5,2.0,0.0,Masters. Belarús,4.7,Sergei Demidovich vs Alexander Prokopenko,1794211620
+798,1794212860122,769393222,6-11,under,105.5,2.12,0.0,Masters. Polonia,4.7,Adam Kukkuk vs Marcin Kociuba,1794212400
+799,1794215452484,769401108,11-6,under,94.5,2.144,0.0,Masters. Polonia,4.7,Dariusz Swiatek vs Ryszard Korzec,1794214920
+800,1794215701383,769401675,11-3,under,98.5,2.18,0.0,Masters. Rusia,4.7,Dmitry Volin vs Gleb Radionov,1794214524
+801,1794215719550,769401666,4-11,under,96.5,2.03,0.0,Masters. Rusia,4.7,Nikita Konovalov vs Valeriy Gorelov,1794215221
+802,1794215743550,769401655,11-4,under,99.5,2.18,0.0,Masters. España,4.7,Mario Hidalgo Gutierrez vs Eduardo Guzman Guzman,1794214800
+803,1794217239692,769406520,3-11,under,91.5,2.08,0.0,Masters. Rusia,4.71,Maksim Tkachenko vs Vladislav Milinka,1794217081
+804,1794217436829,769405486,11-5,under,90.5,2.19,0.0,Masters. Rusia,4.71,Stepan Murygin vs Igor Tyukhlov,1794216601
+805,1794217526824,769407544,11-4,under,97.5,2.17,0.0,Masters. Rusia,4.71,Alexandr Shirshov vs Maksim Kovrizhnikov,1794217380
+806,1794217604826,769406203,6-11,under,101.5,2.18,0.0,Masters. Rusia,4.71,Ilya Saygin vs Artem Lobovikov,1794217021
+807,1794218151198,769407610,6-11,under,99.5,2.03,0.0,Masters. Belarús,4.57,Alexander Prokopenko vs Sergei Demidovich,1794217139
+808,1794218450159,769409684,2-11,under,99.5,2.0,0.0,Masters. Polonia,4.65,Michal Dziekan vs Tomasz Wojewodzki,1794218280
+809,1794218516151,769410195,11-3,under,88.5,2.104,0.0,Masters. Belarús,4.65,Igor Shkurin vs Vasily Sadkovsky,1794218401
+810,1794219038359,769411339,11-6,under,103.5,2.16,0.0,Masters. Rusia,4.58,Daniil Bukreev vs Maksim Kovrizhnikov,1794218700
+811,1794219080364,769409859,6-11,under,99.5,2.17,0.0,Masters. Rusia,4.58,Dmitry Volin vs Andrei Yakushev,1794217762
+812,1794219374101,769412571,11-3,under,92.5,2.008,0.0,Masters. Belarús,4.58,Pavel Ivanov vs Maksim Busov,1794218246
+813,1794219536111,769411295,4-11,under,102.5,2.055,0.0,Masters. Rusia,4.58,Igor Egorov V. vs Rauf Huseynov,1794218821
+814,1794219677113,769413102,5-11,under,98.5,2.08,0.0,Masters. Rusia,4.65,Alexander Chernov vs Vladislav Milinka,1794219300
+815,1794219799993,769414763,3-11,under,103.5,2.208,0.0,Masters. Rusia,4.65,Dmitry Sviyatsky vs Aleksey Alekhin,1794219339
+816,1794220100524,769414988,6-11,under,106.5,2.035,0.0,Masters. Polonia,4.65,Mateusz Ponikowski vs Marian Balak,1794219721
+817,1794220215565,769414492,5-11,under,95.5,2.02,0.0,Masters. Belarús,4.65,Sergei Demidovich vs Vadim Kazachenko,1794219095
+818,1794220812358,769417564,6-11,under,101.5,2.18,0.0,Masters. Rusia,4.88,Artem Muravyev vs Alexandr Shirshov,1794220441
+819,1794220878354,769417635,6-11,under,105.5,2.016,0.0,Masters. Belarús,4.88,Roman Pchelentsov vs Fedor Zhogal,1794220049
+820,1794221301479,769419243,5-11,under,103.5,2.184,0.0,Masters. Rusia,4.9,Gennadiy Kokov vs Andrei Yakushev,1794220522
+821,1794221774440,769420756,11-2,under,101.5,2.18,0.0,Masters. Rusia,4.76,Alexander Lyashenko vs Dmitry Sviyatsky,1794221136
+822,1794222668426,769421012,11-6,under,97.5,2.056,0.0,Masters. Rusia,4.87,Pavel Mukhin vs Igor Egorov V.,1794221881
+823,1794223160656,769423465,6-11,under,104.5,2.184,0.0,Masters. Polonia,4.87,Norbert Zielony vs Krystian Szajewski,1794222481
+824,1794223208667,769425261,11-6,under,101.5,2.18,0.0,Masters. Rusia,4.87,Alexander Lyashenko vs Aleksey Alekhin,1794222727
+825,1794224195549,769426986,5-11,under,105.5,2.155,0.0,Masters. Rusia,4.87,Aleksandr Gorochny vs Vladislav Bushkov,1794223801
+826,1794224654276,769427260,4-11,under,103.5,2.005,0.0,Masters. Argentina,4.89,Fernando Gutierrez vs Pablo Villegas,1794223861
+827,1794225110638,769430428,5-11,under,98.5,2.17,0.0,Masters. Rusia,4.89,Ivan Iordanov vs Alexander Lyashenko,1794224418
+828,1794225860519,769432908,11-4,under,93.5,2.15,0.0,Masters. Rusia,4.89,Evgeniy Manakov vs Maxim Chernov,1794225000
+829,1794225860519,769431458,4-11,under,96.5,2.03,0.0,Masters. Belarús,4.89,Maksim Busov vs Roman Pchelentsov,1794224695
+830,1794225878520,769431948,5-11,under,99.5,2.096,0.0,Masters. Rusia,4.89,Anton Evstifeykin vs Ilya Semerkin,1794225600
+831,1794227584937,769437834,11-5,under,103.5,2.016,0.0,Masters. Rusia,4.99,Alexandr Shirshov vs Daniil Bukreev,1794227100
+832,1794227823458,769437578,2-11,under,101.5,2.005,0.0,Masters. Argentina,4.91,Juan Gutierrez vs Ezequiel Arakaki,1794227101
+833,1794227979258,769439617,11-3,under,98.5,2.016,0.0,Masters. Belarús,4.91,Denis Stadinchuk vs Maxim Shchadko,1794227017
+834,1794228431299,769440902,6-11,under,105.5,2.18,0.0,Masters. Rusia,4.91,Artem Lobovikov vs Ilya Saygin,1794227761
+835,1794228443298,769440853,6-11,under,92.5,2.15,0.0,Masters. Belarús,4.91,Artem Poduporin vs Andrey Krasnov,1794227821
+836,1794229615968,769444155,11-4,under,101.5,2.16,0.0,Masters. Rusia,4.76,Yuri Oberemok vs Andrey Spiridonov,1794229200
+837,1794229639960,769443700,11-5,under,103.5,2.184,0.0,Masters. España,4.76,Ivan Campana Gomez vs Eduardo Guzman Guzman,1794228901
+838,1794230035123,769445539,6-11,under,105.5,2.0,0.0,Masters. Polonia,4.62,Michal Sawecki vs Krzysztof Ruszczynski,1794229680
+839,1794231070847,769448692,11-5,under,92.5,2.165,0.0,Masters. Belarús,4.55,Andrey Krasnov vs Artem Poduporin,1794230401
+840,1794232870472,769454241,11-3,under,103.5,2.016,0.0,Masters. Rusia,4.41,Aleksandr Gorochny vs Vitaly Krivonogov,1794232261
+841,1794232900481,769454802,5-11,under,103.5,2.184,0.0,Masters. Rusia,4.41,Andrey Spiridonov vs Igor Shelovskoy,1794232621
+842,1794233999852,769457553,6-11,under,83.5,2.16,0.0,Masters. Belarús,4.42,Artem Poduporin vs Alexander Blinets,1794233281
+843,1794234158307,769457974,4-11,under,102.5,2.184,0.0,Masters. Rusia,4.42,Anton Evstifeykin vs Pavel Malakhov,1794233580
+844,1794234623793,769459889,11-4,under,104.5,2.208,0.0,Masters. Rusia,4.36,Yuri Oberemok vs Dmitry Fedorov 1982,1794234301
+845,1794234790830,769460318,11-6,under,90.5,2.14,0.0,Masters. Polonia,4.43,Daniel Zubrzycki vs Kamil Amilianowicz,1794234601
+846,1794235030839,769461440,4-11,under,102.5,2.184,0.0,Masters. Rusia,4.43,Alexander Gavyshev vs Damir Yaikov,1794234534
+847,1794236531350,769464626,5-11,under,104.5,2.0,0.0,Masters. Polonia,4.38,Robert Baran vs Michal Sawecki,1794236100
+848,1794236770359,769467390,5-11,under,105.5,2.1,0.0,Masters. Belarús,4.38,Maxim Shchadko vs Alexander Kavrigo,1794236461
+849,1794236800345,769467055,6-11,under,103.5,2.16,0.0,Masters. Rusia,4.38,Victor Demyashin vs Daniil Ovsyannikov,1794236400
+850,1794237176279,769468188,5-11,under,80.5,2.02,0.0,Masters. Rusia,4.31,Bogdan Tikhonov vs Pavel Malakhov,1794236880
+851,1794237434550,769466844,11-6,under,106.5,2.016,0.0,Masters. Rusia,4.31,Vladislav Bushkov vs Vitaly Krivonogov,1794236460
+852,1794238467726,769472932,5-11,under,103.5,2.035,0.0,Masters. Rusia,4.25,Konstantin Grishin vs Eduard Tolstuhin,1794238260
+853,1794239210340,769474380,11-6,under,89.5,2.01,0.0,Masters. Belarús,4.11,Denis Stadinchuk vs Maxim Shchadko,1794238621
+854,1794240205530,769477530,6-11,under,106.5,2.155,0.0,Masters. Polonia,4.11,Lukasz Bednarek vs Tomasz Pawlowski,1794240000
+855,1794240266559,769477904,5-11,under,106.5,2.136,0.0,Masters. Rusia,4.11,Vladimir Mikhalin vs Alexander Shalaev,1794239400
+856,1794241216765,769479443,6-11,under,104.5,2.184,0.0,Masters. Rusia,3.99,Evgeniy Manakov vs Arsentiy Turubanov,1794240012
+857,1794241888165,769484096,4-11,under,99.5,2.18,0.0,Masters. Polonia,4.0,Norbert Wetklo vs Daniel Zubrzycki,1794241620
+858,1794242083501,769485158,6-11,under,99.5,2.17,0.0,Masters. Rusia,4.0,Denis Zhurenko vs Daniil Tretyakov,1794241801
+859,1794242095500,769484977,11-6,under,106.5,2.155,0.0,Masters. Polonia,4.0,Jakub Majewski vs Robert Krysiewicz,1794241801
+860,1794242507173,769485984,4-11,under,104.5,2.155,0.0,Masters. Rusia,4.0,Emil Nasyrov vs Stanislav Valov,1794242101
+861,1794242561178,769485239,11-5,under,98.5,2.17,0.0,Masters. Rusia,4.0,Yuri Oberemok vs Igor Shelovskoy,1794241980
+862,1794242882977,769486558,2-11,under,95.5,2.17,0.0,Masters. Rusia,4.0,Victor Demyashin vs Ilya Vladimirov,1794242100
+863,1794243905605,769489388,3-11,under,104.5,2.01,0.0,Masters. Rusia,4.14,Alexander Nekrasov vs Mikhail Leonov,1794243661
+864,1794244139048,769491399,4-11,under,97.5,2.17,0.0,Masters. Polonia,4.14,Kamil Amilianowicz vs Norbert Wetklo,1794243900
+865,1794244197472,769490685,6-11,under,104.5,2.184,0.0,Masters. Rusia,4.14,Damir Yaikov vs Emil Nasyrov,1794243517
+866,1794245566980,769496162,3-11,under,101.5,2.035,0.0,Masters. Rusia,4.01,Eduard Tolstuhin vs Konstantin Grishin,1794245221
+867,1794246104531,769497423,5-11,under,105.5,2.155,0.0,Masters. Polonia,3.95,Tomasz Pawlowski vs Robert Krysiewicz,1794245700
+868,1794246116538,769497054,6-11,under,101.5,2.18,0.0,Masters. Rusia,3.95,Muhridin Abdunazarov vs Valery Khen,1794245700
+869,1794246354726,769497754,4-11,under,97.5,2.17,0.0,Masters. Rusia,3.95,Timofey Ufimtsev vs Ilya Vladimirov,1794245701
+870,1794246562360,769500181,1-11,under,99.5,2.184,0.0,Masters. Rusia,3.95,Stanislav Valov vs Emil Nasyrov,1794246528
+871,1794247524018,769501779,6-11,under,104.5,2.0,0.0,Masters. Polonia,4.08,Karol Szeszko vs Wojciech Zielinski,1794247201
+872,1794248173463,769502941,11-5,under,105.5,2.155,0.0,Masters. Belarús,4.03,Ma Lei vs Igor Shkrobot,1794247381
+873,1794248305029,769504524,5-11,under,105.5,2.208,0.0,Masters. Polonia,4.03,Lukasz Bednarek vs Robert Krysiewicz,1794247800
+874,1794248335356,769505088,11-4,under,102.5,2.184,0.0,Masters. Rusia,4.03,Alexander Gavyshev vs Stanislav Valov,1794247787
+875,1794249303949,769508601,6-11,under,101.5,2.032,0.0,Masters. Rusia,3.85,Konstantin Grishin vs Sanzhar Zhumagaliev,1794249060
+876,1794249405959,769507740,6-11,under,97.5,2.155,0.0,Masters. Rusia,3.85,Alexander Shalaev vs Vladimir Mikhalin,1794248761
+877,1794249554731,769507341,4-11,under,104.5,2.208,0.0,Masters. Polonia,4.01,Zbigniew Kisala vs Norbert Wetklo,1794248701
+878,1794250049996,769510195,6-11,under,104.5,2.184,0.0,Masters. Belarús,4.01,Roman Zuborev vs Dmitry Mikhalchuk,1794249781
+879,1794251202896,769514876,2-11,under,100.5,2.08,0.0,Masters. Belarús,4.21,Nikolay Zademlenyuk vs Dmitriy Leshkevich,1794251101
+880,1794251405889,769513872,11-5,under,100.5,2.075,0.0,Masters. Belarús,4.15,Artyom Logvinov vs Vladimir Korshkov,1794250800
+881,1794252240163,769516980,3-11,under,96.5,2.17,0.0,Masters. Belarús,4.22,Ma Lei vs Dmitry Mikhalchuk,1794251520
+882,1794253514773,769521188,6-11,under,104.5,2.0,0.0,Masters. Polonia,4.29,Wojciech Zielinski vs Jakub Wojdat,1794253020
+883,1794254406702,769524900,6-11,under,103.5,2.16,0.0,Masters. Rusia,4.23,Alexey Yamankin vs Artyom Surin,1794253981
+884,1794254565760,769524947,5-11,under,102.5,2.06,0.0,Masters. Belarús,4.23,Andrey Grits vs Alexander Vasiliev,1794254100
+885,1794254980769,769527007,5-11,under,103.5,2.08,0.0,Masters. Belarús,4.23,Dmitriy Leshkevich vs Andrey Borodich,1794254700
+886,1794255376316,769527339,2-11,under,91.5,2.01,0.0,Masters. Rusia,4.23,Denis Oleinikov vs Alexander Nekrasov,1794254820
+887,1794256920597,769532565,4-11,under,104.5,2.056,0.0,Masters. Belarús,4.04,Dmitry Mikhalchuk vs Igor Shkrobot,1794256200
+888,1794257368684,769535095,4-11,under,92.5,2.07,0.0,Masters. Belarús,4.04,Nikolay Zademlenyuk vs Andrey Borodich,1794256861
+889,1794258283920,769537104,5-11,under,105.5,2.208,0.0,Masters. Belarús,4.04,Vitaly Sizonenko vs Daniil Bunkevich,1794258001
+890,1794259480573,769539567,5-11,under,105.5,2.208,0.0,Masters. Belarús,3.92,Roman Zuborev vs Igor Shkrobot,1794258840
+891,1794261613545,769544992,5-11,under,106.5,2.136,0.0,Masters. Argentina,3.93,Damian Erlich vs Martin Atamian,1794260701
+892,1794261911603,769546303,5-11,under,100.5,2.18,0.0,Masters. Polonia,3.93,Jakub Wojdat vs Karol Szeszko,1794261420
+893,1794262440636,769547874,11-5,under,103.5,2.184,0.0,Masters. España. Mujeres,3.93,Natalia Vargas Postigo vs Sonia Medina Diaz,1794262020
+894,1794263406585,769551420,11-6,under,103.5,2.06,0.0,Masters. Polonia,3.93,Marcin Kacperczyk vs Mateusz Strzelczak,1794263401
+895,1794263735759,769551406,5-11,under,103.5,2.155,0.0,Masters. Belarús,3.93,Daniil Bunkevich vs Dmitry Akulich,1794263400
+896,1794263747760,769552083,4-11,under,102.5,2.184,0.0,Masters. Belarús,3.93,Yuri Tokarevskiy vs Alexey Lipai,1794263520
+897,1794263898666,769551874,2-11,under,99.5,2.16,0.0,Masters. Polonia,4.0,Wojciech Zielinski vs Karol Szeszko,1794263580
+898,1794264012668,769552905,11-3,under,98.5,2.18,0.0,Masters. Rusia,4.0,Dmitriy Karabut vs Aleksandr Lebedenko,1794264001
+899,1794264343800,769552617,11-4,under,95.5,2.155,0.0,Masters. Argentina,4.06,Thiago Ceballos vs Claudio Cortez,1794263520
+900,1794264650907,769554333,11-4,under,102.5,2.08,0.0,Masters. Polonia,4.06,Daniel Rutkowski vs Mateusz Strzelczak,1794264480
+901,1794264734911,769553315,11-3,under,96.5,2.36,0.0,Masters. Polonia,4.06,Kayque Valois vs Kamil Okonek,1794264061
+902,1794265419212,769555603,5-11,under,96.5,2.155,0.0,Masters. Belarús,4.2,Alexander Shvaibovich vs Nikita Borodin,1794265201
+903,1794265467213,769556134,11-5,under,100.5,2.18,0.0,Masters. Belarús,4.26,Vitaly Sizonenko vs Kirill Motuz,1794265381
+904,1794265497209,769556002,11-6,under,105.5,2.22,0.0,Masters. Polonia,4.26,Dawid Sywala vs Leszek Maduzia,1794265200
+905,1794266540234,769557790,11-6,under,107.5,2.15,0.0,Masters. Argentina,4.37,Marcelo Gerez vs Juan Busso,1794265980
+906,1794266829623,769557342,11-5,under,99.5,2.175,0.0,Masters. Belarús,4.45,Roman Kharitonenko vs Alexey Lipai,1794265980
+907,1794268097217,769561696,6-11,under,104.5,2.08,0.0,Masters. Polonia,4.54,Daniel Rutkowski vs Marcin Kacperczyk,1794267780
+908,1794268283727,769561568,11-6,under,103.5,2.16,0.0,Masters. Belarús,4.54,Dmitry Akulich vs Vitaly Sizonenko,1794267901
+909,1794268681358,769563281,11-6,under,101.5,2.18,0.0,Masters. Rusia,4.54,Artyom Rodin vs Dmitriy Karabut,1794268680
+910,1794269068767,769563597,11-2,under,95.5,2.36,0.0,Masters. Rusia,4.68,Sergei Shmelyov vs Alexey Demidov,1794268200
+911,1794270529552,769567414,11-5,under,103.5,2.184,0.0,Masters. Belarús,4.85,Alexey Lipai vs Yuri Tokarevskiy,1794270061
+912,1794271144182,769568428,11-6,under,103.5,2.344,0.0,Masters. Polonia,4.85,Artur Slomka vs Mikolaj Jurek,1794270601
+913,1794272287896,769572119,3-11,under,102.5,2.075,0.0,Masters. Polonia,4.95,Marcin Kacperczyk vs Daniel Rutkowski,1794272040
+914,1794272700439,769573348,11-3,under,94.5,2.155,0.0,Masters. Rusia,4.88,Aleksandr Lebedenko vs Alexander Kulagin,1794272580
+915,1794272898463,769573087,11-4,under,101.5,2.16,0.0,Masters. Polonia,4.88,Lukasz Ogorzelec vs Slawomir Kucharski,1794272461
+916,1794272910693,769572763,5-11,under,102.5,2.344,0.0,Masters. Polonia,4.88,Kayque Valois vs Artur Slomka,1794272340
+917,1794273199575,769573917,11-2,under,95.5,2.17,0.0,Masters. Belarús,4.96,Roman Kharitonenko vs Yuri Tokarevskiy,1794272881
+918,1794273555068,769574441,5-11,under,105.5,2.155,0.0,Masters. Belarús,4.96,Dmitry Akulich vs Daniil Bunkevich,1794273000
+919,1794274355211,769577783,11-3,under,96.5,2.36,0.0,Masters. Rusia,4.97,Sergei Shmelyov vs Amir Ziyangareyev,1794274320
+920,1794275121225,769579882,4-11,under,104.5,2.155,0.0,Masters. Rusia,4.91,Dmitry Stepanov vs Alexey Uzhevsky,1794275040
+921,1794275410273,769579409,6-11,under,103.5,2.16,0.0,Masters. Belarús,4.91,Alexey Lipai vs Roman Kharitonenko,1794274921
+922,1794275771540,769579581,3-11,under,100.5,2.16,0.0,Masters. Belarús,5.01,Kirill Motuz vs Daniil Bunkevich,1794275041
+923,1794276048841,769581074,11-6,under,101.5,2.075,0.0,Masters. Belarús,5.01,Pavel Shchurko vs Yuri Vasilian,1794275700
+924,1794276090843,769581540,11-4,under,101.5,2.344,0.0,Masters. Rusia,5.01,Alexey Demidov vs Amir Ziyangareyev,1794275820
+925,1794276747393,769583362,6-11,under,104.5,2.184,0.0,Masters. Rusia,5.1,Aleksandr Lebedenko vs Dmitriy Karabut,1794276601
+926,1794278048966,769585274,11-0,under,93.5,2.17,0.0,Masters. Argentina,5.05,Juan Busso vs Claudio Cortez,1794276960
+927,1794279793558,769589487,11-4,under,99.5,2.18,0.0,Masters. Polonia. Mujeres,5.14,Agata Wycichowska vs Alicja Olub-Walasek,1794279601
+928,1794280228016,769590423,11-2,under,97.5,2.37,0.0,Masters. Rusia,5.14,Salavat Abulaev vs Alexey Demidov,1794279901
+929,1794281419032,769593750,11-4,under,97.5,2.17,0.0,Masters. Rusia,5.34,Oleg Shilo vs Anton Zheleznov,1794281220
+930,1794282945038,769596207,5-11,under,104.5,2.18,0.0,Masters. Rusia,5.43,Nikita Butvina vs Anton Zheleznov,1794282480
+931,1794283203051,769596818,6-11,under,104.5,2.184,0.0,Masters. Polonia. Mujeres,5.43,Alicja Olub-Walasek vs Mariola Pietrzak,1794282841
+932,1794283407069,769597100,6-11,under,106.5,2.208,0.0,Masters. Belarús,5.43,Egor Ivanovsky vs Svatoslav Vasilenya,1794283200
+933,1794283449776,769597427,11-5,under,96.5,2.155,0.0,Masters. Rusia,5.43,Viktor Lyashenko vs Kirill Samarin,1794283200
+934,1794283485778,769597462,11-5,under,104.5,2.18,0.0,Masters. Rusia. Mujeres,5.43,Anastasiya Stepanova vs Alina Khomutetskaya,1794283201
+935,1794283773783,769598649,6-11,under,103.5,2.06,0.0,Masters. Polonia,5.43,Wiktor Szczygiel vs Filip Soszynski,1794283500
+936,1794285210960,769602119,11-6,under,100.5,2.185,0.0,Masters. Polonia. Mujeres,5.64,Agata Wycichowska vs Sylwia Karlinska,1794285120
+937,1794285624977,769602975,11-5,under,103.5,2.184,0.0,Masters. Rusia,5.64,Dmitry Novikov vs Viktor Skvortsov,1794285241
+938,1794286891025,769605344,11-5,under,101.5,2.056,0.0,Masters. Rusia,5.84,Anton Zheleznov vs Oleg Shilo,1794286321
+939,1794287011032,769605864,11-6,under,104.5,2.184,0.0,Masters. Belarús,5.84,Andrey Krasnov vs Denis Khvesenya,1794286801
+940,1794289094827,769611616,4-11,under,101.5,2.0,0.0,Masters. Polonia,5.86,Filip Soszynski vs Lukasz Kalinowski,1794288196
+941,1794289628836,769612403,6-11,under,91.5,2.175,0.0,Masters. Rusia,5.86,Kirill Samarin vs Dmitry Novikov,1794288721
+942,1794290595345,769615854,3-11,under,102.5,2.016,0.0,Masters. Polonia,5.77,Leszek Kucyrka vs Tomasz Bednarski,1794290400
+943,1794290667333,769615971,6-11,under,101.5,2.18,0.0,Masters. Polonia,5.77,Zdzislaw Blocho vs Jakub Drygas,1794290400
+944,1794291346069,769617128,11-6,under,105.5,2.18,0.0,Masters. Rusia. Mujeres,5.68,Olesya Molodtsova vs Zinaida Drak,1794290821
+945,1794291496076,769616808,6-11,under,101.5,2.016,0.0,Masters. Polonia,5.68,Krzysztof Szulc vs Filip Soszynski,1794290186
+946,1794291658725,769618823,3-11,under,102.5,2.075,0.0,Masters. Rusia,5.77,Alexey Mezentsev vs Murat Shungalov,1794291421
+947,1794291676726,769618179,11-4,under,99.5,2.15,0.0,Masters. Rusia,5.77,Kirill Samarin vs Viktor Lyashenko,1794291000
+948,1794292584502,769620046,6-11,under,104.5,2.184,0.0,Masters. Belarús,5.87,Andrey Krasnov vs Kirill Goncharov,1794291901
+949,1794293268518,769622799,11-2,under,99.5,2.08,0.0,Masters. Rusia,6.25,Viktor Skvortsov vs Viktor Lyashenko,1794292681
+950,1794294255819,769625034,3-11,under,100.5,2.0,0.0,Masters. Polonia,6.27,Leszek Kucyrka vs Piotr Lachowicz,1794293389
+951,1794294697941,769626091,6-11,under,92.5,2.225,0.0,Masters. Rusia,6.27,Nikita Konovalov vs Valeriy Gorelov,1794294060
+952,1794295095261,769626101,4-11,under,97.5,2.17,0.0,Masters. Polonia,6.27,Jakub Drygas vs Hubert Kisiolek,1794294301
+953,1794295469281,769627900,11-3,under,98.5,2.016,0.0,Masters. Polonia,6.36,Filip Soszynski vs Wiktor Szczygiel,1794294340
+954,1794295944548,769629185,6-11,under,105.5,2.18,0.0,Masters. Rusia. Mujeres,6.36,Olesya Molodtsova vs Elena Ivanova,1794295501
+955,1794297099713,769632762,11-4,under,88.5,2.155,0.0,Masters. Rusia,6.28,Dmitry Novikov vs Kirill Samarin,1794296341
+956,1794297844854,769635068,5-11,under,98.5,2.17,0.0,Masters. Rusia,6.28,Igor Osintsev vs Vyacheslav Ivanov,1794297600
+957,1794298049662,769635474,2-11,under,98.5,2.07,0.0,Masters. Rusia. Mujeres,6.39,Ekaterina Ivanova vs Yekaterina Golubeva,1794297601
+958,1794299768568,769640922,11-6,under,96.5,2.008,0.0,Masters. Rusia,6.1,Gennadiy Kokov vs Nikita Konovalov,1794299101
+959,1794300763848,769642839,6-11,under,99.5,2.096,0.0,Masters. Rusia. Mujeres,6.1,Elena Ivanova vs Olesya Molodtsova,1794300061
+960,1794301510871,769647571,11-5,under,103.5,2.184,0.0,Masters. Polonia,6.1,Maciej Jar vs Norbert Zielony,1794301321
+961,1794301565590,769646248,6-11,under,99.5,2.065,0.0,Masters. Rusia,6.1,Grigory Grulev vs Eduard Mozhaev,1794301201
+962,1794301607590,769645370,5-11,under,98.5,2.17,0.0,Masters. Polonia,6.1,Marcin Ozieblo vs Dariusz Swiatek,1794300840
+963,1794302424414,769648746,3-11,under,96.5,2.08,0.0,Masters. Rusia. Mujeres,6.1,Yekaterina Golubeva vs Maria Stroganova,1794301980
+964,1794302518372,769648061,11-6,under,105.5,2.005,0.0,Masters. Belarús,6.1,Maksim Busov vs Yuri Moroz,1794301800
+965,1794302644374,769649971,3-11,under,96.5,2.175,0.0,Masters. Rusia,6.1,Valeriy Gorelov vs Nikita Konovalov,1794301981
+966,1794303384209,769652340,4-11,under,104.5,2.155,0.0,Masters. Belarús,6.12,Artyom Logvinov vs Ruslan Romanovsky,1794303001
+967,1794304658319,769655895,4-11,under,101.5,2.0,0.0,Masters. Polonia,6.14,Miroslaw Zabkiewicz vs Tomasz Bednarski,1794303641
+968,1794304911518,769656886,2-11,under,87.5,2.0,0.0,Masters. Belarús,6.14,Andrey Suprunyuk vs Andrey Tristen,1794304681
+969,1794304959521,769655900,11-4,under,93.5,2.01,0.0,Masters. Rusia. Mujeres,6.14,Maria Stroganova vs Ekaterina Ivanova,1794304500
+970,1794305049802,769657851,11-5,under,88.5,2.15,0.0,Masters. Rusia,6.14,Pavel Malakhov vs Andrey Dergunov,1794304200
+971,1794305061801,769657345,11-6,under,101.5,2.016,0.0,Masters. Polonia,6.04,Rafal Zajkowski vs Kamil Okonek,1794304800
+972,1794305073830,769657736,4-11,under,99.5,2.205,0.0,Masters. Rusia,6.04,Sergey Tultsev vs Sergey Cherednichenko,1794304200
+973,1794305293017,769657927,5-11,under,105.5,2.155,0.0,Masters. España,6.04,Jose Antonio Gamero Tirado vs Miguel Rodriguez Moreno,1794304861
+974,1794306079814,769661168,11-5,under,94.5,2.01,0.0,Masters. Rusia,6.14,Sergey Makarov vs Konstantin Grishin,1794305701
+975,1794306915540,769664849,6-11,under,96.5,2.155,0.0,Masters. Rusia,5.86,Valery Khen vs Malek Al-Ezzi,1794305400
+976,1794307107647,769664930,5-11,under,103.5,2.184,0.0,Masters. Belarús,5.97,Dmitriy Rudov vs Artyom Logvinov,1794306780
+977,1794307282572,769665250,5-11,under,98.5,2.185,0.0,Masters. Rusia,5.88,Stanislav Valov vs Maksim Kovrizhnikov,1794306900
+978,1794307414579,769664121,4-11,under,88.5,2.13,0.0,Masters. Rusia,5.88,Valeriy Gorelov vs Artem Lobovikov,1794306301
+979,1794307438579,769666631,11-5,under,103.5,2.184,0.0,Masters. Polonia,5.79,Krystian Szajewski vs Maciej Jar,1794307320
+980,1794307873284,769666335,11-6,under,102.5,2.175,0.0,Masters. Polonia,5.79,Zdzislaw Blocho vs Hubert Kisiolek,1794307260
+981,1794308621105,769670167,4-11,under,102.5,2.035,0.0,Masters. Rusia,6.1,Tagir Batandaev vs Rauf Huseynov,1794308401
+982,1794309176195,769671568,11-3,under,101.5,2.184,0.0,Masters. Belarús,5.92,Artyom Strelchenok vs Dmitriy Rudov,1794308701
+983,1794309200200,769670866,4-11,under,104.5,2.155,0.0,Masters. Rusia,5.92,Andrey Dergunov vs Nabijon Gafurov,1794308701
+984,1794310295147,769675393,6-11,under,101.5,2.18,0.0,Masters. Polonia,5.84,Krystian Szajewski vs Szymon Rybarczyk,1794309900
+985,1794310445136,769676381,5-11,under,98.5,2.175,0.0,Masters. Rusia,5.84,Artem Muravyev vs Maksim Kovrizhnikov,1794309901
+986,1794311384170,769679357,11-6,under,104.5,2.184,0.0,Masters. Rusia,5.96,Sergey Cherednichenko vs Malek Al-Ezzi,1794310981
+987,1794311880641,769680218,5-11,under,105.5,2.208,0.0,Masters. Rusia,5.96,Grigory Grulev vs Sergey Yakupov,1794311701
+988,1794312123356,769680369,6-11,under,91.5,2.07,0.0,Masters. Belarús,5.87,Ruslan Romanovsky vs Artyom Strelchenok,1794311401
+989,1794312699042,769683057,11-1,under,96.5,2.18,0.0,Masters. Polonia,5.98,Artur Slomka vs Piotr Stepinski,1794312180
+990,1794312903049,769683648,6-11,under,101.5,2.18,0.0,Masters. Argentina,5.98,Gonzalo Spinelli vs Agustin Casela,1794312421
+991,1794313356512,769685843,11-2,under,89.5,2.14,0.0,Masters. Rusia,6.08,Sergey Tultsev vs Malek Al-Ezzi,1794312661
+992,1794313440515,769685599,6-11,under,103.5,2.0,0.0,Masters. Polonia,6.0,Kamil Okonek vs Rafal Zajkowski,1794312320
+993,1794314137642,769687915,6-11,under,106.5,2.155,0.0,Masters. Belarús,6.0,Dmitriy Rudov vs Ruslan Romanovsky,1794313501
+994,1794314416628,769690026,11-5,under,101.5,2.175,0.0,Masters. Rusia. Mujeres,6.0,Maya Burova vs Anastasia Zorina,1794314160
+995,1794315892030,769693017,6-11,under,103.5,2.16,0.0,Masters. España,5.92,Mario Hidalgo Gutierrez vs Miguel Angel Tortosa Rueda,1794315181
+996,1794316207567,769695636,11-6,under,106.5,2.208,0.0,Masters. Rusia,5.92,Sergey Yakupov vs Dmitry Mikhalenko,1794315660
+997,1794316348117,769695652,11-6,under,99.5,2.065,0.0,Masters. Polonia,5.83,Lukasz Mikucki vs Konrad Gryk,1794315661
+998,1794317564178,769699640,11-5,under,104.5,2.18,0.0,Masters. Rusia,5.94,Nabijon Gafurov vs Andrey Dergunov,1794316681
+999,1794317648192,769700592,11-2,under,97.5,2.18,0.0,Masters. Polonia,5.94,Artur Slomka vs Kayque Valois,1794317401
+1000,1794318572530,769704786,6-11,under,105.5,2.18,0.0,Masters. Belarús,5.94,Grigoriy Pitirinov vs Konstantin Gramovich,1794318240
+1001,1794318881323,769705680,11-3,under,91.5,2.2,0.0,Masters. Rusia. Mujeres,6.04,Veronika Kan vs Maya Burova,1794318601
+1002,1794319823554,769707825,5-11,under,103.5,2.08,0.0,Masters. Polonia,6.36,Piotr Stepinski vs Kayque Valois,1794319201
+1003,1794320111611,769708470,5-11,under,102.5,2.16,0.0,Masters. Rusia,6.36,Alexander Pitimirov vs Rauf Huseynov,1794319261
+1004,1794320195906,769710612,5-11,under,104.5,2.18,0.0,Masters. Belarús,6.36,Grigoriy Pitirinov vs Evgeniy Yakimets,1794319740
+1005,1794320294915,769711506,5-11,under,100.5,2.15,0.0,Masters. Rusia. Mujeres,6.36,Anastasia Ilyina vs Maya Burova,1794319981
+1006,1794320622665,769713083,4-11,under,93.5,2.15,0.0,Masters. Rusia,6.36,Denis Medvedev vs Oleg Kobzev,1794320158
+1007,1794321242860,769714433,4-11,under,94.5,2.175,0.0,Masters. Rusia,6.58,Pavel Petrovskiy vs Valery Morozyuk,1794321001
+1008,1794322236055,769717122,6-11,under,101.5,2.18,0.0,Masters. Rusia. Mujeres,6.38,Anastasia Zorina vs Maya Burova,1794321841
+1009,1794322921084,769718931,3-11,under,96.5,2.17,0.0,Masters. España,6.38,Eduardo Perez Moya vs Miguel Rodriguez Moreno,1794322381
+1010,1794323293064,769721054,11-6,under,105.5,2.18,0.0,Masters. Rusia. Mujeres,6.29,Alena Vabishchevich vs Sofia Moskalenko,1794322389
+1011,1794323344070,769720805,6-11,under,105.5,2.18,0.0,Masters. Rusia,6.29,Andrei Yakushev vs Evgeniy Serov,1794322520
+1012,1794324653664,769726549,6-11,under,106.5,2.155,0.0,Masters. Rusia,6.52,Vadim Shurinov vs Nikita Prikhodkov,1794324238
+1013,1794324880324,769726029,11-6,under,105.5,2.18,0.0,Masters. Rusia,6.52,Yuriy Lobovikov vs Maxim Loginov,1794324241
+1014,1794324904318,769727120,5-11,under,102.5,2.16,0.0,Masters. Rusia. Mujeres,6.52,Alexandra Romashkina vs Camilla Romanok,1794324370
+1015,1794325344599,769727443,11-6,under,104.5,2.08,0.0,Masters. Polonia,6.52,Krzysztof Czurylowicz vs Jakub Caban,1794324720
+1016,1794325920243,769730379,5-11,under,99.5,2.2,0.0,Masters. Rusia,6.64,Pavel Antonov vs Pavel Petrovskiy,1794325561
+1017,1794326626652,769733708,11-5,under,105.5,2.1,0.0,Masters. Polonia,6.54,Arkadiusz Bernat vs Robert Pedziak,1794326400
+1018,1794327308220,769736021,6-11,under,106.5,2.155,0.0,Masters. Polonia,6.47,Slawomir Kukkuk vs Tomasz Kolenda,1794326881
+1019,1794327516031,769736371,11-4,under,97.5,2.17,0.0,Masters. Rusia,6.47,Gleb Radionov vs Andrei Yakushev,1794326407
+1020,1794327889260,769738302,11-3,under,96.5,2.17,0.0,Masters. Belarús,6.58,Konstantin Gramovich vs Grigoriy Pitirinov,1794327480
+1021,1794328064265,769740309,5-11,under,103.5,2.184,0.0,Masters. Rusia,6.48,Dmitry Sviyatsky vs Nikita Prikhodkov,1794324977
+1022,1794328251681,769739423,11-6,under,104.5,2.184,0.0,Masters. Rusia,6.59,Dmitry Savinov vs Denis Vakalov,1794327901
+1023,1794328668431,769740103,5-11,under,104.5,2.18,0.0,Masters. Belarús,6.7,Iurii Tsatko vs Alexander Rakovich,1794328080
+1024,1794328692431,769740439,6-11,under,105.5,2.075,0.0,Masters. Polonia,6.7,Tomasz Wardzynski vs Yurii Chalenko,1794328500
+1025,1794329716744,769744215,3-11,under,91.5,2.184,0.0,Masters. Rusia,6.82,Valery Morozyuk vs Pavel Antonov,1794329400
+1026,1794329746746,769744739,4-11,under,95.5,2.056,0.0,Masters. Polonia,6.82,Jakub Caban vs Pawel Galecki,1794329460
+1027,1794330293412,769747391,3-11,under,96.5,2.17,0.0,Masters. Rusia. Mujeres,6.73,Alena Vabishchevich vs Alexandra Romashkina,1794329963
+1028,1794331316554,769750634,11-6,under,103.5,2.16,0.0,Masters. España,6.43,Jesus Mayo Baeza vs Antonio Gonzalez Gutierrez,1794330901
+1029,1794331958754,769752752,11-3,under,102.5,2.18,0.0,Masters. Rusia,6.33,Valery Morozyuk vs Evgeniy Penetov,1794331500
+1030,1794332582327,769755455,11-6,under,99.5,2.17,0.0,Masters. Polonia,6.33,Slawomir Kukkuk vs Bogdan Wilczynski,1794332221
+1031,1794332804338,769755769,6-11,under,106.5,2.155,0.0,Masters. Rusia. Mujeres,6.33,Camilla Romanok vs Alena Vabishchevich,1794331924
+1032,1794333962143,769762266,5-11,under,105.5,2.155,0.0,Masters. Rusia,6.36,Sergey Yacenko vs Alexey Yamankin,1794332722
+1033,1794334698298,769763755,11-4,under,99.5,2.18,0.0,Masters. Rusia,6.36,Artem Makarychev vs Nikita Poteryakhin,1794334081
+1034,1794335041647,769765336,11-6,under,106.5,2.155,0.0,Masters. Rusia,6.36,Denis Vakalov vs Dmitry Savinov,1794334560
+1035,1794335197654,769765295,6-11,under,103.5,2.06,0.0,Masters. Polonia,6.36,Marcin Chwojko vs Arkadiusz Zieminski,1794334801
+1036,1794335481275,769768108,2-11,under,93.5,2.184,0.0,Masters. Rusia,6.36,Denis Oleinikov vs Kirill Klepikov,1794335221
+1037,1794336899019,769772545,5-11,under,103.5,2.08,0.0,Masters. Polonia,6.58,Pawel Galecki vs Krzysztof Czurylowicz,1794336300
+1038,1794337104583,769774013,11-6,under,104.5,2.184,0.0,Masters. Rusia,6.49,Arsen Platonov vs Nikita Kochetov,1794336450
+1039,1794337503612,769774540,6-11,under,104.5,2.08,0.0,Masters. Polonia,6.49,Aleksy Maciaszczyk vs Maciej Morawski,1794336900
+1040,1794337569611,769775926,5-11,under,104.5,2.18,0.0,Masters. Rusia,6.49,Vladislav Bushkov vs Denis Oleinikov,1794337200
+1041,1794337708946,769775202,6-11,under,95.5,2.15,0.0,Masters. Belarús,6.49,Alexander Rakovich vs Pavel Skrobot,1794337021
+1042,1794338307037,769778205,6-11,under,103.5,2.06,0.0,Masters. Polonia,6.39,Tomasz Wardzynski vs Arkadiusz Bernat,1794337800
+1043,1794339677242,769787106,11-6,under,101.5,2.18,0.0,Masters. Rusia. Mujeres,6.3,Alexandra Romashkina vs Sofia Moskalenko,1794338879
+1044,1794340310159,769787154,11-6,under,99.5,2.17,0.0,Masters. Belarús,6.3,Alexander Mazyrka vs Yaroslav Starichenok,1794339420
+1045,1794342138968,769796238,11-4,under,104.5,2.208,0.0,Masters. Belarús,6.21,Iurii Tsatko vs Matvey Zhdanyuk,1794341520
+1046,1794342314957,769795449,11-5,under,105.5,2.0,0.0,Masters. España,6.21,Daniel Fortes Navea vs Jose David Lopez,1794341700
+1047,1794342344957,769797269,5-11,under,102.5,2.06,0.0,Masters. Polonia,6.21,Marcin Chwojko vs Karol Szeszko,1794342000
+1048,1794342682755,769799008,3-11,under,103.5,2.155,0.0,Masters. Rusia,6.21,Kirill Klepikov vs Denis Oleinikov,1794342240
+1049,1794342792377,769798690,6-11,under,103.5,2.16,0.0,Masters. Rusia,6.21,Artyom Rodin vs Sergey Yacenko,1794341960
+1050,1794342944338,769797925,6-11,under,99.5,2.17,0.0,Masters. España,6.21,Alejandro Merino Pena vs Fernando Utrilla Caballero,1794341821
+1051,1794343441807,769800335,4-11,under,103.5,2.075,0.0,Masters. Polonia,6.21,Aleksy Maciaszczyk vs Mateusz Sroczynski,1794342780
+1052,1794345054453,769805233,5-11,under,94.5,2.09,0.0,Masters. Rusia,5.95,Alexey Yamankin vs Sergey Yacenko,1794344761
+1053,1794345150451,769805647,11-4,under,102.5,2.184,0.0,Masters. Polonia,5.95,Mateusz Sroczynski vs Maciej Morawski,1794345000
+1054,1794346446749,769809691,11-5,under,106.5,2.136,0.0,Masters. Rusia,5.95,Timofey Metalnikov vs Vladislav Bushkov,1794346201
+1055,1794346808326,769810208,11-3,under,100.5,2.16,0.0,Masters. Belarús,5.95,Nazar Sergey vs Dmitry Kiselev,1794346500
+1056,1794347915125,769812928,4-11,under,103.5,2.175,0.0,Masters. España,5.78,Antonio Gonzalez Gutierrez vs Jesus Mayo Baeza,1794347280
+1057,1794348751960,769815965,2-11,under,100.5,2.184,0.0,Masters. Belarús,5.89,Aleksandr Sidorkov vs Nazar Sergey,1794348301
+1058,1794350094111,769820157,4-11,under,104.5,2.0,0.0,Masters. Rusia,5.89,Alexander Kulagin vs Sergei Shmelyov,1794350041
+1059,1794350358634,769819591,4-11,under,105.5,2.136,0.0,Masters. Argentina,5.8,Fernando Gulloni vs Martin Berlese,1794349680
+1060,1794351013534,769821845,5-11,under,104.5,2.175,0.0,Masters. Belarús,5.71,Konstantin Gramovich vs Sergei Khramets,1794350701
+1061,1794351788146,769823436,11-6,under,99.5,2.17,0.0,Masters. Belarús,5.81,Ivan Smyslin vs Yuri Vasilian,1794351360
+1062,1794351848145,769824311,11-3,under,100.5,2.16,0.0,Masters. Polonia,5.72,Wladyslaw Szumilas vs Zdzislaw Blocho,1794351600
+1063,1794351884156,769823881,11-3,under,103.5,2.155,0.0,Masters. Rusia,5.72,Alexey Burov vs Maxim Filippov,1794351000
+1064,1794352808184,769825539,3-11,under,94.5,2.155,0.0,Masters. España. Mujeres,5.82,Mercedes Fernandez Gainza vs Veronica Pablos,1794352080
+1065,1794353577118,769828605,11-6,under,89.5,2.208,0.0,Masters. Belarús,5.75,Roman Kharitonenko vs Rustam Matusevich,1794353220
+1066,1794353637125,769828559,11-3,under,103.5,2.155,0.0,Masters. Belarús,5.75,Konstantin Gramovich vs Daniil Bunkevich,1794353281
+1067,1794354207142,769830463,11-2,under,99.5,2.16,0.0,Masters. Polonia,5.85,Leszek Maduzia vs Artur Stoszko,1794353820
+1068,1794354363146,769831252,3-11,under,102.5,2.21,0.0,Masters. Belarús,5.85,Aleksey Radionov vs Vladislav Stolyarov,1794354300

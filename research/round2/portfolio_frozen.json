@@ -1,0 +1,280 @@
+{
+  "kelly_scale": {
+    "ST0": 1.0,
+    "ST3": 1.0,
+    "ST5": 0.0
+  },
+  "policies": {
+    "0.1": {
+      "mode": "igual",
+      "scale": 0.005
+    },
+    "0.15": {
+      "mode": "igual",
+      "scale": 0.0075
+    },
+    "0.2": {
+      "mode": "igual",
+      "scale": 0.01
+    }
+  },
+  "selection": [
+    {
+      "mean_days_underwater_at_close": 0.0,
+      "mean_log_30": 0.0,
+      "mean_ulcer_at_daily_close": 0.0,
+      "median_end_per_100": 100.0,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        0.0,
+        0.0
+      ],
+      "p05_end_per_100": 100.0,
+      "p95_dd": 0.0,
+      "scale": 0.0
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 1.472676652937132,
+      "mean_ulcer_at_daily_close": 0.005500139306845489,
+      "median_end_per_100": 434.9226991172733,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        1.2665106944634972,
+        1.7067898728947188
+      ],
+      "p05_end_per_100": 365.6877966157396,
+      "p95_dd": 0.019689604345035083,
+      "scale": 0.001
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 3.6564193872997173,
+      "mean_ulcer_at_daily_close": 0.01370877375012397,
+      "median_end_per_100": 3846.5734084574933,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        3.1408034861134926,
+        4.238415639388243
+      ],
+      "p05_end_per_100": 2505.1671095053157,
+      "p95_dd": 0.04871129490634318,
+      "scale": 0.0025
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 7.2292080093235125,
+      "mean_ulcer_at_daily_close": 0.027282530611351045,
+      "median_end_per_100": 136092.2745263305,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        6.207304654739611,
+        8.384740756742953
+      ],
+      "p05_end_per_100": 58134.31092320992,
+      "p95_dd": 0.09572729267499491,
+      "scale": 0.005
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 10.719390635197703,
+      "mean_ulcer_at_daily_close": 0.0407277268710685,
+      "median_end_per_100": 4431748.6965658525,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        9.202344426687095,
+        12.439399905283137
+      ],
+      "p05_end_per_100": 1253564.5458908258,
+      "p95_dd": 0.14107454924152085,
+      "scale": 0.0075
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 14.127792235481087,
+      "mean_ulcer_at_daily_close": 0.05405048429254919,
+      "median_end_per_100": 133158892.47585018,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        12.116419984699048,
+        16.40048598515276
+      ],
+      "p05_end_per_100": 25014637.811476156,
+      "p95_dd": 0.18478072903447407,
+      "scale": 0.01
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 20.701371078435795,
+      "mean_ulcer_at_daily_close": 0.08035163214173592,
+      "median_end_per_100": 93797167569.31172,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        17.725597696886197,
+        24.06633010904717
+      ],
+      "p05_end_per_100": 7863534097.10363,
+      "p95_dd": 0.26738552237727287,
+      "scale": 0.015
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 26.93875216105501,
+      "mean_ulcer_at_daily_close": 0.10622913989364817,
+      "median_end_per_100": 46986088410887.68,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        23.01972963167642,
+        31.345570727244922
+      ],
+      "p05_end_per_100": 1836896159138.6353,
+      "p95_dd": 0.3437818059092318,
+      "scale": 0.02
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 32.835171417561554,
+      "mean_ulcer_at_daily_close": 0.13172228311387776,
+      "median_end_per_100": 1.6902311368875438e+16,
+      "mode": "igual",
+      "p025_p975_log_30": [
+        28.028744554046494,
+        38.26232876714155
+      ],
+      "p05_end_per_100": 311686372944500.3,
+      "p95_dd": 0.4142219469653019,
+      "scale": 0.025
+    },
+    {
+      "mean_days_underwater_at_close": 0.0,
+      "mean_log_30": 0.0,
+      "mean_ulcer_at_daily_close": 0.0,
+      "median_end_per_100": 100.0,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        0.0,
+        0.0
+      ],
+      "p05_end_per_100": 100.0,
+      "p95_dd": 0.0,
+      "scale": 0.0
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 1.4650183006749542,
+      "mean_ulcer_at_daily_close": 0.005406373654235418,
+      "median_end_per_100": 431.3127169296683,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        1.2590629865897915,
+        1.702388871388082
+      ],
+      "p05_end_per_100": 362.3248482246267,
+      "p95_dd": 0.020221919722496873,
+      "scale": 0.001
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 3.637532153280197,
+      "mean_ulcer_at_daily_close": 0.013476443615692696,
+      "median_end_per_100": 3765.6695090736143,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        3.1252822881321505,
+        4.227730733032857
+      ],
+      "p05_end_per_100": 2440.8722299174933,
+      "p95_dd": 0.04997549330886186,
+      "scale": 0.0025
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 7.192341911249773,
+      "mean_ulcer_at_daily_close": 0.02682479712012722,
+      "median_end_per_100": 130746.37690059176,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        6.174984494145779,
+        8.362059115410103
+      ],
+      "p05_end_per_100": 55393.2237959579,
+      "p95_dd": 0.09805132021052365,
+      "scale": 0.005
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 10.665546460054054,
+      "mean_ulcer_at_daily_close": 0.04005147966969199,
+      "median_end_per_100": 4181205.385139811,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        9.152066932372039,
+        12.404404592947618
+      ],
+      "p05_end_per_100": 1167320.846952831,
+      "p95_dd": 0.14428481676211957,
+      "scale": 0.0075
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 14.058072706982616,
+      "mean_ulcer_at_daily_close": 0.05316257613477349,
+      "median_end_per_100": 123654145.53555949,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        12.058242768713656,
+        16.35560228986945
+      ],
+      "p05_end_per_100": 22872595.922267165,
+      "p95_dd": 0.1887311901531865,
+      "scale": 0.01
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 20.60358523638845,
+      "mean_ulcer_at_daily_close": 0.07906081431659377,
+      "median_end_per_100": 85274286452.96771,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        17.65979535178703,
+        23.98588834132483
+      ],
+      "p05_end_per_100": 7093426313.881941,
+      "p95_dd": 0.2724735738802967,
+      "scale": 0.015
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 26.81967705897237,
+      "mean_ulcer_at_daily_close": 0.10456239019844234,
+      "median_end_per_100": 41651919148486.06,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        22.937679230039873,
+        31.230147896165086
+      ],
+      "p05_end_per_100": 1631049090404.17,
+      "p95_dd": 0.34969518047174464,
+      "scale": 0.02
+    },
+    {
+      "mean_days_underwater_at_close": 28.436,
+      "mean_log_30": 32.70074930317522,
+      "mean_ulcer_at_daily_close": 0.12970630215621273,
+      "median_end_per_100": 1.4577269391752678e+16,
+      "mode": "medio_kelly_descontado",
+      "p025_p975_log_30": [
+        27.948251161435994,
+        38.09655046136787
+      ],
+      "p05_end_per_100": 272977876759223.62,
+      "p95_dd": 0.42089815262342256,
+      "scale": 0.025
+    }
+  ],
+  "win_haircut_per_full_edge": {
+    "ST0": 0.2795620615343369,
+    "ST3": 0.35752622081615043,
+    "ST5": 0.3038808641821844
+  }
+}
