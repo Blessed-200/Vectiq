@@ -1,0 +1,7 @@
+# Especificación de contrastes de trazabilidad
+
+Ampliación operativa de A2–A5, antes de inspeccionar estimaciones de rendimiento. Las proyecciones de apertura ya se habían contado. No se añade una hipótesis de mejora.
+
+- Para la afirmación de cinco y cuatro puntos, usar el primer instante con marcador admisible por partido y etapa y dos escalones que encierren una probabilidad Under sin margen de 0,50. Interpolar con la función del repositorio. Medir centro menos total final, fracción estrictamente por debajo e igual al centro, con IC de días. Un mercado cercano al 50 % se refiere a la mediana. La distancia a la media del marcador no basta para identificar una ganancia. Este estimando utiliza el primer centro, mientras que CALIBRA puede actualizar el centro prepartido. El total de una alerta no tiene por qué coincidir con el centro.
+- Contrastar cada entrada del panel con la recepción de un tick de lista del mismo partido y milisegundo. El precio y línea deben corresponder al lado Under, aparecer sin bloqueo y coincidir con la etapa. Separar ausencia de tick, cambio de precio/etapa y discrepancia entre feeds simultáneos. Esta verificación económica termina en la pizarra.
+- En la tabla de alertas, contrastar coincidencia de motor, partido, reloj, cuota y línea. Guardar sólo la presencia de un identificador de mensaje, nunca su valor ni el usuario. Si hay marcador sin id de Telegram, no usarlo como prueba de recepción. Los callbacks de operador serían autoinformes y tampoco acreditarían una apuesta. No consultar la tabla de usuarios.
