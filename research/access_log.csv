@@ -1,0 +1,5 @@
+event,scope,access,reason
+preflight,repository_source_and_release_metadata,metadata_and_code,identify_sources_and_time_boundaries
+preflight,owner_external_holdout,none,out_of_scope
+freeze,confirmation,metadata_only,dates_names_sizes_digests
+freeze,blind,metadata_only,dates_names_sizes_digests
