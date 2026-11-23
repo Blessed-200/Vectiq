@@ -1,0 +1,378 @@
+{
+  "books": {
+    "ST0": {
+      "alert": {},
+      "both_quote_and_exact_alert": 0,
+      "quote": {},
+      "recorded": 0
+    },
+    "ST3": {
+      "alert": {
+        "no_matching_game_and_leg_marker": 54,
+        "same_marker_with_message_id": 677
+      },
+      "both_quote_and_exact_alert": 675,
+      "quote": {
+        "no_exact_list_tick": 2,
+        "same_visible_under_line_price_stage": 729
+      },
+      "recorded": 731
+    },
+    "ST5": {
+      "alert": {
+        "no_matching_game_and_leg_marker": 58,
+        "same_marker_with_message_id": 107
+      },
+      "both_quote_and_exact_alert": 107,
+      "quote": {
+        "same_visible_under_line_price_stage": 165
+      },
+      "recorded": 165
+    }
+  },
+  "definition": "Equality at local feed receipt and alert marker. Message id is evidence of recording; account fills and actual end-user delivery unavailable.",
+  "discovery_only": true,
+  "linked_quote_marker_terminal": {
+    "ST0": {
+      "exact_quote_marker_with_id_n": 0,
+      "performance_at_displayed_odds": {
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "daily_flat_pnl_of_WL": [],
+        "days_of_opening_with_WL": 0,
+        "flat_days_with_WL": 0,
+        "loss_streak_in_opening_order": null,
+        "mdd_flat_units_opening_order": null,
+        "mean_decimal_price_WL": null,
+        "n_L": 0,
+        "n_W": 0,
+        "n_WL": 0,
+        "n_WL_with_paper_stake": 0,
+        "n_matches_WL": 0,
+        "n_push_separate": 0,
+        "negative_days_flat_units": 0,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": null,
+        "positive_days_flat_units": 0,
+        "roi_at_booked_paper_stakes_per_WL": {
+          "ci95": null,
+          "estimate": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "roi_flat_per_WL": {
+          "ci95": null,
+          "estimate": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        },
+        "terminal_observation_timing": null,
+        "wr_positive_net_per_WL": {
+          "ci95": null,
+          "estimate": null,
+          "n_days_contributing": 0,
+          "resamples_with_denominator": 0
+        }
+      },
+      "terminal_coverage": {}
+    },
+    "ST3": {
+      "exact_quote_marker_with_id_n": 675,
+      "performance_at_displayed_odds": {
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "daily_flat_pnl_of_WL": [
+          {
+            "longest_loss_streak_within_utc_opening_day": 5,
+            "n": 73,
+            "net_units": 17.3,
+            "utc_day_of_opening": "2026-11-04"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 4,
+            "n": 78,
+            "net_units": 31.230000000000004,
+            "utc_day_of_opening": "2026-11-05"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 5,
+            "n": 89,
+            "net_units": 22.173000000000005,
+            "utc_day_of_opening": "2026-11-06"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 4,
+            "n": 105,
+            "net_units": 12.667000000000002,
+            "utc_day_of_opening": "2026-11-07"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 3,
+            "n": 97,
+            "net_units": 23.329,
+            "utc_day_of_opening": "2026-11-08"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 5,
+            "n": 33,
+            "net_units": 4.073,
+            "utc_day_of_opening": "2026-11-09"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 8,
+            "n": 97,
+            "net_units": 16.258000000000003,
+            "utc_day_of_opening": "2026-11-10"
+          }
+        ],
+        "days_of_opening_with_WL": 7,
+        "flat_days_with_WL": 0,
+        "loss_streak_in_opening_order": 8,
+        "mdd_flat_units_opening_order": 10.340000000000003,
+        "mean_decimal_price_WL": 2.182977272727273,
+        "n_L": 252,
+        "n_W": 320,
+        "n_WL": 572,
+        "n_WL_with_paper_stake": 572,
+        "n_matches_WL": 572,
+        "n_push_separate": 0,
+        "negative_days_flat_units": 0,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": 0.0992198953941178,
+        "positive_days_flat_units": 7,
+        "roi_at_booked_paper_stakes_per_WL": {
+          "ci95": [
+            0.14442944567848373,
+            0.26021321749498894
+          ],
+          "estimate": 0.1863765759118239,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        },
+        "roi_flat_per_WL": {
+          "ci95": [
+            0.15788100686498857,
+            0.2974449541284404
+          ],
+          "estimate": 0.2220804195804196,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        },
+        "terminal_observation_timing": {
+          "mdd_paper_units_netting_simultaneous_observations": 9.340000000000003,
+          "minutes_entry_to_first_terminal_median": 21.449191666666664,
+          "multi_entry_terminal_times": 0,
+          "n_WL": 572,
+          "n_observed_at_10min": 0,
+          "n_observed_earlier_than_10min": 0,
+          "n_observed_later_than_10min": 572
+        },
+        "wr_positive_net_per_WL": {
+          "ci95": [
+            0.530791788856305,
+            0.5935672514619883
+          ],
+          "estimate": 0.5594405594405595,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        }
+      },
+      "terminal_coverage": {
+        "matched": 572,
+        "no_eligible_terminal": 103
+      }
+    },
+    "ST5": {
+      "exact_quote_marker_with_id_n": 107,
+      "performance_at_displayed_odds": {
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "daily_flat_pnl_of_WL": [
+          {
+            "longest_loss_streak_within_utc_opening_day": 3,
+            "n": 38,
+            "net_units": 7.4670000000000005,
+            "utc_day_of_opening": "2026-11-08"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 3,
+            "n": 17,
+            "net_units": -4.459,
+            "utc_day_of_opening": "2026-11-09"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 1,
+            "n": 37,
+            "net_units": 17.951,
+            "utc_day_of_opening": "2026-11-10"
+          }
+        ],
+        "days_of_opening_with_WL": 3,
+        "flat_days_with_WL": 0,
+        "loss_streak_in_opening_order": 3,
+        "mdd_flat_units_opening_order": 6.845000000000001,
+        "mean_decimal_price_WL": 1.8125108695652175,
+        "n_L": 30,
+        "n_W": 62,
+        "n_WL": 92,
+        "n_WL_with_paper_stake": 92,
+        "n_matches_WL": 92,
+        "n_push_separate": 0,
+        "negative_days_flat_units": 1,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": 0.06714262716017971,
+        "positive_days_flat_units": 2,
+        "roi_at_booked_paper_stakes_per_WL": {
+          "ci95": [
+            -0.2658706896551724,
+            0.470551114681663
+          ],
+          "estimate": 0.21295596482725193,
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "roi_flat_per_WL": {
+          "ci95": [
+            -0.2622941176470588,
+            0.4851621621621622
+          ],
+          "estimate": 0.2278152173913044,
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        },
+        "terminal_observation_timing": {
+          "mdd_paper_units_netting_simultaneous_observations": 6.845000000000001,
+          "minutes_entry_to_first_terminal_median": 16.146525,
+          "multi_entry_terminal_times": 0,
+          "n_WL": 92,
+          "n_observed_at_10min": 0,
+          "n_observed_earlier_than_10min": 18,
+          "n_observed_later_than_10min": 74
+        },
+        "wr_positive_net_per_WL": {
+          "ci95": [
+            0.4117647058823529,
+            0.8108108108108109
+          ],
+          "estimate": 0.6739130434782609,
+          "n_days_contributing": 3,
+          "resamples_with_denominator": 9652
+        }
+      },
+      "terminal_coverage": {
+        "matched": 92,
+        "no_eligible_terminal": 15
+      }
+    },
+    "portfolio": {
+      "exact_quote_marker_with_id_n": 782,
+      "performance_at_displayed_odds": {
+        "actual_bank_mdd": "no verificado",
+        "actual_settlement_order_loss_streak": "no verificado",
+        "daily_flat_pnl_of_WL": [
+          {
+            "longest_loss_streak_within_utc_opening_day": 5,
+            "n": 73,
+            "net_units": 17.3,
+            "utc_day_of_opening": "2026-11-04"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 4,
+            "n": 78,
+            "net_units": 31.230000000000004,
+            "utc_day_of_opening": "2026-11-05"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 5,
+            "n": 89,
+            "net_units": 22.173000000000005,
+            "utc_day_of_opening": "2026-11-06"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 4,
+            "n": 105,
+            "net_units": 12.667000000000002,
+            "utc_day_of_opening": "2026-11-07"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 4,
+            "n": 135,
+            "net_units": 30.796000000000003,
+            "utc_day_of_opening": "2026-11-08"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 7,
+            "n": 50,
+            "net_units": -0.38599999999999923,
+            "utc_day_of_opening": "2026-11-09"
+          },
+          {
+            "longest_loss_streak_within_utc_opening_day": 6,
+            "n": 134,
+            "net_units": 34.209,
+            "utc_day_of_opening": "2026-11-10"
+          }
+        ],
+        "days_of_opening_with_WL": 7,
+        "flat_days_with_WL": 0,
+        "loss_streak_in_opening_order": 7,
+        "mdd_flat_units_opening_order": 9.461,
+        "mean_decimal_price_WL": 2.1316475903614456,
+        "n_L": 282,
+        "n_W": 382,
+        "n_WL": 664,
+        "n_WL_with_paper_stake": 664,
+        "n_matches_WL": 649,
+        "n_push_separate": 0,
+        "negative_days_flat_units": 1,
+        "panel_mdd_fraction_synthetic_t_plus_10min_initial_100": 0.09189204357802871,
+        "positive_days_flat_units": 6,
+        "roi_at_booked_paper_stakes_per_WL": {
+          "ci95": [
+            0.1416410623308929,
+            0.24952965453989606
+          ],
+          "estimate": 0.1884194578370957,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        },
+        "roi_flat_per_WL": {
+          "ci95": [
+            0.14518913857677904,
+            0.2911245136186771
+          ],
+          "estimate": 0.22287500000000005,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        },
+        "terminal_observation_timing": {
+          "mdd_paper_units_netting_simultaneous_observations": 8.815999999999999,
+          "minutes_entry_to_first_terminal_median": 20.940333333333335,
+          "multi_entry_terminal_times": 18,
+          "n_WL": 664,
+          "n_observed_at_10min": 0,
+          "n_observed_earlier_than_10min": 18,
+          "n_observed_later_than_10min": 646
+        },
+        "wr_positive_net_per_WL": {
+          "ci95": [
+            0.5353671948332143,
+            0.6066411238825032
+          ],
+          "estimate": 0.5753012048192772,
+          "n_days_contributing": 7,
+          "resamples_with_denominator": 10000
+        }
+      },
+      "terminal_coverage": {
+        "matched": 664,
+        "no_eligible_terminal": 118
+      }
+    }
+  },
+  "other_registered_markers_by_leg": {
+    "PRE_legacy": 1292,
+    "ST3": 311,
+    "ST4": 281,
+    "ST5": 33
+  },
+  "seed": 20261122,
+  "shards_read": 199
+}

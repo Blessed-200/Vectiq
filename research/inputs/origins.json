@@ -1,0 +1,62 @@
+{
+  "st0": {
+    "id": 781301130,
+    "projection_sha256": "aca58a337239d28b236f2fb023ecbaf3e5dc88a39c5c59e44a443fef1031a5d6",
+    "raw_sha256": "f2c341c4438bff776d57963f78a32079722b49469a494d4b3b3ab76962822536",
+    "retained_columns": [
+      "id",
+      "ts_ms",
+      "game_id",
+      "sets",
+      "side",
+      "line",
+      "price",
+      "ev",
+      "league",
+      "stake",
+      "players",
+      "start_ts"
+    ],
+    "updated_at": "2026-11-23T03:00:09Z"
+  },
+  "st3": {
+    "id": 781300933,
+    "projection_sha256": "45828705c80825040d6dd19ea79a3c3e18beb6e19c675cbb09eafeb3b0c8b010",
+    "raw_sha256": "e69ad0c05e49512eba54ef2722f6d8770cee2d3a919cc0b0178984d5741d634e",
+    "retained_columns": [
+      "id",
+      "ts_ms",
+      "game_id",
+      "sets",
+      "side",
+      "line",
+      "price",
+      "ev",
+      "league",
+      "stake",
+      "players",
+      "start_ts"
+    ],
+    "updated_at": "2026-11-23T03:00:06Z"
+  },
+  "st5": {
+    "id": 781301066,
+    "projection_sha256": "c670c0effdbbab40f32d8208a538e2d879d51e9d9fd7c0c012fcf0677f6af12a",
+    "raw_sha256": "467f99e7f3958ce9e0bd0ec6d095410cacf0e5ce41f8650cece6db3119be8241",
+    "retained_columns": [
+      "id",
+      "ts_ms",
+      "game_id",
+      "sets",
+      "side",
+      "line",
+      "price",
+      "ev",
+      "league",
+      "stake",
+      "players",
+      "start_ts"
+    ],
+    "updated_at": "2026-11-23T03:00:08Z"
+  }
+}

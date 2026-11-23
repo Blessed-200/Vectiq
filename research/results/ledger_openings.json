@@ -1,0 +1,146 @@
+{
+  "view": "openings",
+  "window_ms_utc_start_inclusive_end_exclusive": [
+    1792713600000,
+    1794355200000
+  ],
+  "seed": 20261122,
+  "draws": 10000,
+  "unit": "filtered policy book row; a game can contribute to multiple books",
+  "blocks": "whole UTC days of entry, sampled with replacement; empty days retained",
+  "stage_mapping": {
+    "PRE": "ST0",
+    "SET1": "ST3",
+    "ST5": "may include k=1 or k=2"
+  },
+  "books": {
+    "ST3": {
+      "source": {
+        "status": "read",
+        "file": "st3.sqlite",
+        "sha256": "2b91a79254d668ee3b5a3b0bd666f9dbfb0f6aea369b98e279e861378d1241af",
+        "as_of_ms": null,
+        "outcomes_projected": false,
+        "counts": {
+          "rows_in_window": 1068,
+          "outside_panel_filter": 337,
+          "panel_ST3_above_owner_price_band_2_30": 38
+        },
+        "eligible_openings": 731
+      },
+      "openings": {
+        "n": 731,
+        "n_unique_games": 731,
+        "n_without_reported_start_anchored_at_opening": 0,
+        "n_duplicate_rows_beyond_first_per_game": 0,
+        "stage_counts": {
+          "1": 731
+        },
+        "league_counts": {
+          "Masters. Argentina": 27,
+          "Masters. Belarús": 171,
+          "Masters. España": 45,
+          "Masters. España. Mujeres": 4,
+          "Masters. Polonia": 152,
+          "Masters. Polonia. Mujeres": 3,
+          "Masters. Rusia": 296,
+          "Masters. Rusia. Mujeres": 33
+        },
+        "opening_days": {
+          "2026-11-04": 87,
+          "2026-11-05": 95,
+          "2026-11-06": 101,
+          "2026-11-07": 124,
+          "2026-11-08": 113,
+          "2026-11-09": 91,
+          "2026-11-10": 120
+        },
+        "mean_decimal_price": 2.183777017783858,
+        "min_decimal_price": 2.1,
+        "max_decimal_price": 2.485
+      }
+    },
+    "ST5": {
+      "source": {
+        "status": "read",
+        "file": "st5.sqlite",
+        "sha256": "706ed7e4d6d82e120a7e96ba62e40a57c5a5e3f0ff2a02848d8e4c39d10fdbf6",
+        "as_of_ms": null,
+        "outcomes_projected": false,
+        "counts": {
+          "rows_in_window": 327,
+          "outside_panel_filter": 162
+        },
+        "eligible_openings": 165
+      },
+      "openings": {
+        "n": 165,
+        "n_unique_games": 165,
+        "n_without_reported_start_anchored_at_opening": 0,
+        "n_duplicate_rows_beyond_first_per_game": 0,
+        "stage_counts": {
+          "1": 5,
+          "2": 160
+        },
+        "league_counts": {
+          "Masters. Argentina": 7,
+          "Masters. Belarús": 38,
+          "Masters. España": 8,
+          "Masters. España. Mujeres": 2,
+          "Masters. Mujeres": 1,
+          "Masters. Polonia": 29,
+          "Masters. Polonia. Mujeres": 1,
+          "Masters. Rusia": 73,
+          "Masters. Rusia. Mujeres": 6
+        },
+        "opening_days": {
+          "2026-11-08": 52,
+          "2026-11-09": 54,
+          "2026-11-10": 59
+        },
+        "mean_decimal_price": 1.8197272727272726,
+        "min_decimal_price": 1.715,
+        "max_decimal_price": 1.985
+      }
+    },
+    "ST0": {
+      "source": {
+        "status": "read",
+        "file": "st0.sqlite",
+        "sha256": "0d94115622f2e78789b32562adb93cf3599328ddfbab1dc3e3c6dff272f43447",
+        "as_of_ms": null,
+        "outcomes_projected": false,
+        "counts": {},
+        "eligible_openings": 0
+      },
+      "openings": {
+        "n": 0,
+        "n_unique_games": 0,
+        "n_without_reported_start_anchored_at_opening": 0,
+        "n_duplicate_rows_beyond_first_per_game": 0,
+        "stage_counts": {},
+        "league_counts": {},
+        "opening_days": {},
+        "mean_decimal_price": null,
+        "min_decimal_price": null,
+        "max_decimal_price": null
+      }
+    }
+  },
+  "opening_overlap": {
+    "books_available": [
+      "ST3",
+      "ST5",
+      "ST0"
+    ],
+    "pairwise_shared_games": {
+      "ST3+ST5": 53,
+      "ST3+ST0": 0,
+      "ST5+ST0": 0
+    },
+    "n_book_rows_available": 896,
+    "n_distinct_games_available": 843,
+    "n_games_spanning_multiple_utc_opening_days": 0,
+    "all_three_shared_games": 0
+  }
+}
