@@ -12,6 +12,7 @@ import scipy
 
 from data import STAGES, assets, build, fetch, jsave
 import benchmarks
+import h6_followup
 import micro
 import monitor
 import policies
@@ -23,7 +24,7 @@ REPO=HERE.parents[1]
 SPLIT=HERE.parent/"split.json"
 CANDIDATES=("data.py","mechanisms.py","policies.py","policy_stats.py","structural.py","micro.py",
             "benchmarks.py","portfolio.py","monitor.py","final_once.py","acceptance.md","policies_protocol.md",
-            "structural_protocol.md","monitor_protocol.md","warmup.json","micro_frozen.json","policy_frozen.json",
+            "structural_protocol.md","monitor_protocol.md","h6_followup.py","h6_followup.md","warmup.json","micro_frozen.json","policy_frozen.json",
             "portfolio_frozen.json","monitor_reference.json","monitor_simulation.json")
 STATE=("structural_state.json","monitor.json","seen_ids.json","games.jsonl")
 def digest(p):
@@ -64,6 +65,7 @@ def score(stage,work):
     v=policies.evaluate_policies(validated,alt_valid,rows("controls.jsonl"),jload(HERE/"policy_frozen.json"),
           days,split["seed"],split["bootstrap_draws"],stage,rows("mechanism_rows.jsonl"))
     jsave(path/"policy.json",v)
+    jsave(path/"h6_followup.json",h6_followup.evaluate(stage,path,split=split,seed=split["seed"],draws=split["bootstrap_draws"]))
     jsave(path/"benchmarks.json",benchmarks.evaluate(stage,path,split))
     jsave(path/"micro.json",micro.evaluate(stage,path,jload(HERE/"micro_frozen.json")))
     jsave(path/"portfolio.json",portfolio.evaluate(sig,days,jload(HERE/"portfolio_frozen.json")))
@@ -95,7 +97,7 @@ def run_final(a):
     build("blind",a.cache,a.work,a.jobs)
     score("blind",a.work)
     jsave(end,dict(opened_utc=now_open,completed_utc=now(),seal_commit=ref,
-           result_sha256={f:digest(a.work/"blind"/f) for f in ("extract.json","policy.json","benchmarks.json","micro.json","portfolio.json","monitor.json")}))
+           result_sha256={f:digest(a.work/"blind"/f) for f in ("extract.json","policy.json","h6_followup.json","benchmarks.json","micro.json","portfolio.json","monitor.json")}))
 def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("action",choices=("confirmation","seal","blind"))
     p.add_argument("--work",type=Path,required=True);p.add_argument("--cache",type=Path,required=True);p.add_argument("--jobs",type=int,default=6)
