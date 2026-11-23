@@ -365,7 +365,7 @@ def evaluate_policies(signals,alternatives,controls,frozen,days,seed,draws,stage
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("action",choices=("fit","evaluate"));ap.add_argument("--stage",choices=("discovery","confirmation","blind"),required=True)
+    ap.add_argument("action",choices=("fit","evaluate"));ap.add_argument("--stage",choices=("discovery","confirmation"),required=True)
     ap.add_argument("--signals",type=Path,required=True);ap.add_argument("--controls",type=Path,required=True)
     ap.add_argument("--alternatives",type=Path);ap.add_argument("--mechanism-rows",type=Path)
     ap.add_argument("--split",type=Path,required=True);ap.add_argument("--frozen",type=Path,required=True)

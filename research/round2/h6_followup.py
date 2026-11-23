@@ -49,7 +49,7 @@ def evaluate(stage,folder,days=None,seed=20261122,draws=10000,split=None):
 
 
 if __name__=="__main__":
-    ap=argparse.ArgumentParser();ap.add_argument("--stage",required=True,choices=("discovery","confirmation","blind"))
+    ap=argparse.ArgumentParser();ap.add_argument("--stage",required=True,choices=("discovery","confirmation"))
     ap.add_argument("--folder",type=Path,required=True);ap.add_argument("--split",type=Path,required=True)
     ap.add_argument("--out",type=Path,required=True)
     a=ap.parse_args();reg=json.loads(a.split.read_text())

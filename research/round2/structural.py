@@ -617,7 +617,7 @@ def simulate_oracle(rows,latents,stage,nsim=50000,seed=SEED):
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument("command",choices=["predict"])
-    ap.add_argument("--stage",required=True,choices=CUTS)
+    ap.add_argument("--stage",required=True,choices=("discovery","confirmation"))
     ap.add_argument("--data-root",type=Path,required=True)
     ap.add_argument("--out-dir",type=Path,required=True)
     ap.add_argument("--state-in",type=Path)
