@@ -1,6 +1,7 @@
 import unittest
 from types import SimpleNamespace as NS
-from entry_trace import classify
+from entry_trace import classify, daily_streak_bounds
+from ledger_audit import Entry
 
 
 class QuoteIdentityTest(unittest.TestCase):
@@ -26,6 +27,13 @@ class QuoteIdentityTest(unittest.TestCase):
     def test_closed_market(self):
         self.state.quotes[0].blocked = True
         self.assertEqual(classify(self.bet, [("item", self.state)]), "different_or_blocked_price")
+
+    def test_losing_streak_with_unresolved_middle_entry(self):
+        entries = [Entry("ST3", i, i*100, i, 1, 2.1, 104.5, "L", 1.0) for i in (1,2,3)]
+        terminals = {i:(110, 9000, "L", ()) for i in (1,3)}
+        got = daily_streak_bounds(entries, terminals, set())["1970-01-01"]
+        self.assertEqual(got["minimum_possible_longest_run"], 1)
+        self.assertEqual(got["maximum_possible_longest_run"], 3)
 
 
 if __name__ == "__main__":

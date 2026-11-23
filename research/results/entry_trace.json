@@ -367,6 +367,73 @@
       }
     }
   },
+  "longest_losing_run_by_utc_entry_day_including_missing": {
+    "ST0": {},
+    "ST3": {
+      "2026-11-04": {
+        "entries": 87,
+        "maximum_possible_longest_run": 7,
+        "minimum_possible_longest_run": 4,
+        "missing": 14
+      },
+      "2026-11-05": {
+        "entries": 95,
+        "maximum_possible_longest_run": 5,
+        "minimum_possible_longest_run": 4,
+        "missing": 16
+      },
+      "2026-11-06": {
+        "entries": 101,
+        "maximum_possible_longest_run": 5,
+        "minimum_possible_longest_run": 5,
+        "missing": 12
+      },
+      "2026-11-07": {
+        "entries": 124,
+        "maximum_possible_longest_run": 4,
+        "minimum_possible_longest_run": 4,
+        "missing": 18
+      },
+      "2026-11-08": {
+        "entries": 113,
+        "maximum_possible_longest_run": 6,
+        "minimum_possible_longest_run": 2,
+        "missing": 16
+      },
+      "2026-11-09": {
+        "entries": 91,
+        "maximum_possible_longest_run": 6,
+        "minimum_possible_longest_run": 5,
+        "missing": 10
+      },
+      "2026-11-10": {
+        "entries": 120,
+        "maximum_possible_longest_run": 9,
+        "minimum_possible_longest_run": 5,
+        "missing": 22
+      }
+    },
+    "ST5": {
+      "2026-11-08": {
+        "entries": 52,
+        "maximum_possible_longest_run": 4,
+        "minimum_possible_longest_run": 3,
+        "missing": 10
+      },
+      "2026-11-09": {
+        "entries": 54,
+        "maximum_possible_longest_run": 5,
+        "minimum_possible_longest_run": 3,
+        "missing": 2
+      },
+      "2026-11-10": {
+        "entries": 59,
+        "maximum_possible_longest_run": 2,
+        "minimum_possible_longest_run": 2,
+        "missing": 5
+      }
+    }
+  },
   "other_registered_markers_by_leg": {
     "PRE_legacy": 1292,
     "ST3": 311,

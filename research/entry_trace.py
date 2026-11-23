@@ -115,6 +115,33 @@ def exact_snapshots(cache, by_key):
     return observations, assets_read
 
 
+def daily_streak_bounds(entries, terminals, ambiguities):
+    """Bracket the longest losing run per UTC entry day under all missing score labels."""
+    closed, _ = reconcile_tape(entries, terminals, ambiguities)
+    labels = {(r.entry.book, r.entry.row_id):r.result for r in closed}
+    groups = defaultdict(list)
+    for e in sorted(entries, key=lambda e: e.order):
+        groups[e.time_ms // 86_400_000].append(labels.get((e.book, e.row_id)))
+    from datetime import date, timedelta
+    result = {}
+    for day, results in sorted(groups.items()):
+        bounds = []
+        for missing in ("W", "L"):
+            current = longest = 0
+            for label in results:
+                resolved = label or missing
+                if resolved == "L":
+                    current += 1
+                    longest = max(longest, current)
+                elif resolved == "W":
+                    current = 0
+            bounds.append(longest)
+        result[(date(1970,1,1)+timedelta(days=day)).isoformat()] = {
+            "entries":len(results), "missing":results.count(None),
+            "minimum_possible_longest_run":bounds[0], "maximum_possible_longest_run":bounds[1]}
+    return result
+
+
 def audit(cache, ledger_dir, frozen, terminal_file):
     by_key = entries_in_window(ledger_dir)
     observations, assets_read = exact_snapshots(cache, by_key)
@@ -155,6 +182,11 @@ def audit(cache, ledger_dir, frozen, terminal_file):
             out["alert"][match] += 1
     window = parse_window(partition())
     terminals, ambiguities = terminal_map(terminal_file, window)
+    entry_lists = {k:[] for k in BOOKS}
+    for group in by_key.values():
+        for e in group:
+            entry_lists[e.book].append(e)
+    loss_bounds = {k:daily_streak_bounds(v, terminals, ambiguities) for k,v in entry_lists.items()}
     retention = {}
     for book, entries in [*( (k, chain[k]) for k in BOOKS), ("portfolio",sum((chain[k] for k in BOOKS), []))]:
         closed, coverage = reconcile_tape(entries, terminals, ambiguities)
@@ -162,6 +194,7 @@ def audit(cache, ledger_dir, frozen, terminal_file):
                            "performance_at_displayed_odds":performance(closed, window, partition()["bootstrap_draws"])}
     return dict(discovery_only=True,seed=partition()["seed"],books=results,shards_read=assets_read,
                 linked_quote_marker_terminal=retention,
+                longest_losing_run_by_utc_entry_day_including_missing=loss_bounds,
                 other_registered_markers_by_leg=dict(Counter(k for k,_ in set(markers)-used)),
                 definition="Equality at local feed receipt and alert marker. Message id is evidence of recording; account fills and actual end-user delivery unavailable.")
 
