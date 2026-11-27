@@ -48,6 +48,80 @@ def tracked_bank(anchor: float, anchor_ts_s: float, st3_db: sqlite3.Connection, 
     return max(bank, 0.0), n, ex
 
 
+OPEN_MAX_S = 3 * 3600.0       # a Masters match ends within ~1 h; an alert still unsettled after 3 h is a vanished/void match, not money at risk
+
+
+def _row(db: sqlite3.Connection | None, game_id: int) -> tuple | None:
+    if db is None:
+        return None
+    return db.execute("SELECT result, pnl, stake, players, side, line, price FROM bets WHERE game_id=? LIMIT 1", (game_id,)).fetchone()
+
+
+def snapshot(anchor: float, anchor_ts_s: float, quotes, dbs: dict, skipped: set, now_s: float, pct: float = STAKE_PCT,
+             stake_state: dict | None = None) -> dict:
+    """Bank as a bookmaker shows it. `quotes` = (game_id, kind, ts_ms, stake) of the alerts sent after the typed balance.
+
+    realized  = typed balance + settled results                (what `tracked_bank` always returned: the stake base)
+    in_play   = dollars held by alerts whose match is not settled yet (stake leaves the balance when the bet is placed)
+    available = realized - in_play                             (what the sportsbook balance should read if every alert was played)
+    Presentation only: the stake sizing keeps using `realized`, so alert amounts do not change.
+    """
+    realized, n_settled, excluded, open_items = anchor, 0, 0, []
+    for gid, kind, ts_ms, stake in quotes:
+        if ts_ms <= int(anchor_ts_s * 1000) or stake is None:
+            continue
+        row = _row(dbs.get(kind), gid)
+        if gid in skipped:
+            excluded += 1
+            continue
+        res = row[0] if row else None
+        if res in ("W", "L") and row[2]:
+            realized += stake * row[1] / row[2]
+            n_settled += 1
+        elif res in ("P", "V"):
+            continue                                              # stake returned: neither in play nor a result
+        elif now_s - ts_ms / 1000.0 <= OPEN_MAX_S:
+            open_items.append((gid, kind, ts_ms, stake, row))
+    realized = max(realized, 0.0)
+    in_play = round(sum(i[3] for i in open_items), 2)
+    stake_s = None
+    if stake_state is not None:
+        stake_s, _ = stake_now(stake_state, realized, now_s, pct)
+    return {"anchor": anchor, "realized": realized, "profit": realized - anchor, "n_settled": n_settled, "excluded": excluded,
+            "open_n": len(open_items), "in_play": in_play, "available": max(realized - in_play, 0.0), "stake": stake_s,
+            "open": sorted(open_items, key=lambda i: i[2])}
+
+
+def format_open(items: list, limit: int = 8) -> str:
+    """One line per open alert, to reconcile against the sportsbook slip."""
+    if not items:
+        return ""
+    out = []
+    for gid, kind, ts_ms, stake, row in items[-limit:]:
+        who = (row[3] if row and row[3] else f"partido {gid}")
+        what = f"{'Under' if row and row[4] == 'under' else 'Over'} {row[5]:g} @ {row[6]:.2f}" if row else ""
+        out.append(f"• {who} · {what} · ${stake:,.2f}")
+    more = len(items) - limit
+    return "\n".join(out) + (f"\n… y {more} más" if more > 0 else "")
+
+
+def estado_text(snap: dict, typed: float, ask_hint: str) -> str:
+    """Shared /estado body (owner and private users)."""
+    sign = "+" if snap["profit"] >= 0 else "−"
+    txt = (f"<b>VECTIQ · ESTADO</b>\nSaldo que escribiste: <b>${typed:,.2f}</b>\n"
+           f"Resultados liquidados desde entonces: <b>{sign}${abs(snap['profit']):,.2f}</b> ({snap['n_settled']} alertas"
+           + (f", {snap['excluded']} «No llegué»" if snap["excluded"] else "") + ")\n"
+           f"En juego ahora: <b>{snap['open_n']}</b> alertas · <b>${snap['in_play']:,.2f}</b>\n"
+           f"<b>Disponible: ${snap['available']:,.2f}</b> <i>(lo que debería mostrar tu casa si jugaste todas)</i>\n"
+           f"Banca contando lo apostado: ${snap['realized']:,.2f}\n")
+    if snap.get("stake") is not None:
+        txt += f"Stake por alerta: <b>${snap['stake']:,.2f}</b>\n"
+    lst = format_open(snap["open"])
+    if lst:
+        txt += "\n<b>Abiertas</b>\n" + lst + "\n"
+    return txt + ask_hint
+
+
 def _has(db: sqlite3.Connection, table: str) -> bool:
     return db.execute("SELECT 1 FROM sqlite_master WHERE name=?", (table,)).fetchone() is not None
 

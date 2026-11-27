@@ -148,9 +148,15 @@ class Users:
                 return ("Aún no tengo tu saldo. Escribe /banca 30", None)
             bank = self.bank(u, dbs)
             stake, _ = self.stake(dict(u), bank, now_s, pct)
-            return (f"<b>VECTIQ · TU ESTADO</b>\nÚltimo saldo que escribiste: <b>${float(u['bank']):,.2f}</b>\n"
-                    f"Banca que calcula el bot: <b>${bank:,.2f}</b>\nStake base por alerta: <b>${stake:,.2f}</b>\n"
-                    "<i>Si tu saldo real es otro, escribe /banca 123.45</i>", None)
+            try:
+                snap = bankroll.snapshot(float(u["bank"]), float(u.get("bank_ts") or 0.0), [tuple(q) for q in u.get("q", [])], dbs,
+                                         set(u.get("skip") or []), now_s)
+                snap["stake"] = stake
+                return (bankroll.estado_text(snap, float(u["bank"]), "<i>Si tu saldo real es otro, escribe /banca 123.45</i>"), None)
+            except Exception:  # noqa: BLE001 - the status must never fail because of the open-bets detail
+                return (f"<b>VECTIQ · TU ESTADO</b>\nÚltimo saldo que escribiste: <b>${float(u['bank']):,.2f}</b>\n"
+                        f"Banca que calcula el bot: <b>${bank:,.2f}</b>\nStake base por alerta: <b>${stake:,.2f}</b>\n"
+                        "<i>Si tu saldo real es otro, escribe /banca 123.45</i>", None)
         arg = cmd.group(2) if c == "banca" else (t if not cmd and u.get("ask") else None)
         if arg is not None:
             v = parse_amount(arg)

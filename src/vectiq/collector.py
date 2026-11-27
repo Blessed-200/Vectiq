@@ -793,10 +793,19 @@ class Collector:
         st0db = self.st0.db if self.st0 is not None else None
         bank, n, ex = bankroll.tracked_bank(anchor, float(self.session.d.get("bank_ts") or 0.0), self.st3.db, st5db, st0db)
         stake, _ = bankroll.stake_now(dict(self.session.d), bank, now_s, self.stake_pct or bankroll.STAKE_PCT)
+        hint = "<i>Si tu saldo real en Betwinner es otro, escribe /banca 123.45 y el bot se ajusta.</i>"
+        try:
+            self.st3.db.execute(bankroll.QUOTED)
+            quotes = self.st3.db.execute("SELECT game_id, kind, ts_ms, stake FROM quoted").fetchall()
+            skipped = {r[0] for r in self.st3.db.execute("SELECT game_id FROM exec WHERE status='no_llego'")} if bankroll._has(self.st3.db, "exec") else set()
+            snap = bankroll.snapshot(anchor, float(self.session.d.get("bank_ts") or 0.0), quotes, self._dbs(), skipped, now_s)
+            snap["stake"] = stake
+            return bankroll.estado_text(snap, anchor, hint)
+        except Exception:  # noqa: BLE001 - the status must never fail because of the open-bets detail
+            log.warning("estado detail failed", exc_info=True)
         return (f"<b>VECTIQ · ESTADO</b>\nÚltimo saldo que escribiste: <b>${anchor:,.2f}</b>\n"
                 f"Desde entonces: {n} alertas liquidadas ({ex} marcadas «No llegué»)\n"
-                f"Banca que calcula el bot: <b>${bank:,.2f}</b>\nStake por alerta: <b>${stake:,.2f}</b>\n"
-                f"<i>Si tu saldo real en Betwinner es otro, escribe /banca 123.45 y el bot se ajusta.</i>")
+                f"Banca que calcula el bot: <b>${bank:,.2f}</b>\nStake por alerta: <b>${stake:,.2f}</b>\n" + hint)
 
     def _st3_watchdog(self, now_s: float) -> None:
         if self.st3 is None or "st3" not in self.alerts or self.notify_alert is None or not self.trading(now_s):
