@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>VECTIQ · Individuales (sombra)</title>
+<meta name="description" content="Diez reglas minadas seguidas una por una en papel, sin alertas y sin mezclarse con ST3, ST5 y ST0.">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#15181d;--mut:#6a7280;--line:#e4e2da;--pos:#1f7a4d;--neg:#b3382c;--acc:#1b3a5c;--acc2:#8a6d2f;--posbg:#e5f2ea;--negbg:#f7e4e1;--shadow:0 1px 2px rgba(20,24,29,.06)}
+@media (prefers-color-scheme:dark){:root{--bg:#101318;--card:#171b22;--ink:#e8eaee;--mut:#8f98a6;--line:#262c36;--pos:#4cc38a;--neg:#f0786b;--acc:#8fb4e3;--acc2:#d4b36a;--posbg:#16301f;--negbg:#3a1d1a;--shadow:none}}
+*{box-sizing:border-box}html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;padding:0 16px 48px}
+.wrap{max-width:980px;margin:0 auto}
+header{padding:22px 0 10px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:24px;letter-spacing:.14em;font-weight:700}
+.sub{color:var(--mut);font-size:13px;margin-top:2px}
+.clock{font-variant-numeric:tabular-nums;color:var(--mut);font-size:12.5px;text-align:right}
+.clock b{color:var(--ink);font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0;box-shadow:var(--shadow)}
+.card h2{margin:0 0 10px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;color:var(--mut);padding:9px 6px;border-radius:9px;font:600 14px inherit;font-family:inherit;cursor:pointer}
+.seg button.on{background:var(--acc);color:#fff}
+@media (prefers-color-scheme:dark){.seg button.on{background:var(--acc);color:#0c1118}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font:500 13px inherit;font-family:inherit;cursor:pointer}
+.chip.on{border-color:var(--acc);color:var(--acc);font-weight:700}
+.rng{color:var(--mut);font-size:12.5px;margin-left:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
+.k{border:1px solid var(--line);border-radius:12px;padding:10px 11px;background:var(--card)}
+.k .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.k .l{color:var(--mut);font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;margin-top:2px}.k .s{color:var(--mut);font-size:11.5px;margin-top:1px}
+.pos{color:var(--pos)}.neg{color:var(--neg)}
+svg{display:block;width:100%;height:auto;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--bg);font-size:12px;padding:6px 9px;border-radius:8px;white-space:nowrap;transform:translate(-50%,-110%);z-index:5;display:none;font-variant-numeric:tabular-nums}
+.chart{position:relative}
+table{width:100%;border-collapse:collapse;font-size:13.5px;font-variant-numeric:tabular-nums}
+th{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);text-align:right;font-weight:600;padding:6px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 6px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left;min-width:210px}
+tr.clk{cursor:pointer}tr.clk:hover td,tr.sel td{background:var(--bg)}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:6px;padding:2px 6px;letter-spacing:.04em}
+.t0{background:#e9e1f3;color:#47306b}.t3{background:#e3ebf5;color:#1b3a5c}.t5{background:#f1e9d6;color:#7a5d1f}
+@media (prefers-color-scheme:dark){.t0{background:#2a2038;color:#bda3e3}.t3{background:#1c2a3d;color:#8fb4e3}.t5{background:#33291a;color:#d4b36a}}
+.res{font-weight:700}.W{color:var(--pos)}.L{color:var(--neg)}.O{color:var(--mut)}
+.note{color:var(--mut);font-size:12.5px;margin-top:8px}
+input[type=number]{width:84px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:5px 7px;font:inherit}
+.two{display:grid;grid-template-columns:1fr;gap:12px}@media(min-width:760px){.two{grid-template-columns:1fr 1fr}}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--acc);border-radius:8px;padding:4px 10px;font:600 12px inherit;font-family:inherit;cursor:pointer}
+
+.rowsel td{background:var(--bg)}
+.desc{display:block;color:var(--mut);font-size:11.5px;white-space:normal;max-width:330px;text-align:left;font-weight:400}
+.back{font-size:13px;color:var(--acc);text-decoration:none;font-weight:600}
+.pill{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:2px 9px;font-size:12px;color:var(--mut);margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div><h1>VECTIQ</h1><div class="sub">Individuales (sombra) · cada regla por separado · solo papel, sin Telegram</div></div>
+  <div class="clock"><a class="back" href="./">← Panel combinada (ST3 + ST5 + ST0)</a><br>datos <span id="gen">--</span></div>
+</header>
+
+<div class="card">
+  <div class="note" style="margin:0 0 10px">Aquí no se apuesta dinero ni se manda nada a Telegram. Cada regla registra, por su cuenta, la apuesta que habría hecho con la <b>cuota real</b> del momento (1 u por apuesta, una por partido). Sirve para ver cuál se mantiene en la práctica antes de darle dinero. No se mezcla con la combinada.</div>
+  <div class="chips" id="chips"></div>
+  <div class="chips"><span class="rng" id="rng" style="margin-left:0"></span></div>
+</div>
+
+<div class="card"><h2>Resumen por regla <span class="pill" id="totpill"></span></h2>
+  <div class="scroll"><table id="tbl"></table></div>
+  <div class="note">ROI = ganancia media por cada 1 u apostada. «Prueba» = ROI que tuvo la regla en la ventana de confirmación y en el primer ciego de la investigación; en vivo se espera algo menos. Caída = peor bajada de la curva en unidades. Toca una fila para ver su curva.</div>
+</div>
+
+<div class="card"><h2 id="ctitle">Curva acumulada</h2><div class="chart" id="c1"></div><div class="note">1 u por apuesta. Línea gris: pico anterior.</div></div>
+
+<div class="card"><h2>Últimas apuestas de la regla elegida</h2><div class="scroll"><table id="last"></table></div></div>
+<div class="note">Reglas archivadas (no se siguen): R0, R6, R8, R9, R11, R14 a R36 y R38. ST3, ST5 y ST0 siguen solo en la página combinada.</div>
+</div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s), H=3600e3, D=864e5;
+let DOC=null, OFF=-4*H, RANGE=null, SEL=0, RULE=0;
+const fmt=(v,d=1)=>(v>=0?"+":"")+v.toFixed(d), pc=v=>fmt(v*100,1)+"%", cls=v=>v>0?"pos":v<0?"neg":"";
+const cd=ts=>new Date(ts+OFF), p2=n=>String(n).padStart(2,"0");
+const hm=ts=>{const d=cd(ts);return p2(d.getUTCHours())+":"+p2(d.getUTCMinutes())};
+const dm=ts=>{const d=cd(ts);return p2(d.getUTCDate())+"/"+p2(d.getUTCMonth()+1)};
+const dayKey=ts=>Math.floor((ts+OFF-6*H)/D), dayStart=k=>k*D+6*H-OFF;
+fetch("data/sombra.json",{cache:"no-store"}).then(r=>r.json()).then(d=>{DOC=d;OFF=d.cuba_utc*H;
+  DOC.bets=d.bets.map(r=>({t:r[0],rule:r[1],u:r[2],price:r[3],line:r[4],side:r[5],gid:r[6],pl:r[7],lg:r[8],k:r[9]}));init();})
+ .catch(e=>{document.body.insertAdjacentHTML("beforeend",'<div class="card">No se pudieron cargar los datos ('+e+').</div>')});
+function init(){
+  const now=Date.now(), last=DOC.bets.length?DOC.bets[DOC.bets.length-1].t:now, today=dayKey(Math.max(now,last));
+  const chips=[["Hoy",()=>[dayStart(today),dayStart(today+1)]],["Ayer",()=>[dayStart(today-1),dayStart(today)]],["3 días",()=>[dayStart(today-2),dayStart(today+1)]],["7 días",()=>[dayStart(today-6),dayStart(today+1)]],["Todo",()=>null]];
+  $("#chips").innerHTML=chips.map((c,i)=>`<button class="chip" data-i="${i}">${c[0]}</button>`).join("");
+  $("#chips").onclick=e=>{const i=e.target.dataset.i;if(i==null)return;RANGE=chips[i][1]();SEL=+i;render()};
+  SEL=4; RANGE=null; $("#gen").textContent=dm(DOC.generated_ms)+" "+hm(DOC.generated_ms);
+  addEventListener("resize",render); render();
+}
+function stats(bs){const s=bs.filter(b=>b.u!=null);const n=s.length;if(!n)return{n:0,open:bs.length};
+  const w=s.filter(b=>b.u>0).length,net=s.reduce((a,b)=>a+b.u,0),roi=net/n,sd=Math.sqrt(s.reduce((a,b)=>a+(b.u-roi)**2,0)/Math.max(n-1,1)),ci=1.96*sd/Math.sqrt(n);
+  let cur=0,mxL=0,cum=0,pk=0,dd=0,pr=0;for(const b of s){if(b.u<=0)cur++,mxL=Math.max(mxL,cur);else cur=0;cum+=b.u;pk=Math.max(pk,cum);dd=Math.max(dd,pk-cum);pr+=b.price}
+  return{n,w,net,roi,ci,mxL,dd,acc:w/n,price:pr/n,open:bs.length-n}}
+function inRange(b){return !RANGE||(b.t>=RANGE[0]&&b.t<RANGE[1])}
+function render(){
+  [...$("#chips").children].forEach((c,i)=>c.classList.toggle("on",i===SEL));
+  const bs=DOC.bets.filter(inRange); $("#rng").textContent=bs.length?`${dm(bs[0].t)} ${hm(bs[0].t)} → ${dm(bs.at(-1).t)} ${hm(bs.at(-1).t)} (Cuba)`:"sin apuestas en este período";
+  const rows=DOC.rules.map((r,i)=>({r,i,s:stats(bs.filter(b=>b.rule===i))}));
+  const tot=stats(bs); $("#totpill").textContent=tot.n?`${tot.n} apuestas · ${DOC.void||0} anuladas en total`:"sin datos";
+  $("#tbl").innerHTML="<tr><th>Regla</th><th>Apuestas</th><th>Abiertas</th><th>Acierto</th><th>Cuota</th><th>ROI</th><th>Neto u</th><th>Caída u</th><th>Racha −</th><th>Prueba (conf / ciego)</th></tr>"+
+   rows.map(({r,i,s})=>`<tr class="clk ${i===RULE?"rowsel":""}" data-i="${i}"><td><b>${r.id}</b><span class="desc">${r.desc}</span></td><td>${s.n}</td><td>${s.open||0}</td>`+
+   (s.n?`<td>${(s.acc*100).toFixed(0)}%</td><td>${s.price.toFixed(2)}</td><td class="${cls(s.roi)}"><b>${pc(s.roi)}</b> <span class="O">±${(s.ci*100).toFixed(0)}</span></td><td class="${cls(s.net)}">${fmt(s.net,1)}</td><td>${s.dd.toFixed(1)}</td><td>${s.mxL}</td>`:`<td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td>`)+
+   `<td>${r.ref?r.ref[0].toFixed(0)+"% / "+r.ref[1].toFixed(0)+"%":"–"}</td></tr>`).join("");
+  $("#tbl").querySelectorAll("tr.clk").forEach(tr=>tr.onclick=()=>{RULE=+tr.dataset.i;render()});
+  const mine=bs.filter(b=>b.rule===RULE); $("#ctitle").textContent="Curva acumulada · "+DOC.rules[RULE].id;
+  line("#c1",mine);
+  const L=mine.slice(-25).reverse();
+  $("#last").innerHTML="<tr><th>Hora</th><th>Partido</th><th>Apuesta</th><th>Cuota</th><th>Res.</th></tr>"+L.map(b=>`<tr><td>${dm(b.t)} ${hm(b.t)}</td><td style="text-align:left">${b.pl}</td><td>${b.side==="under"?"Menos":"Más"} de ${b.line}</td><td>${b.price.toFixed(2)}</td><td class="res ${b.u==null?"O":b.u>0?"W":b.u<0?"L":"O"}">${b.u==null?"…":b.u>0?"G":b.u<0?"P":"="}</td></tr>`).join("");
+}
+function line(id,bs){
+  const el=$(id),s=bs.filter(b=>b.u!=null);if(s.length<2){el.innerHTML='<div class="note">Muy pocas apuestas liquidadas en este período.</div>';return}
+  const W=Math.max(300,el.clientWidth||600),Ht=230,m={l:44,r:8,t:10,b:22};let c=0,pk=0;const P=[],K=[];for(const b of s){c+=b.u;pk=Math.max(pk,c);P.push({t:b.t,v:c});K.push(pk)}
+  const x0=P[0].t,x1=P.at(-1).t,vs=P.map(p=>p.v).concat(K,[0]);let lo=Math.min(...vs),hi=Math.max(...vs);const pad=(hi-lo)*.08||1;lo-=pad;hi+=pad;
+  const X=t=>m.l+(t-x0)/(x1-x0||1)*(W-m.l-m.r),Y=v=>m.t+(1-(v-lo)/(hi-lo))*(Ht-m.t-m.b);
+  let g="";for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,y=Y(v);g+=`<line x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${m.l-6}" y="${y+4}" text-anchor="end" font-size="10" fill="var(--mut)">${v.toFixed(0)}</text>`}
+  const lab=t=>(x1-x0)<2*D?hm(t):dm(t);for(let i=0;i<=3;i++){const t=x0+(x1-x0)*i/3;g+=`<text x="${X(t)}" y="${Ht-6}" text-anchor="middle" font-size="10" fill="var(--mut)">${lab(t)}</text>`}
+  const path=P.map((p,i)=>(i?"L":"M")+X(p.t).toFixed(1)+" "+Y(p.v).toFixed(1)).join(""),pp=P.map((p,i)=>(i?"L":"M")+X(p.t).toFixed(1)+" "+Y(K[i]).toFixed(1)).join("");
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${Ht}" width="${W}" height="${Ht}">${g}<line x1="${m.l}" x2="${W-m.r}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--mut)" stroke-dasharray="3 3"/><path d="${pp}" fill="none" stroke="var(--mut)" stroke-width="1" opacity=".6"/><path d="${path}" fill="none" stroke="${P.at(-1).v>=0?"var(--pos)":"var(--neg)"}" stroke-width="2" stroke-linejoin="round"/></svg>`;
+}
+</script>
+</body>
+</html>

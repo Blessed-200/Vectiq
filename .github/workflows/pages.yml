@@ -45,12 +45,17 @@ jobs:
           gh release download shadow-ledger --pattern "state.tar.gz" \
             --dir site/assets --clobber || echo "shadow-ledger aún no existe — estado vacío honesto"
 
+      - name: "Descargar sombra individual (opcional — puede no existir aún)"
+        run: |
+          gh release download ledger --pattern "sombra.sqlite" --dir site/assets --clobber || echo "sombra.sqlite aún no existe — página vacía honesta"
+
       - name: Construir site/data
         run: |
           python3 site/build_data.py \
             --assets site/assets --out site/data --repo-root . \
             --require masters.sqlite masters_book.json
           python3 site/build_panel.py --assets site/assets --out site/data
+          python3 site/build_sombra.py --assets site/assets --out site/data
           ls -la site/data/
 
       - name: Verificar que los JSON son válidos y recientes

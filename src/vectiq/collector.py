@@ -44,7 +44,8 @@ class Collector:
                  notify_status: Callable[[str], bool] | None = None, status_every_s: float = 600.0,
                  shadow_state_dir: Path | None = None, masters_live: bool = False, calibra: calibra_mod.Calibra | None = None,
                  st4_ledger: PaperLedger | None = None, st5_ledger: PaperLedger | None = None, st0_ledger: PaperLedger | None = None,
-                 session: Session | None = None, pin=None) -> None:
+                 sombra=None, session: Session | None = None, pin=None) -> None:
+        self.sombra = sombra                     # individual shadow of ten mined rules (signals/sombra.py): paper only, never alerts
         self.st0 = st0_ledger                    # ST0 prepartido: Under on the lowest rung just before the start
         self._st0_fired: set[int] = set()
         self.st5 = st5_ledger                    # ST5 "alta probabilidad": Markov model, Under >= 65 % (supersedes ST4 when it fires)
@@ -301,9 +302,10 @@ class Collector:
             done = prev.completed_sets
             self.finals[gid] = (done, sum(a + b for a, b in done))
             self._calibra_final(gid)
+            self._sombra_final(gid)
             if self.book is not None and masters.is_masters(prev):
                 self.book.add_match(gid, done)
-            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
+            for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.sombra):
                 if book:
                     book.settle(gid, prev.points_played)
             if self.mledger is not None:
@@ -320,17 +322,18 @@ class Collector:
     def _settle_final(self, gid: int, st: MatchState, done: list[tuple[int, int]], src: str) -> None:
         self.finals[gid] = (done, sum(a + b for a, b in done))
         self._calibra_final(gid)
+        self._sombra_final(gid)
         if self.book is not None and masters.is_masters(st):
             self.book.add_match(gid, done)
         total = sum(a + b for a, b in done)
-        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
+        for book in (self.ledger, self.shadow, self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.sombra):
             if book:
                 book.settle(gid, total, src=src)
         if self.mledger is not None:
             self._refresh_sprt()
 
     def _settle_unresolved(self, gid: int, prev: MatchState) -> None:
-        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0):
+        for book in (self.ledger, self.shadow, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.sombra):
             if book:
                 book.settle_vanished(gid, prev.points_played)
         if self.mledger is not None:
@@ -401,6 +404,13 @@ class Collector:
                 self.on_trade_stop(self)        # final upload of the state the next run will take over
 
     def _settle_known(self) -> None:
+        if self.sombra is not None:
+            try:
+                for gid in self.sombra.open_games():
+                    if gid in self.finals:
+                        self.sombra.settle(gid, self.finals[gid][1])
+            except Exception:  # noqa: BLE001 - shadow layer
+                log.warning("sombra settle failed", exc_info=True)
         if self.mledger is None:
             return
         for gid in self.mledger.open_games():
@@ -864,6 +874,24 @@ class Collector:
             log.info("masters %s %s under %s @%s ev=%.3f", pick.stage, pick.signal.players, pick.signal.line,
                      pick.signal.price, pick.signal.ev)
 
+    def _sombra_obs(self, s: MatchState, kind: str) -> None:
+        """Individual shadow: sees every Masters state (also the pre-match board); paper only, isolated from everything else."""
+        if self.sombra is None:
+            return
+        try:
+            self.sombra.observe(s, trading=self.trading(s.fetched_ms / 1000.0), kind=kind)
+            self.sombra.flush()
+        except Exception:  # noqa: BLE001 - a shadow layer must never stop the collector
+            log.warning("sombra observe failed", exc_info=True)
+
+    def _sombra_final(self, gid: int) -> None:
+        if self.sombra is None:
+            return
+        try:
+            self.sombra.final(gid, self.finals[gid][1], trading=self.trading(time.time()))
+        except Exception:  # noqa: BLE001 - shadow layer
+            log.warning("sombra final failed", exc_info=True)
+
     def _calibra_final(self, gid: int) -> None:
         if self.calibra is not None:
             try:
@@ -939,7 +967,7 @@ class Collector:
         if now_s - self._sweep_t < 300:
             return
         self._sweep_t = now_s
-        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.shadow, self.ledger):
+        for led in (self.mledger, self.cand, self.st2, self.st3, self.st4, self.st5, self.st0, self.shadow, self.ledger, self.sombra):
             if led is None:
                 continue
             for gid, champ, start in led.stale_open_meta(now_s):
@@ -1063,6 +1091,7 @@ class Collector:
             except (KeyError, ValueError, TypeError):
                 continue
             self.tape.append("line", s.game_id, it, r.fetched_ms)
+            self._sombra_obs(s, "line")
             if masters.is_masters(s):          # not stored in self.last: only the live list may end a match
                 self._masters(s, r.fetched_ms / 1000.0)
 
@@ -1120,6 +1149,7 @@ class Collector:
             if s.live:
                 self._signals(s)
             self._masters(s, resp.fetched_ms / 1000.0)
+            self._sombra_obs(s, "item")
         present = {s.game_id for s in states}
         for gid in list(self.last):
             if gid in present:

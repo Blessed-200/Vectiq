@@ -17,6 +17,7 @@ from vectiq.signals.calibra import Calibra
 from vectiq.signals.masters import MastersBook
 from vectiq.feed.client import BetwinnerClient
 from vectiq.signals.paper import PaperLedger
+from vectiq.signals.sombra import Sombra
 from vectiq.store.tape import TapeWriter
 
 DEFAULT_BASES = ["https://betwinner2.com"]
@@ -60,7 +61,7 @@ def _probe_line(c: BetwinnerClient) -> dict:
     return res
 
 
-STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "st0.sqlite", "calibra.sqlite", "tg_status.json", "session.json", "users.json")
+STATE_FILES = ("masters.sqlite", "masters_book.json", "cand.sqlite", "st2.sqlite", "st3.sqlite", "st4.sqlite", "st5.sqlite", "st0.sqlite", "calibra.sqlite", "sombra.sqlite", "tg_status.json", "session.json", "users.json")
 
 
 def cmd_rescue(args: argparse.Namespace) -> int:
@@ -98,7 +99,7 @@ def _release_upload(paths: list[Path]) -> None:
 def _handoff_in(col: Collector, out: Path) -> None:
     """Called when this run starts trading: take over the previous run's ledger and distribution book."""
     subprocess.run(["gh", "release", "download", "ledger", "--pattern", "masters.sqlite", "--pattern",
-                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "st0.sqlite", "--pattern", "calibra.sqlite", "--pattern", "tg_status.json", "--pattern", "session.json", "--pattern", "users.json",
+                    "masters_book.json", "--pattern", "cand.sqlite", "--pattern", "st2.sqlite", "--pattern", "st3.sqlite", "--pattern", "st4.sqlite", "--pattern", "st5.sqlite", "--pattern", "st0.sqlite", "--pattern", "calibra.sqlite", "--pattern", "sombra.sqlite", "--pattern", "tg_status.json", "--pattern", "session.json", "--pattern", "users.json",
                     "--dir", str(out), "--clobber"],
                    check=False, capture_output=True)
     col.mledger.reopen()
@@ -117,6 +118,11 @@ def _handoff_in(col: Collector, out: Path) -> None:
         col.st0.reopen()
     if col.calibra is not None:
         col.calibra.reopen()
+    if col.sombra is not None:
+        try:
+            col.sombra.takeover()                 # individual shadow: reload ratings + apply the finals seen while passive
+        except Exception:  # noqa: BLE001 - shadow layer: never block the hand-over
+            logging.getLogger("vectiq.cli").warning("sombra takeover failed", exc_info=True)
     loaded = MastersBook.load(out / "masters_book.json")
     for gid, (sets, _) in col.finals.items():  # finals this run saw before taking over
         loaded.add_match(gid, sets)
@@ -129,6 +135,11 @@ def _handoff_in(col: Collector, out: Path) -> None:
 def _handoff_out(col: Collector, out: Path) -> None:
     """Called when this run stops trading: publish the state the next run takes over."""
     col.book.save(out / "masters_book.json")
+    if col.sombra is not None:
+        try:
+            col.sombra.flush(force=True)
+        except Exception:  # noqa: BLE001
+            logging.getLogger("vectiq.cli").warning("sombra flush failed", exc_info=True)
     _release_upload([out / n for n in STATE_FILES])
     (out / "trading.flag").unlink(missing_ok=True)
 
@@ -146,12 +157,18 @@ def cmd_collect(args: argparse.Namespace) -> int:
     st0_ledger = PaperLedger(out / "st0.sqlite", start_bankroll=100.0)    # ST0: pre-match Under on the lowest rung
     mledger = PaperLedger(out / "masters.sqlite", start_bankroll=args.bankroll)
     calibra = Calibra(out / "calibra.sqlite")                              # CALIBRA: shadow learning layer
+    sombra = None                                                          # ten mined rules, one by one, paper only, no alerts
+    if os.environ.get("VECTIQ_SOMBRA", "1") != "0":
+        try:
+            sombra = Sombra(out / "sombra.sqlite")
+        except Exception:  # noqa: BLE001 - a shadow layer must never stop the collector
+            logging.getLogger("vectiq.cli").warning("sombra disabled (init failed)", exc_info=True)
     book = MastersBook.load(out / "masters_book.json")
     t0 = time.time()
     chat = telegram.shadow_chat()
     col = Collector(
         _client(args), tape, ledger, shadow=shadow, mledger=mledger, book=book, cand=cand, st2_ledger=st2_ledger,
-        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, st0_ledger=st0_ledger, calibra=calibra, session=Session(out / "session.json"), users=Users(out / "users.json"),
+        st3_ledger=st3_ledger, st4_ledger=st4_ledger, st5_ledger=st5_ledger, st0_ledger=st0_ledger, calibra=calibra, sombra=sombra, session=Session(out / "session.json"), users=Users(out / "users.json"),
         channel_alerts=os.environ.get("VECTIQ_CHANNEL_ALERTS", "off") == "on", edit_msg=lambda ch, mid, t, b=None: telegram.edit_message(ch, mid, t, b),
         send_to=lambda cid, txt, b=None, silent=False: telegram.send_alert(txt, b, silent, chat_id=str(cid)), alerts=os.environ.get("VECTIQ_ALERTS", "st3,st5,st0"),   # st3 | pre | masters (legacy) | any mix
         masters_live=os.environ.get("VECTIQ_MASTERS_LIVE", "off") == "on",
@@ -172,7 +189,7 @@ def cmd_collect(args: argparse.Namespace) -> int:
         (out / "trading.flag").write_text("1")  # chained runs get the flag in _handoff_in
     col.run(args.minutes * 60, args.interval)
     col.book.save(out / "masters_book.json")
-    print(json.dumps({"st3": st3_ledger.summary(), "st4": st4_ledger.summary(), "st5": st5_ledger.summary(), "st0": st0_ledger.summary(), "st2": st2_ledger.summary(), "masters": mledger.summary()}))
+    print(json.dumps({"st3": st3_ledger.summary(), "st4": st4_ledger.summary(), "st5": st5_ledger.summary(), "st0": st0_ledger.summary(), "st2": st2_ledger.summary(), "masters": mledger.summary(), **({"sombra": sombra.summary()} if sombra is not None else {})}))
     return 0
 
 
