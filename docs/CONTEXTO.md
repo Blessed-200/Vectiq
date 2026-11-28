@@ -62,3 +62,10 @@ Notebooks: VQD (descubrimiento), VQC (combinaciones, GPU), VQM (microscopio). Da
 - Boletos del dueño (25–27/11, 150): línea y cuota idénticas a la alerta en ST0 90 %, ST3 82 %, ST5 24 % (en ST5 la escalera cambia); demora mediana alerta→boleto ~35 s; tomó ~60 % de las alertas en sus horas activas; sin diferencia demostrable entre lo tomado y lo no tomado.
 - `alert_timing` no se llenaba (las alertas ya no llevan message_id de canal); corregido el 28/11 (commit 0d8c2db), datos desde la siguiente corrida.
 - Telegram «serverless» (tgcloud): solo JavaScript en V8, sin npm, sin red salvo fetch del SDK; no sirve para este sistema (Python, modelo Markov, ledgers). Descartado.
+
+## Estudio de pesos ST3/ST5/ST0 (28/11, aún NO aplicado)
+- Rachas: dentro de cada estrategia son las normales por azar (prueba de rachas z = 0,1 / 0,9 / 0,8; racha máx. ST0 = 11 con orden de liquidación estimado). La racha «combinada» de 23 baja a 17 al contar un resultado por partido (varias alertas comparten partido). No hay evidencia de régimen.
+- Correlación entre estrategias (bloques de 3 h): ST0–ST3 0,30, ST3–ST5 0,34, ST0–ST5 0,16.
+- A igual riesgo que hoy (SD ≈ 6,1 % de banca por bloque de 3 h tomando todas las alertas), con ROI posterior ST3 12,0 / ST5 11,8 / ST0 13,8 %: stakes por alerta actuales 1/1/0,45 → Sharpe por bloque 0,637; parejo 0,76 c/u → 0,686; ST3 0,71 / ST5 1,0 / ST0 0,71 → 0,685; óptimo 0,54/0,90/0,86 → 0,693. Si ST0 cae a 8 %: parejo 0,534 (peor que hoy 0,548); ST3 0,71/ST5 1,0/ST0 0,71 → 0,544 (casi igual que hoy). Propuesta robusta: ST3 0,7 % · ST5 1,0 % · ST0 0,7 %. El stake se redondea a $0,5 y mín. $1 (`bankroll.stake_now`).
+- Un optimizador sin encoger sobre solo 6 días pone 100 % en ST0: no confiar (sobreajuste a una racha de 6 días).
+- Micro: ningún stake por apuesta (∝ EV, ∝ 1/(cuota−1), ∝ cuota) supera al plano de forma demostrable. Pista débil a seguir hacia adelante, sin aplicar: ST5 con EV 15–16 % (quintil bajo, n 266) ROI −0,5 % frente a +16 % el resto.
