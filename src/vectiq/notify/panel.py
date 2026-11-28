@@ -4,7 +4,7 @@ The channel no longer carries bet alerts (those go to each person's private chat
 the system: today / last 7 days / by strategy / latest bets / health / users, a daily summary at 6 AM Cuba and a chart.
 All numbers come from the three alert ledgers with the same filters as the web page (ST3 price >= 2.10; ST5 EV in
 (0.15, 0.30] and <= 2 sets; ST0 all), so channel, page and bot always agree. Money = a $100 bank sized exactly like the bot
-(1 % ST3/ST5, 0.45 % ST0, base recalculated hourly or after +-5 %)."""
+(0.7 % ST3, 1 % ST5, 0.65 % ST0, base recalculated hourly or after +-5 %)."""
 from __future__ import annotations
 
 import datetime as dt
@@ -14,7 +14,7 @@ import time
 from typing import Callable
 
 LEGS = ("ST3", "ST5", "ST0")
-PCTS = (0.01, 0.01, 0.0045)
+PCTS = (0.007, 0.01, 0.0065)
 SPARK = "▁▂▃▄▅▆▇█"
 HOME_BUTTONS = [[("📅 Hoy", "d:today"), ("📆 7 días", "d:week"), ("🎯 Estrategias", "d:strat")],
                 [("🕒 Últimas", "d:last"), ("🩺 Salud", "d:health"), ("👥 Usuarios", "d:users")],

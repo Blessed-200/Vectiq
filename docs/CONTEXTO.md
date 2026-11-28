@@ -8,10 +8,12 @@ Operación de apuestas Masters (tenis de mesa, mejor de 7) sobre el **total del 
 ## 2. En producción (no tocar sin pruebas)
 | Estrategia | Qué hace | Stake |
 |---|---|---|
-| **ST3** | Under tras el set 1, rungo bajo, modelo Markov | 1,0 % de la banca por alerta |
+| **ST3** | Under tras el set 1, rungo bajo, modelo Markov | 0,7 % de la banca por alerta (antes 1,0 %) |
 | **ST5** | Under tras 2 sets completos, valor 15–30 % de EV, aparece ~78 s después del set | 1,0 % |
-| **ST0** | Prepartido, Under | 0,45 % |
+| **ST0** | Prepartido, Under | 0,65 % (antes 0,45 %) |
 
+- **Desde el 28/11** el stake base es ST3 0,7 % · ST5 1,0 % · ST0 0,65 % (estudio a igual riesgo; ver «Estudio de pesos»). Variables: `VECTIQ_STAKE_PCT`, `VECTIQ_ST3_REL` (0,7), `VECTIQ_ST0_PCT` (0,0065).
+- **Freno de cartera** (`signals/brake.py`, `VECTIQ_BOOK_BRAKE=0` lo apaga): un solo multiplicador 0,25–1 para las tres estrategias y todos los usuarios. Baja si el ROI ponderado reciente (vida media 120 h, prior 800 apuestas al +10 %) cae por debajo del +10 % esperado, y ×0,5 si la caída de la cartera llega al 20 % (se libera al 10 %). Antes los frenos graduales (evidencia/caída/vigilante CUSUM) no actuaban sobre el stake real en modo % de banca; solo los duros (caída 30 %, parada del día 15 %, ROI de las últimas 150 < −8 %). Recalcula cada 15 min y avisa en Telegram al activarse/liberarse.
 - Stake dinámico: se recalcula cada hora o al moverse ±5 % la banca; mín. $1, máx. $3.000 (`notify/bankroll.py`). Frenos por caída en `signals/st3.py`/`collector.py`.
 - Alertas por privado; el canal es panel (botones, resumen 6 AM Cuba). Los botones «aceptada / cuota menor / no llegué» **no son fiables** para saber ejecutabilidad.
 - Día de apuestas en Cuba = 6 AM a 6 AM.
@@ -69,3 +71,8 @@ Notebooks: VQD (descubrimiento), VQC (combinaciones, GPU), VQM (microscopio). Da
 - A igual riesgo que hoy (SD ≈ 6,1 % de banca por bloque de 3 h tomando todas las alertas), con ROI posterior ST3 12,0 / ST5 11,8 / ST0 13,8 %: stakes por alerta actuales 1/1/0,45 → Sharpe por bloque 0,637; parejo 0,76 c/u → 0,686; ST3 0,71 / ST5 1,0 / ST0 0,71 → 0,685; óptimo 0,54/0,90/0,86 → 0,693. Si ST0 cae a 8 %: parejo 0,534 (peor que hoy 0,548); ST3 0,71/ST5 1,0/ST0 0,71 → 0,544 (casi igual que hoy). Propuesta robusta: ST3 0,7 % · ST5 1,0 % · ST0 0,7 %. El stake se redondea a $0,5 y mín. $1 (`bankroll.stake_now`).
 - Un optimizador sin encoger sobre solo 6 días pone 100 % en ST0: no confiar (sobreajuste a una racha de 6 días).
 - Micro: ningún stake por apuesta (∝ EV, ∝ 1/(cuota−1), ∝ cuota) supera al plano de forma demostrable. Pista débil a seguir hacia adelante, sin aplicar: ST5 con EV 15–16 % (quintil bajo, n 266) ROI −0,5 % frente a +16 % el resto.
+
+## Regla de jugadores (auditada 28/11)
+- `signals/players.py` multiplica el stake (×0,4–1,6, media 1) según el rating de puntos de los jugadores. Reconstruida punto-en-el-tiempo con datos posteriores a su diseño (21/11→28/11, 2.225 alertas): ganancia extra +49 u (IC95 +12/+88) frente a stake plano; ST5 +19,5 u (IC +3,7/+34,8), ST3 +22,8 u (IC −1/+46), ST0 +6,9 u (no concluyente). ROI por quintil de multiplicador en ST3/ST5: ~0–4 % (m≈0,4) a ~23–25 % (m≈1,5); pendiente ROI ≈ −0,12 + 0,22·m (z=3). Fuerza actual ≈ óptima en Sharpe (k=1: 0,679; k=1,5: 0,681; k=2: 0,671). No tocar. Los multiplicadores de ST0 tienen media 1,14 (no se centran por estrategia).
+- Pruebas de robustez de los pesos 0,7/1,0/0,7 vs 1/1/0,45 (22–28/11, con tilt): Sharpe 0,792 vs 0,674, dif +0,119 IC95 [+0,052, +0,200]; 1.ª mitad 0,835 vs 0,749, 2.ª mitad 0,679 vs 0,533; sin los dos mejores días de ST0 0,605 vs 0,553; con descuento de ejecución (−1/−3/−0,5 pts) 0,706 vs 0,590; sin tilt 0,722 vs 0,607. Exposición abierta simultánea (todas tomadas): mediana 3,9 %, p99 8,7 %, máx 11,5 % de la banca.
+- Riesgo con todas las alertas tomadas y reinvirtiendo: sin ventaja real el bot pierde ~70 % en 60 días por arrastre de varianza → por eso el freno graduado. Calibración sobre 14–28/11: caída máx 18 %; el freno por ventaja cuesta ~6 % del crecimiento final y reduce la caída mediana en el escenario «ventaja desaparece» de 80 % a 41 %.

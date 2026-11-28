@@ -213,6 +213,10 @@ class Collector:
                     note = (note + "\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{m:.1f}."
                 elif m <= 0.85:
                     note = (note + "\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{m:.1f}."
+            x, why = self._book_brake()
+            if x < 0.995:
+                stake = min(bankroll.MAX_STAKE, max(bankroll.MIN_STAKE, round(stake * x * 2) / 2))
+                note = (note + "\n" if note else "") + f"🛡️ Freno de cartera ×{x:.2f}: {why}."
             if redo:       # shown AFTER the player multiplier so it always equals the 💵 amount at the top of the alert
                 note = (f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta "
                         f"(base ${base:,.2f} = {redo_pct * 100:.2f} %)." + ("\n" + note if note else ""))
@@ -221,6 +225,34 @@ class Collector:
         if self.flat_stake > 0 and frac > 0 and self._bank() > 0:
             return min(self.flat_stake / self._bank(), 0.05), "Stake fijo."
         return frac, note
+
+    def _book_brake(self) -> tuple[float, str]:
+        """Book-level stake multiplier (signals/brake.py), cached 15 min. 1.0 when off, in fixed-$ mode or on any problem."""
+        if os.environ.get("VECTIQ_BOOK_BRAKE", "1") == "0" or self.stake_pct <= 0 or getattr(self, "st3", None) is None:
+            return 1.0, ""
+        now = time.time()
+        c = getattr(self, "_brake_cache", None)
+        if c is not None and now - c[0] < 900.0:
+            return c[1], c[2]
+        try:
+            from .signals import brake
+            dbs = {"st3": self.st3.db, "st5": self.st5.db if self.st5 is not None else None,
+                   "st0": self.st0.db if getattr(self, "st0", None) is not None else None}
+            w = {"st3": self.stake_pct * bankroll.REL_ST3, "st5": self.stake_pct, "st0": st0.STAKE_PCT}
+            x, info = brake.multiplier(brake.load_events(dbs, w, now), now)
+            why = brake.reason(info)
+        except Exception:  # noqa: BLE001 - a brake must never stop an alert
+            log.warning("book brake failed", exc_info=True)
+            return 1.0, ""
+        prev = getattr(self, "_brake_prev", 1.0)
+        self._brake_cache, self._brake_prev = (now, x, why), x
+        if (x < 0.995) != (prev < 0.995) and getattr(self, "notify_alert", None) is not None:
+            try:
+                self.notify_alert(f"<b>🛡️ FRENO DE CARTERA ×{x:.2f}</b>\n{why}.\nTodos los stakes bajan por igual hasta que se recupere." if x < 0.995
+                                  else "<b>✅ FRENO DE CARTERA liberado</b>\nStakes normales.", None)
+            except Exception:  # noqa: BLE001
+                pass
+        return x, why
 
     def _tilt(self, players_: str) -> float:
         """Stake multiplier from the player ratings (1.0 when off, unknown players or too little history)."""
@@ -485,11 +517,11 @@ class Collector:
             if left < frac:
                 frac = max(0.0, left)
                 note = "Ya hay apuesta PRE en este partido: tope 2 % entre las dos."
-        frac, note = self._flat(frac, note, al.players)
+        frac, note = self._flat(frac, note, al.players, pct=self.stake_pct * bankroll.REL_ST3)
         if talk and ok and frac >= 0.0025:
             mid = self._chan_alert(telegram.format_st3(al, self._bank(), frac, al.url, note=note),
                                     telegram.exec_buttons(al.game_id))
-            self._fan("bet", al.game_id, al.ts_ms, al.players, self.stake_pct,
+            self._fan("bet", al.game_id, al.ts_ms, al.players, self.stake_pct * bankroll.REL_ST3,
                       lambda b, f, n: telegram.format_st3(al, b, f, al.url, note=n))
             st3.record_alert(self.st3.db, al, "bet", mid)
             bankroll.record_quote(self.st3.db, al.game_id, "bet", al.ts_ms, round(self._bank() * frac, 2))
@@ -648,6 +680,8 @@ class Collector:
         if self.users is None or self.send_to is None:
             return
         m, now = self._tilt(players_), time.time()
+        bx, bwhy = self._book_brake()
+        m *= bx
         for uid, u in self.users.active():
             try:
                 bank = self.users.bank(u, self._dbs())
@@ -657,10 +691,13 @@ class Collector:
                 frac = min(stake / bank, 0.05)
                 stake = round(bank * frac, 2)
                 note = f"📊 Stake recalculado: banca ${bank:,.2f} → ${stake:,.2f} por alerta." if redo else ""
-                if m >= 1.15:
-                    note += ("\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{m:.1f}."
-                elif m <= 0.85:
-                    note += ("\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{m:.1f}."
+                mt = m / bx if bx > 0 else m
+                if mt >= 1.15:
+                    note += ("\n" if note else "") + f"👤 Jugadores de pocos puntos: stake ×{mt:.1f}."
+                elif mt <= 0.85:
+                    note += ("\n" if note else "") + f"👤 Jugadores de más puntos: stake ×{mt:.1f}."
+                if bx < 0.995:
+                    note += ("\n" if note else "") + f"🛡️ Freno de cartera ×{bx:.2f}: {bwhy}."
                 if self.send_to(uid, build(bank, frac, note), telegram.exec_buttons(gid), False) is not None:
                     self.users.record(u, gid, kind, ts_ms, stake)
             except Exception:  # noqa: BLE001 - one broken chat must not stop the others

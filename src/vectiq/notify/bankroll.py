@@ -9,8 +9,11 @@
 """
 from __future__ import annotations
 
+import os
+
 import sqlite3
 
+REL_ST3 = float(os.environ.get("VECTIQ_ST3_REL", "0.7"))   # ST3 stake = STAKE_PCT x this (28 nov risk-matched study: ST3 0.7 / ST5 1.0 / ST0 0.65 %)
 STAKE_PCT = 0.01      # x0.6 of the original 1.75 %: typical 11-day dip 15 %, not 25 % (study of 22 nov)
 RECALC_S, RECALC_MOVE = 3600.0, 0.05
 MIN_STAKE, MAX_STAKE = 1.0, 3000.0

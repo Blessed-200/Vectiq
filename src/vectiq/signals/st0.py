@@ -34,7 +34,7 @@ Z_LOW = float(os.environ.get("VECTIQ_ST0_Z", "-0.4"))       # rating z of the pa
 RUNGS = 3
 STAKE_FRAC = 0.0045                                         # paper-book fraction and evidence cap; alerts use the % of the bank
 PER_MATCH_CAP = 0.05
-STAKE_PCT = float(os.environ.get("VECTIQ_ST0_PCT", "0.0045"))   # share of the bank per alert (ST3/ST5 use 1.0 %)
+STAKE_PCT = float(os.environ.get("VECTIQ_ST0_PCT", "0.0065"))   # share of the bank per alert (ST3 0.7 %, ST5 1.0 % since 28 nov)
 
 
 @dataclass(slots=True)
