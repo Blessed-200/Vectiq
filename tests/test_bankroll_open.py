@@ -63,3 +63,13 @@ def test_alert_delivery_time_is_logged_next_to_the_alert():
     d, s = db.execute("SELECT detect_ms, sent_ms FROM alert_timing WHERE game_id=5").fetchone()
     assert 1000 <= s - d <= 60_000
     assert st3.record_alert(db, al, "bet", 77) is False and db.execute("SELECT COUNT(*) FROM alert_timing").fetchone()[0] == 1
+
+
+def test_alert_timing_is_logged_even_without_channel_message():
+    """Alerts go to private chats only (channel message_id is None): the latency must still be recorded."""
+    import time
+    from vectiq.signals import st3
+    db = sqlite3.connect(":memory:")
+    al = st3.Alert(6, "A vs B", "Masters. Poland", (11, 8), (0, 0), 100.5, 2.0, [(100.5, 1.8, 2.0)], int(time.time() * 1000) - 2000)
+    assert st3.record_alert(db, al, "st0", None) is True
+    assert db.execute("SELECT COUNT(*) FROM alert_timing WHERE game_id=6 AND kind='st0'").fetchone()[0] == 1

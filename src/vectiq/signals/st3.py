@@ -192,8 +192,8 @@ def record_alert(db: sqlite3.Connection, al: Alert, kind: str, message_id: int |
     init_db(db)
     cur = db.execute("INSERT OR IGNORE INTO alerts VALUES(?,?,?,?,?,?)",
                      (al.game_id, kind, al.ts_ms, message_id, al.line, al.price))
-    if cur.rowcount == 1 and message_id is not None:
-        try:      # when Telegram accepted the message: lets us measure detection -> delivery latency (never blocks the alert)
+    if cur.rowcount == 1:
+        try:      # called right after the fan-out to private users (alerts no longer go to the channel): detection -> sent latency (never blocks the alert)
             db.execute("CREATE TABLE IF NOT EXISTS alert_timing(game_id INTEGER, kind TEXT, detect_ms INTEGER, sent_ms INTEGER, "
                        "PRIMARY KEY(game_id, kind))")
             db.execute("INSERT OR IGNORE INTO alert_timing VALUES(?,?,?,?)", (al.game_id, kind, al.ts_ms, int(time.time() * 1000)))
