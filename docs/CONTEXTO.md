@@ -55,3 +55,10 @@ Notebooks: VQD (descubrimiento), VQC (combinaciones, GPU), VQM (microscopio). Da
 
 ## 10. Pendientes vivos
 1. Revisión de la sombra el 04/12 (ver §3). 2. R5b. 3. Medir latencia de entrega con `alert_timing`. 4. Vigilar ST3 (ROI de los últimos 6 días +5,8 % vs +15 % acumulado). 5. PR #31. 6. Posibles mejoras de envío (conexión persistente, envío paralelo) tras medir.
+
+## Hallazgos del 28/11 (ver también el chat)
+- ROI unitario con alertas liquidadas (hasta 27/11 23:00 UTC): ST3 +12,4 % (n 3313, IC95 +8,8/+16,1), ST5 +12,4 % (n 1305, +7,7/+17,2), ST0 +16,6 % (n 908, +9,3/+23,6; solo 6 días, 22–27/11, los 6 positivos). La variación diaria coincide con la esperada por azar (sin agrupamiento).
+- Brecha esposa/dueño: ella apuesta 0,5 plano (2,1–2,4 % de su banca en las tres), el bot da 1 %/1 %/0,45 %. Con las mismas alertas un stake plano pesa ~2,2× más a ST3/ST5 y ~5× más a ST0 en % de banca; en 26/11 (ST3 −20 u, ST0 +24 u) plano daba ≈ +1 USD y el bot ≈ −15 USD.
+- Boletos del dueño (25–27/11, 150): línea y cuota idénticas a la alerta en ST0 90 %, ST3 82 %, ST5 24 % (en ST5 la escalera cambia); demora mediana alerta→boleto ~35 s; tomó ~60 % de las alertas en sus horas activas; sin diferencia demostrable entre lo tomado y lo no tomado.
+- `alert_timing` no se llenaba (las alertas ya no llevan message_id de canal); corregido el 28/11 (commit 0d8c2db), datos desde la siguiente corrida.
+- Telegram «serverless» (tgcloud): solo JavaScript en V8, sin npm, sin red salvo fetch del SDK; no sirve para este sistema (Python, modelo Markov, ledgers). Descartado.
